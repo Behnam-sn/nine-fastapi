@@ -1,5 +1,3 @@
-from typing import Optional
-
 from pydantic import BaseModel
 
 
@@ -15,7 +13,7 @@ class UserCreate(UserBase):
 class User(UserBase):
     id: int
     name: str
-    bio: Optional[str] = None
+    bio: str | None = None
     # picture_url: str
     created_at: str
     modified_at: str
