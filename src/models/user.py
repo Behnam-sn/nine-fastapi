@@ -10,6 +10,7 @@ class User(Base):
     hashed_password = Column(String)
     name = Column(String, nullable=True)
     bio = Column(String, nullable=True)
+    is_active = Column(Boolean(), default=True)
+    is_superuser = Column(Boolean(), default=False)
     created_at = Column(Text)
     modified_at = Column(Text)
-    is_active = Column(Boolean, default=True)
