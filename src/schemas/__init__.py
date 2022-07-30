@@ -1,2 +1,2 @@
 from .token import Token, TokenData
-from .user import User, UserCreate
+from .user import PasswordUpdate, User, UserCreate, UserUpdate
