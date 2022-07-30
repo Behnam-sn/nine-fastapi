@@ -1,9 +1,13 @@
+import uvicorn
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-import uvicorn
 
 from src.api.api_v1.api import api_router
 from src.core.config import settings
+from src.database.init_db import init_db
+from src.database.session import SessionLocal
+
+init_db(db=SessionLocal())
 
 
 app = FastAPI(
