@@ -33,25 +33,12 @@ def get_users(db: Session, skip: int = 0, limit: int = 100) -> list[models.User]
 
 def update_user(db: Session, username: str, user_update: schemas.UserUpdate) -> models.User:
     db_user = get_user_by_username(db, username=username)
+
     update_data = user_update.dict(exclude_unset=True)
+    update_data["modified_at"] = now()
 
-    if db_user.username != update_data["username"]:
-        # db_notes = db.query(models.Note).filter(
-        #     models.Note.author == username
-        # ).all()
-
-        # for note in db_notes:
-        #     setattr(note, "author", update_data["username"])
-
-        setattr(db_user, "username", update_data["username"])
-
-    if db_user.name != update_data["name"]:
-        setattr(db_user, "name", update_data["name"])
-
-    if db_user.bio != update_data["bio"]:
-        setattr(db_user, "bio", update_data["bio"])
-
-    setattr(db_user, "modified_at", now())
+    for field, value in update_data.items():
+        setattr(db_user, field, value)
 
     db.commit()
     db.refresh(db_user)
