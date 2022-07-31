@@ -84,6 +84,26 @@ def test_activate_user():
     assert user["is_active"] == True
 
 
+def test_activate_user_as_superuser():
+    username = random_lower_string()
+    password = random_lower_string()
+
+    create_random_user(username=username, password=password)
+    superuser_token = user_authentication_headers(
+        username=settings.SUPERUSER_USERNAME,
+        password=settings.SUPERUSER_PASSWORD
+    )
+
+    response = client.put(
+        f"{settings.API_V1_STR}/users/activate/{username}",
+        headers=superuser_token,
+    )
+    user = response.json()
+
+    assert response.status_code == 200
+    assert user["is_active"] == True
+
+
 def test_deactivate_user():
     username = random_lower_string()
     password = random_lower_string()
@@ -94,6 +114,26 @@ def test_deactivate_user():
     response = client.put(
         f"{settings.API_V1_STR}/users/deactivate/{username}",
         headers=token,
+    )
+    user = response.json()
+
+    assert response.status_code == 200
+    assert user["is_active"] == False
+
+
+def test_deactivate_user_as_superuser():
+    username = random_lower_string()
+    password = random_lower_string()
+
+    create_random_user(username=username, password=password)
+    superuser_token = user_authentication_headers(
+        username=settings.SUPERUSER_USERNAME,
+        password=settings.SUPERUSER_PASSWORD
+    )
+
+    response = client.put(
+        f"{settings.API_V1_STR}/users/deactivate/{username}",
+        headers=superuser_token,
     )
     user = response.json()
 

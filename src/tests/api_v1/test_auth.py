@@ -38,3 +38,17 @@ def test_login():
     assert response.status_code == 200
     assert "access_token" in tokens
     assert tokens["access_token"]
+
+
+def test_login_as_superuser():
+    data = {
+        "username": settings.SUPERUSER_USERNAME,
+        "password": settings.SUPERUSER_PASSWORD
+    }
+
+    response = client.post(
+        f"{settings.API_V1_STR}/auth/login",
+        data=data
+    )
+
+    assert response.status_code == 200
