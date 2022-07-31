@@ -34,8 +34,6 @@ def test_get_user_by_username():
 
 
 def test_get_all_users():
-    create_random_user()
-
     response = client.get(
         f"{settings.API_V1_STR}/users/all",
     )
