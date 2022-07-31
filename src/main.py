@@ -7,9 +7,6 @@ from src.core.config import settings
 from src.database.init_db import init_db
 from src.database.session import SessionLocal
 
-init_db(db=SessionLocal())
-
-
 app = FastAPI(
     title=settings.PROJECT_NAME,
     openapi_url=f"{settings.API_V1_STR}/openapi.json"
@@ -25,6 +22,8 @@ if settings.CORS_ORIGINS:
     )
 
 app.include_router(api_router, prefix=settings.API_V1_STR)
+
+init_db(db=SessionLocal())
 
 if __name__ == "__main__":
     uvicorn.run("main:app", reload=True)
