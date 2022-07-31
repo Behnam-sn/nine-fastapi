@@ -10,7 +10,7 @@ def now():
 
 
 class Post():
-    def create_post(self, db: Session, post: schemas.PostCreate, author_id: int) -> models.Post:
+    def create(self, db: Session, post: schemas.PostCreate, author_id: int) -> models.Post:
         db_post = models.Post(
             **post.dict(),
             author_id=author_id,
@@ -22,7 +22,7 @@ class Post():
         db.refresh(db_post)
         return db_post
 
-    def get_all_posts(self, db: Session, skip: int = 0, limit: int = 100) -> list[models.Post]:
+    def get_all(self, db: Session, skip: int = 0, limit: int = 100) -> list[models.Post]:
         return (
             db.query(models.Post)
             .order_by(models.Post.id.desc())
@@ -31,14 +31,14 @@ class Post():
             .all()
         )
 
-    def get_post_by_id(self, db: Session, id: int) -> None | models.Post:
+    def get_by_id(self, db: Session, id: int) -> None | models.Post:
         return (
             db.query(models.Post)
             .filter(models.Post.id == id)
             .first()
         )
 
-    def update_post(self, db: Session, id: int, post_update: schemas.PostUpdate) -> models.Post:
+    def update(self, db: Session, id: int, post_update: schemas.PostUpdate) -> models.Post:
         db_post = self.get_post_by_id(db, id=id)
 
         update_data = post_update.dict(exclude_unset=True)
@@ -49,6 +49,12 @@ class Post():
 
         db.commit()
         db.refresh(db_post)
+        return db_post
+
+    def delete(self, db: Session, id: int) -> None | models.Post:
+        db_post = self.get_by_id(db, id=id)
+        db.delete(db_post)
+        db.commit()
         return db_post
 
     def render_post_with_author(self, db: Session, post: models.Post) -> schemas.Post:
@@ -66,6 +72,22 @@ class Post():
             created_at=post.created_at,
             modified_at=post.modified_at,
         )
+
+    def active(self, db: Session, id: int) -> models.Post:
+        db_post = self.get_by_id(db, id=id)
+        setattr(db_post, "is_active", True)
+
+        db.commit()
+        db.refresh(db_post)
+        return db_post
+
+    def deactive(self, db: Session, id: int) -> models.Post:
+        db_post = self.get_by_id(db, id=id)
+        setattr(db_post, "is_active", False)
+
+        db.commit()
+        db.refresh(db_post)
+        return db_post
 
 
 post = Post()
