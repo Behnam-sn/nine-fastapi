@@ -1,4 +1,5 @@
 from sqlalchemy import Boolean, Column, Integer, String, Text
+from sqlalchemy.orm import relationship
 from src.database.session import Base
 
 
@@ -14,3 +15,4 @@ class User(Base):
     is_superuser = Column(Boolean(), default=False)
     created_at = Column(Text)
     modified_at = Column(Text)
+    posts = relationship("Post", back_populates="author")

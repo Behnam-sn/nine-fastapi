@@ -21,6 +21,12 @@ class PasswordUpdate(BaseModel):
     new_password: str
 
 
+class UserInPost(BaseModel):
+    username: str
+    name: str
+    # picture_url: str
+
+
 class User(UserBase):
     id: int
     name: str
