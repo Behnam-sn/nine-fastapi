@@ -8,12 +8,14 @@ from src.api.deps import get_db
 from src.database.session import Base
 from src.main import app
 
-DATABASE_URL = "sqlite:///./test.db"
+DATABASE_URL = "postgresql://postgres:1@localhost/ninetest"
+# DATABASE_URL = "sqlite:///./test.db"
 
 
-engine = create_engine(
-    DATABASE_URL, connect_args={"check_same_thread": False}
-)
+engine = create_engine(DATABASE_URL)
+# engine = create_engine(
+#     DATABASE_URL, connect_args={"check_same_thread": False}
+# )
 
 TestingSessionLocal = sessionmaker(
     autocommit=False, autoflush=False, bind=engine
