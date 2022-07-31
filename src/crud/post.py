@@ -39,7 +39,7 @@ class Post():
         )
 
     def update(self, db: Session, id: int, post_update: schemas.PostUpdate) -> models.Post:
-        db_post = self.get_post_by_id(db, id=id)
+        db_post = self.get_by_id(db, id=id)
 
         update_data = post_update.dict(exclude_unset=True)
         update_data["modified_at"] = now()
