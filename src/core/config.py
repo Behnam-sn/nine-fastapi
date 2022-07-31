@@ -6,6 +6,7 @@ from pydantic import BaseSettings
 class Settings(BaseSettings):
     PROJECT_NAME: str
     DATABASE_URL: str
+    TEST_DATABASE_URL: str
     CORS_ORIGINS: list = []
 
     API_V1_STR: str = "/api/v1"
