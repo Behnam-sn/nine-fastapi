@@ -40,13 +40,14 @@ def user_authentication_headers(username: str, password: str):
     return {"Authorization": f"Bearer {auth_token}"}
 
 
-def create_random_post(text: str = random_lower_string()):
+def create_random_post(text: str = random_lower_string(), token=None):
     data = {
-        "text": text,
+        "text": text
     }
 
     response = client.post(
-        f"{settings.API_V1_STR}/items/",
+        f"{settings.API_V1_STR}/posts/",
+        headers=token,
         json=data
     )
 
