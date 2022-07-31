@@ -7,10 +7,7 @@ from src.database import base  # keep
 
 def init_db(db: Session):
 
-    user = crud.user.get_user_by_username(
-        db,
-        username=settings.SUPERUSER_USERNAME
-    )
+    user = crud.user.get_by_username(db, username=settings.SUPERUSER_USERNAME)
     if not user:
 
         db_user = models.User(

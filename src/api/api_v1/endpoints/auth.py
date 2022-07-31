@@ -17,13 +17,13 @@ def create_user(
     db: Session = Depends(deps.get_db)
 ):
 
-    if crud.get_user_by_username(db, username=user.username):
+    if crud.user.get_by_username(db, username=user.username):
         raise HTTPException(
             status_code=400,
             detail="Username already registered"
         )
 
-    return crud.create_user(db=db, user=user)
+    return crud.user.create(db=db, user=user)
 
 
 @router.post("/login", response_model=schemas.Token)
@@ -32,7 +32,7 @@ def login(
     db: Session = Depends(deps.get_db)
 ):
 
-    user = crud.user.authenticate_user(
+    user = crud.user.authenticate(
         db,
         username=form_data.username,
         password=form_data.password

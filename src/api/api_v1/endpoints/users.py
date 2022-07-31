@@ -19,7 +19,7 @@ def get_all_users(
     limit: int = 100,
     db: Session = Depends(deps.get_db),
 ):
-    return crud.get_users(db, skip=skip, limit=limit)
+    return crud.user.get_all(db, skip=skip, limit=limit)
 
 
 @router.get("/{username}", response_model=schemas.User)
@@ -27,7 +27,7 @@ def get_user_by_username(
     username: str,
     db: Session = Depends(deps.get_db),
 ):
-    db_user = crud.get_user_by_username(db, username=username)
+    db_user = crud.user.get_by_username(db, username=username)
 
     if db_user is None:
         raise HTTPException(status_code=404, detail="User not found")
@@ -44,13 +44,13 @@ def update_user(
     current_user: models.User = Depends(deps.get_current_user),
     db: Session = Depends(deps.get_db)
 ):
-    db_user = crud.get_user_by_username(db, username=current_user.username)
+    db_user = crud.user.get_by_username(db, username=current_user.username)
 
     if db_user is None:
         raise HTTPException(status_code=404, detail="User not found")
 
     if current_user.username != user_update.username:
-        new_name = crud.get_user_by_username(db, username=user_update.username)
+        new_name = crud.user.get_by_username(db, username=user_update.username)
 
         if new_name:
             raise HTTPException(
@@ -58,7 +58,7 @@ def update_user(
                 detail="Username already registered"
             )
 
-    return crud.update_user(db, username=current_user.username, user_update=user_update)
+    return crud.user.update(db, username=current_user.username, user_update=user_update)
 
 
 @router.put("/activate/{username}", response_model=schemas.User)
@@ -67,7 +67,7 @@ def activate_user(
     current_user: models.User = Depends(deps.get_current_user),
     db: Session = Depends(deps.get_db)
 ):
-    db_user = crud.get_user_by_username(db, username=username)
+    db_user = crud.user.get_by_username(db, username=username)
 
     if db_user is None:
         raise HTTPException(status_code=404, detail="User not found")
@@ -78,7 +78,7 @@ def activate_user(
             detail="Not Authenticated"
         )
 
-    return crud.activate_user(db, username=username)
+    return crud.user.activate(db, username=username)
 
 
 @router.put("/deactivate/{username}", response_model=schemas.User)
@@ -87,7 +87,7 @@ def deactivate_user(
     current_user: models.User = Depends(deps.get_current_user),
     db: Session = Depends(deps.get_db)
 ):
-    db_user = crud.get_user_by_username(db, username=username)
+    db_user = crud.user.get_by_username(db, username=username)
 
     if db_user is None:
         raise HTTPException(status_code=404, detail="User not found")
@@ -98,4 +98,4 @@ def deactivate_user(
             detail="Not Authenticated"
         )
 
-    return crud.deactivate_user(db, username=username)
+    return crud.user.deactivate(db, username=username)
