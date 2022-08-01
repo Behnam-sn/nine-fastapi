@@ -23,6 +23,9 @@ class User():
         db.refresh(db_user)
         return db_user
 
+    def get_by_id(self, db: Session, id: id) -> models.User | None:
+        return db.query(models.User).filter(models.User.id == id).first()
+
     def get_by_username(self, db: Session, username: str) -> models.User | None:
         return db.query(models.User).filter(models.User.username == username).first()
 
