@@ -7,9 +7,10 @@ class Post(Base):
     __tablename__ = "posts"
 
     id = Column(Integer, primary_key=True, index=True)
-    text = Column(String)
+    text = Column(String, index=True)
     owner_id = Column(Integer, ForeignKey("users.id"))
-    is_active = Column(Boolean(), default=True)
+    is_active = Column(Boolean, default=True)
     created_at = Column(Text)
     modified_at = Column(Text)
-    author = relationship("User", back_populates="posts")
+
+    owner = relationship("User", back_populates="posts")

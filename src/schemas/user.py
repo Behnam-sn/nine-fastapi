@@ -1,4 +1,5 @@
 from pydantic import BaseModel
+from src.schemas import Post
 
 
 class UserBase(BaseModel):
@@ -21,21 +22,16 @@ class PasswordUpdate(BaseModel):
     new_password: str
 
 
-class Author(BaseModel):
-    username: str
-    name: str
-    # picture_url: str
-
-
 class User(UserBase):
     id: int
     name: str
     bio: str | None = None
     is_active: bool
     is_superuser: bool
-    # picture_url: str
     created_at: str
     modified_at: str
+
+    posts: list[Post] = []
 
     class Config:
         orm_mode = True

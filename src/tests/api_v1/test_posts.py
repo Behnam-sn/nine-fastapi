@@ -8,7 +8,7 @@ def test_create_post():
     username = random_lower_string()
     password = random_lower_string()
 
-    create_random_user(username=username, password=password)
+    user = create_random_user(username=username, password=password)
     token = user_authentication_headers(username=username, password=password)
 
     data = {
@@ -23,8 +23,8 @@ def test_create_post():
     post = response.json()
 
     assert response.status_code == 200
-    assert post["author"]["username"] == username
     assert post["text"] == data["text"]
+    assert post["owner_id"] == user["id"]
 
 
 def test_get_all_posts():
@@ -191,5 +191,7 @@ def test_delete_post_as_superuser():
         f"{settings.API_V1_STR}/posts/{random_post['id']}",
         headers=superuser_token,
     )
+    post = response.json()
 
     assert response.status_code == 200
+    assert post == random_post
