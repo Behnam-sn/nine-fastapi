@@ -17,3 +17,4 @@ class User(Base):
     modified_at = Column(Text)
 
     posts = relationship("Post", back_populates="owner")
+    comments = relationship("Comment", back_populates="owner")
