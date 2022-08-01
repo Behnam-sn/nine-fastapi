@@ -35,7 +35,7 @@ def create_post(
     current_user: models.User = Depends(deps.get_current_user),
     db: Session = Depends(deps.get_db),
 ):
-    db_post = crud.post.create(db, post=post, author_id=current_user.id)
+    db_post = crud.post.create(db, post=post, owner_id=current_user.id)
     return crud.post.render_post_with_author(db, post=db_post)
 
 
@@ -51,7 +51,7 @@ def update_post(
     if db_post is None:
         raise HTTPException(status_code=404, detail="Post not found")
 
-    if db_post.author_id != current_user.id:
+    if db_post.owner_id != current_user.id:
         raise HTTPException(status_code=400, detail="Permission denied")
 
     db_updated_post = crud.post.update(db, id=id, post_update=post_update)
@@ -70,7 +70,7 @@ def activate_post(
     if db_post is None:
         raise HTTPException(status_code=404, detail="Post not found")
 
-    if current_user.is_superuser is False and current_user.id != db_post.author_id:
+    if current_user.is_superuser is False and current_user.id != db_post.owner_id:
         raise HTTPException(
             status_code=400,
             detail="Not Authenticated"
@@ -91,7 +91,7 @@ def deactivate_post(
     if db_post is None:
         raise HTTPException(status_code=404, detail="Post not found")
 
-    if current_user.is_superuser is False and current_user.id != db_post.author_id:
+    if current_user.is_superuser is False and current_user.id != db_post.owner_id:
         raise HTTPException(
             status_code=400,
             detail="Not Authenticated"

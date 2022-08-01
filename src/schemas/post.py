@@ -15,16 +15,6 @@ class PostUpdate(PostBase):
     pass
 
 
-# class PostInDB(PostBase):
-#     id: int
-#     author_id: int
-#     created_at: str
-#     modified_at: str
-
-#     class Config:
-#         orm_mode = True
-
-
 class Post(PostBase):
     id: int
     author: Author

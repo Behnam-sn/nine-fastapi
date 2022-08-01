@@ -10,10 +10,10 @@ def now():
 
 
 class Post():
-    def create(self, db: Session, post: schemas.PostCreate, author_id: int) -> models.Post:
+    def create(self, db: Session, post: schemas.PostCreate, owner_id: int) -> models.Post:
         db_post = models.Post(
             **post.dict(),
-            author_id=author_id,
+            owner_id=owner_id,
             created_at=now(),
             modified_at=now(),
         )
@@ -59,7 +59,7 @@ class Post():
 
     def render_post_with_author(self, db: Session, post: models.Post) -> schemas.Post:
         author = db.query(models.User).filter(
-            models.User.id == post.author_id).first()
+            models.User.id == post.owner_id).first()
 
         return schemas.Post(
             id=post.id,
