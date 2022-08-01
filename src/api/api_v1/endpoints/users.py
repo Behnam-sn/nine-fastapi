@@ -89,10 +89,7 @@ def activate_user(
         raise HTTPException(status_code=404, detail="User not found")
 
     if current_user.is_superuser is False and current_user.username != username:
-        raise HTTPException(
-            status_code=400,
-            detail="Not Authenticated"
-        )
+        raise HTTPException(status_code=400, detail="Not Authenticated")
 
     return crud.user.activate(db, username=username)
 
@@ -109,9 +106,6 @@ def deactivate_user(
         raise HTTPException(status_code=404, detail="User not found")
 
     if current_user.is_superuser is False and current_user.username != username:
-        raise HTTPException(
-            status_code=400,
-            detail="Not Authenticated"
-        )
+        raise HTTPException(status_code=400, detail="Not Authenticated")
 
     return crud.user.deactivate(db, username=username)

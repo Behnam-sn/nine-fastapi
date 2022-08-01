@@ -50,7 +50,7 @@ def update_post(
         raise HTTPException(status_code=404, detail="Post not found")
 
     if db_post.owner_id != current_user.id:
-        raise HTTPException(status_code=400, detail="Permission denied")
+        raise HTTPException(status_code=400, detail="Permission Denied")
 
     return crud.post.update(db, id=id, post_update=post_update)
 
@@ -67,10 +67,7 @@ def activate_post(
         raise HTTPException(status_code=404, detail="Post not found")
 
     if current_user.is_superuser is False and current_user.id != db_post.owner_id:
-        raise HTTPException(
-            status_code=400,
-            detail="Not Authenticated"
-        )
+        raise HTTPException(status_code=400, detail="Not Authenticated")
 
     return crud.post.active(db, id=id)
 
@@ -87,10 +84,7 @@ def deactivate_post(
         raise HTTPException(status_code=404, detail="Post not found")
 
     if current_user.is_superuser is False and current_user.id != db_post.owner_id:
-        raise HTTPException(
-            status_code=400,
-            detail="Not Authenticated"
-        )
+        raise HTTPException(status_code=400, detail="Not Authenticated")
 
     return crud.post.deactive(db, id=id)
 
@@ -104,9 +98,9 @@ def delete_post(
     db_post = crud.post.get_by_id(db, id=id)
 
     if db_post is None:
-        raise HTTPException(status_code=404, detail="Pote not found")
+        raise HTTPException(status_code=404, detail="Post not found")
 
     if not current_user.is_superuser:
-        raise HTTPException(status_code=400, detail="Permission denied")
+        raise HTTPException(status_code=400, detail="Permission Denied")
 
     return crud.post.delete(db, id=id)

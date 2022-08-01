@@ -59,7 +59,6 @@ class User():
     def activate(self, db: Session, username: str) -> models.User:
         db_user = self.get_by_username(db, username=username)
         setattr(db_user, "is_active", True)
-
         db.commit()
         db.refresh(db_user)
         return db_user
@@ -67,7 +66,6 @@ class User():
     def deactivate(self, db: Session, username: str) -> models.User:
         db_user = self.get_by_username(db, username=username)
         setattr(db_user, "is_active", False)
-
         db.commit()
         db.refresh(db_user)
         return db_user

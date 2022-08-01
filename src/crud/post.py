@@ -31,7 +31,7 @@ class Post():
             .all()
         )
 
-    def get_by_id(self, db: Session, id: int) -> None | models.Post:
+    def get_by_id(self, db: Session, id: int) -> models.Post | None:
         return (
             db.query(models.Post)
             .filter(models.Post.id == id)
@@ -57,26 +57,9 @@ class Post():
         db.commit()
         return db_post
 
-    def render_post_with_author(self, db: Session, post: models.Post) -> schemas.Post:
-        author = db.query(models.User).filter(
-            models.User.id == post.owner_id).first()
-
-        return schemas.Post(
-            id=post.id,
-            text=post.text,
-            author=schemas.Author(
-                username=author.username,
-                name=author.name,
-            ),
-            is_active=post.is_active,
-            created_at=post.created_at,
-            modified_at=post.modified_at,
-        )
-
     def active(self, db: Session, id: int) -> models.Post:
         db_post = self.get_by_id(db, id=id)
         setattr(db_post, "is_active", True)
-
         db.commit()
         db.refresh(db_post)
         return db_post
@@ -84,10 +67,25 @@ class Post():
     def deactive(self, db: Session, id: int) -> models.Post:
         db_post = self.get_by_id(db, id=id)
         setattr(db_post, "is_active", False)
-
         db.commit()
         db.refresh(db_post)
         return db_post
+
+    # def render_post_with_author(self, db: Session, post: models.Post) -> schemas.Post:
+    #     author = db.query(models.User).filter(
+    #         models.User.id == post.owner_id).first()
+
+    #     return schemas.Post(
+    #         id=post.id,
+    #         text=post.text,
+    #         author=schemas.Author(
+    #             username=author.username,
+    #             name=author.name,
+    #         ),
+    #         is_active=post.is_active,
+    #         created_at=post.created_at,
+    #         modified_at=post.modified_at,
+    #     )
 
 
 post = Post()

@@ -30,14 +30,14 @@ class Comment():
             .all()
         )
 
-    def get_by_id(self, db: Session, id: int) -> None | models.Comment:
+    def get_by_id(self, db: Session, id: int) -> models.Comment | None:
         return (
             db.query(models.Comment)
             .filter(models.Comment.id == id)
             .first()
         )
 
-    # def get_by_owner_id(self, db: Session, owner_id: int, skip: int = 0, limit: int = 100) -> None | list[models.Comment]:
+    # def get_by_owner_id(self, db: Session, owner_id: int, skip: int = 0, limit: int = 100) -> list[models.Comment]:
     #     return (
     #         db.query(models.Comment)
     #         .filter(models.Comment.owner_id == owner_id)
@@ -47,7 +47,7 @@ class Comment():
     #         .all()
     #     )
 
-    # def get_by_post_id(self, db: Session, post_id: int, skip: int = 0, limit: int = 100) -> None | list[models.Comment]:
+    # def get_by_post_id(self, db: Session, post_id: int, skip: int = 0, limit: int = 100) -> list[models.Comment]:
     #     return (
     #         db.query(models.Comment)
     #         .filter(models.Comment.post_id == post_id)
