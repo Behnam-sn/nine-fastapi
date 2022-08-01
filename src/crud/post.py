@@ -64,7 +64,7 @@ class Post():
         return schemas.Post(
             id=post.id,
             text=post.text,
-            author=schemas.UserInPost(
+            author=schemas.Author(
                 username=author.username,
                 name=author.name,
             ),

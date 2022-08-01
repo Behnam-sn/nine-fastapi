@@ -1,6 +1,6 @@
 from pydantic import BaseModel
 
-from .user import UserInPost
+from .user import Author
 
 
 class PostBase(BaseModel):
@@ -27,7 +27,7 @@ class PostUpdate(PostBase):
 
 class Post(PostBase):
     id: int
-    author: UserInPost
+    author: Author
     is_active: bool
     created_at: str
     modified_at: str
