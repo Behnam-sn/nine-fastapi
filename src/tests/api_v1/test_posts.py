@@ -73,6 +73,7 @@ def test_update_post():
 
     assert response.status_code == 200
     assert post["id"] == random_post["id"]
+    assert post["is_edited"] == True
     assert post["text"] == data["text"]
 
 

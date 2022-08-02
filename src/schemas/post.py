@@ -23,6 +23,7 @@ class Post(PostBase):
     id: int
     # owner: Author
     owner_id: int
+    is_edited: bool
     is_active: bool
     created_at: str
     modified_at: str

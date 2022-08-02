@@ -65,6 +65,8 @@ class Comment():
         for field, value in update_data.items():
             setattr(db_comment, field, value)
 
+        setattr(db_comment, "is_edited", True)
+
         db.commit()
         db.refresh(db_comment)
         return db_comment

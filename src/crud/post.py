@@ -47,6 +47,8 @@ class Post():
         for field, value in update_data.items():
             setattr(db_post, field, value)
 
+        setattr(db_post, "is_edited", True)
+
         db.commit()
         db.refresh(db_post)
         return db_post
