@@ -19,18 +19,29 @@ def test_get_current_user():
     assert response.status_code == 200
 
 
-def test_get_user_by_username():
-    username = random_lower_string()
-
-    create_random_user(username=username)
+def test_get_user_by_id():
+    random_user = create_random_user()
 
     response = client.get(
-        f"{settings.API_V1_STR}/users/{username}",
+        f"{settings.API_V1_STR}/users/id/{random_user['id']}",
     )
     user = response.json()
 
     assert response.status_code == 200
-    assert user["username"] == username
+    assert user == random_user
+
+
+def test_get_user_by_username():
+    username = random_lower_string()
+    random_user = create_random_user(username=username)
+
+    response = client.get(
+        f"{settings.API_V1_STR}/users/username/{username}",
+    )
+    user = response.json()
+
+    assert response.status_code == 200
+    assert user == random_user
 
 
 def test_get_all_users():
