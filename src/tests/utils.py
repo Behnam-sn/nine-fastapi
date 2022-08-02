@@ -40,13 +40,28 @@ def user_authentication_headers(username: str, password: str):
     return {"Authorization": f"Bearer {auth_token}"}
 
 
-def create_random_post(text: str = random_lower_string(), token=None):
+def create_random_post(token, text: str = random_lower_string()):
     data = {
         "text": text
     }
 
     response = client.post(
         f"{settings.API_V1_STR}/posts/",
+        headers=token,
+        json=data
+    )
+
+    return response.json()
+
+
+def create_random_comment(token, post_id: int, text: str = random_lower_string()):
+    data = {
+        "text": text,
+        "post_id": post_id
+    }
+
+    response = client.post(
+        f"{settings.API_V1_STR}/comments/",
         headers=token,
         json=data
     )
