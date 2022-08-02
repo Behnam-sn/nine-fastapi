@@ -89,10 +89,8 @@ def test_activate_post():
         f"{settings.API_V1_STR}/posts/activate/{random_post['id']}",
         headers=token,
     )
-    post = response.json()
 
-    assert response.status_code == 200
-    assert post["is_active"] == True
+    assert response.status_code == 400
 
 
 def test_activate_post_as_superuser():

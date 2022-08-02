@@ -78,10 +78,8 @@ def test_activate_comment():
         f"{settings.API_V1_STR}/comments/activate/{random_comment['id']}",
         headers=token,
     )
-    comment = response.json()
 
-    assert response.status_code == 200
-    assert comment["is_active"] == True
+    assert response.status_code == 400
 
 
 def test_activate_comment_as_superuser():

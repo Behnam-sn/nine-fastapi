@@ -66,7 +66,7 @@ def activate_post(
     if db_post is None:
         raise HTTPException(status_code=404, detail="Post not found")
 
-    if current_user.is_superuser is False and current_user.id != db_post.owner_id:
+    if not current_user.is_superuser:
         raise HTTPException(status_code=400, detail="Not Authenticated")
 
     return crud.post.active(db, id=id)
