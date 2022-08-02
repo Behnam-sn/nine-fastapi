@@ -67,3 +67,39 @@ def create_random_comment(token, post_id: int, text: str = random_lower_string()
     )
 
     return response.json()
+
+
+def like_post(token, post_id: int):
+    response = client.post(
+        f"{settings.API_V1_STR}/likes/post/{post_id}",
+        headers=token,
+    )
+
+    return response.json()
+
+
+def unlike_post(token, post_id: int):
+    response = client.delete(
+        f"{settings.API_V1_STR}/likes/post/{post_id}",
+        headers=token,
+    )
+
+    return response.json()
+
+
+def like_comment(token, comment_id: int):
+    response = client.post(
+        f"{settings.API_V1_STR}/likes/comment/{comment_id}",
+        headers=token,
+    )
+
+    return response.json()
+
+
+def unlike_comment(token, comment_id: int):
+    response = client.delete(
+        f"{settings.API_V1_STR}/likes/comment/{comment_id}",
+        headers=token,
+    )
+
+    return response.json()

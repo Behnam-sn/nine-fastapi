@@ -19,6 +19,16 @@ class Author(BaseModel):
     name: str
 
 
+class PostLike(BaseModel):
+    id: int
+    post_id: int
+    owner_id: int
+    created_at: str
+
+    class Config:
+        orm_mode = True
+
+
 class Post(PostBase):
     id: int
     # owner: Author
@@ -29,6 +39,7 @@ class Post(PostBase):
     modified_at: str
 
     comments: list[Comment] = []
+    likes: list[PostLike] = []
 
     class Config:
         orm_mode = True

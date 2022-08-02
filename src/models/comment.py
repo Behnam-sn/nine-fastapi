@@ -17,3 +17,4 @@ class Comment(Base):
 
     owner = relationship("User", back_populates="comments")
     post = relationship("Post", back_populates="comments")
+    likes = relationship("Like", back_populates="comment")
