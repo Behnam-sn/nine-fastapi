@@ -71,7 +71,7 @@ class Comment():
         db.refresh(db_comment)
         return db_comment
 
-    def delete(self, db: Session, id: int) -> None | models.Comment:
+    def delete(self, db: Session, id: int) -> models.Comment:
         db_comment = self.get_by_id(db, id=id)
         db.delete(db_comment)
         db.commit()
