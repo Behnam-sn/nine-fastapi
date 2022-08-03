@@ -53,7 +53,7 @@ class Post():
         db.refresh(db_post)
         return db_post
 
-    def delete(self, db: Session, id: int) -> None | models.Post:
+    def delete(self, db: Session, id: int) -> models.Post:
         db_post = self.get_by_id(db, id=id)
         db.delete(db_post)
         db.commit()
