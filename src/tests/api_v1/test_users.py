@@ -20,7 +20,9 @@ def test_get_current_user():
 
 
 def test_get_user_by_id():
-    random_user = create_random_user()
+    username = random_lower_string()
+    password = random_lower_string()
+    random_user = create_random_user(username=username, password=password)
 
     response = client.get(
         f"{settings.API_V1_STR}/users/id/{random_user['id']}",
