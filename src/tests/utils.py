@@ -9,10 +9,10 @@ def random_lower_string() -> str:
     return "".join(random.choices(string.ascii_lowercase, k=32))
 
 
-def create_random_user(username: str = random_lower_string(), name: str = random_lower_string(), password: str = random_lower_string()):
+def create_random_user(username: str, password: str):
     data = {
         "username": username,
-        "name": name,
+        "name": random_lower_string(),
         "password": password
     }
 

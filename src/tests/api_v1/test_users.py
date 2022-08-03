@@ -4,6 +4,14 @@ from src.tests.utils import (create_random_user, random_lower_string,
                              user_authentication_headers)
 
 
+def test_get_all_users():
+    response = client.get(
+        f"{settings.API_V1_STR}/users/all",
+    )
+
+    assert response.status_code == 200
+
+
 def test_get_current_user():
     username = random_lower_string()
     password = random_lower_string()
@@ -35,7 +43,8 @@ def test_get_user_by_id():
 
 def test_get_user_by_username():
     username = random_lower_string()
-    random_user = create_random_user(username=username)
+    password = random_lower_string()
+    random_user = create_random_user(username=username, password=password)
 
     response = client.get(
         f"{settings.API_V1_STR}/users/username/{username}",
@@ -44,14 +53,6 @@ def test_get_user_by_username():
 
     assert response.status_code == 200
     assert user == random_user
-
-
-def test_get_all_users():
-    response = client.get(
-        f"{settings.API_V1_STR}/users/all",
-    )
-
-    assert response.status_code == 200
 
 
 def test_update_user():
