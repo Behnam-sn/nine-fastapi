@@ -1,7 +1,7 @@
 import datetime
 
 from sqlalchemy.orm import Session
-from src import models, schemas
+from src import models
 
 
 def now():

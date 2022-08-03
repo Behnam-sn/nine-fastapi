@@ -1,5 +1,5 @@
 from pydantic import BaseModel
-from src.schemas import Comment, Like, Post
+from src.schemas import Comment, Follow, Like, Post
 
 
 class UserBase(BaseModel):
@@ -34,6 +34,8 @@ class User(UserBase):
     posts: list[Post] = []
     comments: list[Comment] = []
     likes: list[Like] = []
+    followers: list[Follow] = []
+    followings: list[Follow] = []
 
     class Config:
         orm_mode = True

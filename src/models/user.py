@@ -19,3 +19,9 @@ class User(Base):
     posts = relationship("Post", back_populates="owner")
     comments = relationship("Comment", back_populates="owner")
     likes = relationship("Like", back_populates="owner")
+    followers = relationship(
+        "Follow", back_populates="follower", foreign_keys='Follow.follower_id'
+    )
+    followings = relationship(
+        "Follow", back_populates="following", foreign_keys='Follow.following_id'
+    )

@@ -103,3 +103,12 @@ def unlike_comment(token, comment_id: int):
     )
 
     return response.json()
+
+
+def follow_user(token, following_id: int):
+    response = client.post(
+        f"{settings.API_V1_STR}/follows/{following_id}",
+        headers=token,
+    )
+
+    return response.json()
