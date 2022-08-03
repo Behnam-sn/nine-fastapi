@@ -6,13 +6,6 @@ from src.api import deps
 router = APIRouter()
 
 
-@router.get("/current-user", response_model=schemas.User)
-def get_current_user(
-    current_user: models.User = Depends(deps.get_current_active_user),
-):
-    return current_user
-
-
 @router.get("/all", response_model=list[schemas.User])
 def get_all_users(
     skip: int = 0,
@@ -20,6 +13,13 @@ def get_all_users(
     db: Session = Depends(deps.get_db),
 ):
     return crud.user.get_all(db, skip=skip, limit=limit)
+
+
+@router.get("/current-user", response_model=schemas.User)
+def get_current_user(
+    current_user: models.User = Depends(deps.get_current_active_user),
+):
+    return current_user
 
 
 @router.get("/id/{id}", response_model=schemas.User)

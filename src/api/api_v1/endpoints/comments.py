@@ -6,15 +6,6 @@ from src.api import deps
 router = APIRouter()
 
 
-@router.post("/", response_model=schemas.Comment)
-def create_comment(
-    comment: schemas.CommentCreate,
-    current_user: models.User = Depends(deps.get_current_user),
-    db: Session = Depends(deps.get_db),
-):
-    return crud.comment.create(db, comment=comment, owner_id=current_user.id)
-
-
 @router.get("/", response_model=list[schemas.Comment])
 def get_all_comments(
     skip: int = 0,
@@ -22,6 +13,20 @@ def get_all_comments(
     db: Session = Depends(deps.get_db)
 ):
     return crud.comment.get_all(db, skip=skip, limit=limit)
+
+
+@router.post("/", response_model=schemas.Comment)
+def create_comment(
+    comment: schemas.CommentCreate,
+    current_user: models.User = Depends(deps.get_current_user),
+    db: Session = Depends(deps.get_db),
+):
+    db_post = crud.post.get_by_id(db, id=comment.post_id)
+
+    if db_post is None:
+        raise HTTPException(status_code=404, detail="Post not found")
+
+    return crud.comment.create(db, comment=comment, owner_id=current_user.id)
 
 
 @router.put("/{id}", response_model=schemas.Comment)
