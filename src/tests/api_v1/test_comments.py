@@ -5,6 +5,14 @@ from src.tests.utils import (create_random_comment, create_random_post,
                              user_authentication_headers)
 
 
+def test_get_all_comments():
+    response = client.get(
+        f"{settings.API_V1_STR}/comments/",
+    )
+
+    assert response.status_code == 200
+
+
 def test_create_comment():
     username = random_lower_string()
     password = random_lower_string()
@@ -31,12 +39,26 @@ def test_create_comment():
     assert comment["post_id"] == post["id"]
 
 
-def test_get_all_comments():
-    response = client.get(
+def test_comment_on_not_existing_post():
+    username = random_lower_string()
+    password = random_lower_string()
+
+    create_random_user(username=username, password=password)
+    token = user_authentication_headers(username=username, password=password)
+    post = create_random_post(token=token)
+
+    data = {
+        "text": random_lower_string(),
+        "post_id": post["id"] + 1
+    }
+
+    response = client.post(
         f"{settings.API_V1_STR}/comments/",
+        headers=token,
+        json=data
     )
 
-    assert response.status_code == 200
+    assert response.status_code == 404
 
 
 def test_update_comment():
