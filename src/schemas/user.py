@@ -22,6 +22,15 @@ class PasswordUpdate(BaseModel):
     new_password: str
 
 
+class Author(BaseModel):
+    id: int
+    username: str
+    name: str
+
+    class Config:
+        orm_mode = True
+
+
 class User(UserBase):
     id: int
     name: str

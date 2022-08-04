@@ -14,11 +14,6 @@ class PostUpdate(PostBase):
     pass
 
 
-class Author(BaseModel):
-    username: str
-    name: str
-
-
 class PostLike(BaseModel):
     id: int
     post_id: int
@@ -31,7 +26,6 @@ class PostLike(BaseModel):
 
 class Post(PostBase):
     id: int
-    # owner: Author
     owner_id: int
     is_edited: bool
     is_active: bool
