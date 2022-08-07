@@ -1,11 +1,6 @@
-import datetime
-
 from sqlalchemy.orm import Session
+from sqlalchemy.sql import func
 from src import models, schemas
-
-
-def now():
-    return datetime.datetime.now().strftime("%Y/%m/%d %H:%M")
 
 
 class Comment():
@@ -13,8 +8,6 @@ class Comment():
         db_comment = models.Comment(
             **comment.dict(),
             owner_id=owner_id,
-            created_at=now(),
-            modified_at=now(),
         )
         db.add(db_comment)
         db.commit()
@@ -60,12 +53,11 @@ class Comment():
         db_comment = self.get_by_id(db, id=id)
 
         update_data = comment_update.dict(exclude_unset=True)
-        update_data["modified_at"] = now()
+        update_data["is_edited"] = True
+        update_data["modified_at"] = func.now()
 
         for field, value in update_data.items():
             setattr(db_comment, field, value)
-
-        setattr(db_comment, "is_edited", True)
 
         db.commit()
         db.refresh(db_comment)

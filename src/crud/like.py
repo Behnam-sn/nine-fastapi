@@ -1,11 +1,5 @@
-import datetime
-
 from sqlalchemy.orm import Session
 from src import models
-
-
-def now():
-    return datetime.datetime.now().strftime("%Y/%m/%d %H:%M")
 
 
 class Like():
@@ -13,7 +7,6 @@ class Like():
         db_like = models.Like(
             post_id=post_id,
             owner_id=owner_id,
-            created_at=now(),
         )
         db.add(db_like)
         db.commit()
@@ -24,7 +17,6 @@ class Like():
         db_like = models.Like(
             comment_id=comment_id,
             owner_id=owner_id,
-            created_at=now(),
         )
         db.add(db_like)
         db.commit()

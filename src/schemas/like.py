@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from pydantic import BaseModel
 
 
@@ -6,7 +8,7 @@ class Like(BaseModel):
     post_id: int | None = None
     comment_id: int | None = None
     owner_id: int
-    created_at: str
+    created_at: datetime
 
     class Config:
         orm_mode = True

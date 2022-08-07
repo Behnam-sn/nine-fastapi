@@ -1,5 +1,6 @@
-from sqlalchemy import Boolean, Column, Integer, String, Text
+from sqlalchemy import Boolean, Column, DateTime, Integer, String
 from sqlalchemy.orm import relationship
+from sqlalchemy.sql import func
 from src.database.session import Base
 
 
@@ -13,8 +14,12 @@ class User(Base):
     bio = Column(String, index=True, nullable=True)
     is_active = Column(Boolean, default=True)
     is_superuser = Column(Boolean, default=False)
-    created_at = Column(Text)
-    modified_at = Column(Text)
+    created_at = Column(
+        DateTime(timezone=True), server_default=func.now()
+    )
+    modified_at = Column(
+        DateTime(timezone=True), server_default=func.now()
+    )
 
     posts = relationship("Post", back_populates="owner")
     comments = relationship("Comment", back_populates="owner")

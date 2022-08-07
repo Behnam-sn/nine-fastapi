@@ -1,12 +1,7 @@
-import datetime
-
 from sqlalchemy.orm import Session
+from sqlalchemy.sql import func
 from src import models, schemas
 from src.core.security import get_password_hash, verify_password
-
-
-def now():
-    return datetime.datetime.now().strftime("%Y/%m/%d %H:%M")
 
 
 class User():
@@ -15,8 +10,6 @@ class User():
             username=user.username,
             hashed_password=get_password_hash(user.password),
             name=user.name,
-            created_at=now(),
-            modified_at=now(),
         )
         db.add(db_user)
         db.commit()
@@ -36,7 +29,7 @@ class User():
         db_user = self.get_by_username(db, username=username)
 
         update_data = user_update.dict(exclude_unset=True)
-        update_data["modified_at"] = now()
+        update_data["modified_at"] = func.now()
 
         for field, value in update_data.items():
             setattr(db_user, field, value)
@@ -50,7 +43,7 @@ class User():
 
         hashed_password = get_password_hash(new_password)
         setattr(db_user, "hashed_password", hashed_password)
-        setattr(db_user, "modified_at", now())
+        setattr(db_user, "modified_at", func.now())
 
         db.commit()
         db.refresh(db_user)

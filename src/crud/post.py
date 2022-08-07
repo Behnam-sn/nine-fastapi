@@ -1,12 +1,6 @@
-import datetime
-
-from sqlalchemy import or_
 from sqlalchemy.orm import Session
+from sqlalchemy.sql import func
 from src import models, schemas
-
-
-def now():
-    return datetime.datetime.now().strftime("%Y/%m/%d %H:%M")
 
 
 class Post():
@@ -14,8 +8,6 @@ class Post():
         db_post = models.Post(
             **post.dict(),
             owner_id=owner_id,
-            created_at=now(),
-            modified_at=now(),
         )
         db.add(db_post)
         db.commit()
@@ -42,12 +34,11 @@ class Post():
         db_post = self.get_by_id(db, id=id)
 
         update_data = post_update.dict(exclude_unset=True)
-        update_data["modified_at"] = now()
+        update_data["is_edited"] = True
+        update_data["modified_at"] = func.now()
 
         for field, value in update_data.items():
             setattr(db_post, field, value)
-
-        setattr(db_post, "is_edited", True)
 
         db.commit()
         db.refresh(db_post)

@@ -1,5 +1,6 @@
-from sqlalchemy import Column, ForeignKey, Integer, Text
+from sqlalchemy import Column, DateTime, ForeignKey, Integer
 from sqlalchemy.orm import relationship
+from sqlalchemy.sql import func
 from src.database.session import Base
 
 
@@ -10,7 +11,9 @@ class Like(Base):
     post_id = Column(Integer, ForeignKey("posts.id"), nullable=True)
     comment_id = Column(Integer, ForeignKey("comments.id"), nullable=True)
     owner_id = Column(Integer, ForeignKey("users.id"))
-    created_at = Column(Text)
+    created_at = Column(
+        DateTime(timezone=True), server_default=func.now()
+    )
 
     owner = relationship("User", back_populates="likes")
     post = relationship("Post", back_populates="likes")

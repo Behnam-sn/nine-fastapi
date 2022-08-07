@@ -1,11 +1,5 @@
-import datetime
-
 from sqlalchemy.orm import Session
 from src import models
-
-
-def now():
-    return datetime.datetime.now().strftime("%Y/%m/%d %H:%M")
 
 
 class Follow():
