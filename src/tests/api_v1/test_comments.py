@@ -13,6 +13,24 @@ def test_get_all_comments():
     assert response.status_code == 200
 
 
+def test_get_comment_by_id():
+    username = random_lower_string()
+    password = random_lower_string()
+
+    create_random_user(username=username, password=password)
+    token = user_authentication_headers(username=username, password=password)
+    post = create_random_post(token=token)
+    random_comment = create_random_comment(token=token, post_id=post["id"])
+
+    response = client.get(
+        f"{settings.API_V1_STR}/comments/{random_comment['id']}",
+    )
+    comment = response.json()
+
+    assert response.status_code == 200
+    assert random_comment == comment
+
+
 def test_create_comment():
     username = random_lower_string()
     password = random_lower_string()

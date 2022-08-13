@@ -15,6 +15,19 @@ def get_all_comments(
     return crud.comment.get_all(db, skip=skip, limit=limit)
 
 
+@router.get("/{id}", response_model=schemas.Comment)
+def get_comment_by_id(
+    id: int,
+    db: Session = Depends(deps.get_db),
+):
+    db_comment = crud.comment.get_by_id(db, id=id)
+
+    if db_comment is None:
+        raise HTTPException(status_code=404, detail="Comment not found")
+
+    return db_comment
+
+
 @router.post("/", response_model=schemas.Comment)
 def create_comment(
     comment: schemas.CommentCreate,
