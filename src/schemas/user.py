@@ -26,6 +26,7 @@ class Author(BaseModel):
     id: int
     username: str
     name: str
+    is_superuser: bool
 
     class Config:
         orm_mode = True
