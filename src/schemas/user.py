@@ -6,16 +6,14 @@ from src.schemas import Comment, Follow, Like, Post
 
 class UserBase(BaseModel):
     username: str
+    name: str
 
 
 class UserCreate(UserBase):
-    name: str
     password: str
 
 
-class UserUpdate(BaseModel):
-    username: str
-    name: str
+class UserUpdate(UserBase):
     bio: str
 
 
@@ -35,7 +33,6 @@ class Author(BaseModel):
 
 class User(UserBase):
     id: int
-    name: str
     bio: str | None = None
     is_active: bool
     is_superuser: bool
