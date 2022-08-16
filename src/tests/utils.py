@@ -31,7 +31,7 @@ def user_authentication_headers(username: str, password: str):
     }
 
     response = client.post(
-        f"{settings.API_V1_STR}/auth/login",
+        f"{settings.API_V1_STR}/auth/signin",
         data=data
     )
     tokens = response.json()

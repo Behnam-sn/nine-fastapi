@@ -39,7 +39,7 @@ def test_signup_with_existing_username():
     assert response.status_code == 400
 
 
-def test_login():
+def test_signin():
     username = random_lower_string()
     password = random_lower_string()
 
@@ -51,7 +51,7 @@ def test_login():
     }
 
     response = client.post(
-        f"{settings.API_V1_STR}/auth/login",
+        f"{settings.API_V1_STR}/auth/signin",
         data=data
     )
     tokens = response.json()
@@ -61,21 +61,21 @@ def test_login():
     assert tokens["access_token"]
 
 
-def test_login_as_superuser():
+def test_signin_as_superuser():
     data = {
         "username": settings.SUPERUSER_USERNAME,
         "password": settings.SUPERUSER_PASSWORD
     }
 
     response = client.post(
-        f"{settings.API_V1_STR}/auth/login",
+        f"{settings.API_V1_STR}/auth/signin",
         data=data
     )
 
     assert response.status_code == 200
 
 
-def test_login_with_wrong_password():
+def test_signin_with_wrong_password():
     username = random_lower_string()
 
     create_random_user(username=username, password=random_lower_string())
@@ -86,7 +86,7 @@ def test_login_with_wrong_password():
     }
 
     response = client.post(
-        f"{settings.API_V1_STR}/auth/login",
+        f"{settings.API_V1_STR}/auth/signin",
         data=data
     )
 
