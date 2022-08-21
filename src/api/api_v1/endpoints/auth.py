@@ -11,7 +11,7 @@ from src.core.config import settings
 router = APIRouter()
 
 
-@router.post("/signup", response_model=schemas.User)
+@router.post("/signup", response_model=schemas.Token)
 def create_user(
     user: schemas.UserCreate,
     db: Session = Depends(deps.get_db)
@@ -23,7 +23,17 @@ def create_user(
             detail="Username already registered"
         )
 
-    return crud.user.create(db=db, user=user)
+    crud.user.create(db=db, user=user)
+
+    access_token_expires = timedelta(
+        minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES
+    )
+    access_token = security.create_access_token(
+        data={"sub": user.username},
+        expires_delta=access_token_expires
+    )
+
+    return {"access_token": access_token, "token_type": "bearer"}
 
 
 @router.post("/signin", response_model=schemas.Token)
