@@ -17,11 +17,14 @@ class Post():
     def get_all(self, db: Session, skip: int = 0, limit: int = 100) -> list[models.Post]:
         return (
             db.query(models.Post)
-            .order_by(models.Post.id.desc())
+            .order_by(models.Post.id)
             .offset(skip)
             .limit(limit)
             .all()
         )
+
+    def get_length(self, db: Session) -> int:
+        return db.query(models.Post).count()
 
     def get_by_id(self, db: Session, id: int) -> models.Post | None:
         return (

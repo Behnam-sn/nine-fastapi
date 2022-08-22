@@ -39,3 +39,10 @@ class Post(PostBase):
 
     class Config:
         orm_mode = True
+
+
+class PostId(BaseModel):
+    id: int
+
+    class Config:
+        orm_mode = True

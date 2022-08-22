@@ -15,7 +15,14 @@ def create_post(
     return crud.post.create(db, post=post, owner_id=current_user.id)
 
 
-@router.get("/", response_model=list[schemas.Post])
+@router.get("/length", response_model=int)
+def get_posts_length(
+    db: Session = Depends(deps.get_db)
+):
+    return crud.post.get_length(db)
+
+
+@router.get("/", response_model=list[schemas.PostId])
 def get_all_posts(
     skip: int = 0,
     limit: int = 100,
