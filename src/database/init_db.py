@@ -18,3 +18,15 @@ def init_db(db: Session):
         db.add(db_user)
         db.commit()
         db.refresh(db_user)
+
+    user = crud.user.get_by_username(db, username=settings.NORMAL_USERNAME)
+    if not user:
+        db_user = models.User(
+            username=settings.NORMAL_USERNAME,
+            hashed_password=get_password_hash(settings.NORMAL_PASSWORD),
+            name="a",
+            is_superuser=False,
+        )
+        db.add(db_user)
+        db.commit()
+        db.refresh(db_user)

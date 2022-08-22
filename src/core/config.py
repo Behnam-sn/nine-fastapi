@@ -17,6 +17,9 @@ class Settings(BaseSettings):
     SUPERUSER_USERNAME: str
     SUPERUSER_PASSWORD: str
 
+    NORMAL_USERNAME: str
+    NORMAL_PASSWORD: str
+
     class Config:
         env_file = ".env"
         case_sensitive = True
