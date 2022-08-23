@@ -101,7 +101,7 @@ def test_update_comment():
 
     assert response.status_code == 200
     assert comment["id"] == random_comment["id"]
-    assert comment["is_edited"] == True
+    assert comment["is_modified"] == True
     assert comment["text"] == data["text"]
 
 

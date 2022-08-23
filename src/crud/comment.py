@@ -63,7 +63,7 @@ class Comment():
         db_comment = self.get_by_id(db, id=id)
 
         update_data = comment_update.dict(exclude_unset=True)
-        update_data["is_edited"] = True
+        update_data["is_modified"] = True
         update_data["modified_at"] = func.now()
 
         for field, value in update_data.items():

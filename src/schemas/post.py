@@ -21,7 +21,7 @@ class Post(PostBase):
     comments: int
     likes: int
     owner_id: int
-    is_edited: bool
+    is_modified: bool
     is_active: bool
     created_at: datetime
     modified_at: datetime
