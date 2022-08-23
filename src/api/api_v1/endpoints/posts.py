@@ -147,4 +147,4 @@ def delete_post(
     if not current_user.is_superuser:
         raise HTTPException(status_code=400, detail="Permission Denied")
 
-    return crud.post.delete(db, id=id)
+    crud.post.delete(db, id=id)
