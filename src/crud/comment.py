@@ -12,7 +12,8 @@ class Comment():
         db.add(db_comment)
         db.commit()
 
-        self.update_count(db, owner_id=owner_id)
+        self.update_post_count(db, post_id=getattr(db_comment, "post_id"))
+        self.update_owner_count(db, owner_id=owner_id)
 
         db.refresh(db_comment)
         return db_comment
@@ -89,14 +90,16 @@ class Comment():
         db.delete(db_comment)
         db.commit()
 
-        self.update_count(db, owner_id=getattr(db_comment, "owner_id"))
+        self.update_post_count(db, post_id=getattr(db_comment, "post_id"))
+        self.update_owner_count(db, owner_id=getattr(db_comment, "owner_id"))
 
     def active(self, db: Session, id: int) -> models.Comment:
         db_comment = self.get_by_id(db, id=id)
         setattr(db_comment, "is_active", True)
         db.commit()
 
-        self.update_count(db, owner_id=getattr(db_comment, "owner_id"))
+        self.update_post_count(db, post_id=getattr(db_comment, "post_id"))
+        self.update_owner_count(db, owner_id=getattr(db_comment, "owner_id"))
 
         db.refresh(db_comment)
         return db_comment
@@ -106,12 +109,13 @@ class Comment():
         setattr(db_comment, "is_active", False)
         db.commit()
 
-        self.update_count(db, owner_id=getattr(db_comment, "owner_id"))
+        self.update_post_count(db, post_id=getattr(db_comment, "post_id"))
+        self.update_owner_count(db, owner_id=getattr(db_comment, "owner_id"))
 
         db.refresh(db_comment)
         return db_comment
 
-    def update_count(self, db: Session, owner_id: int):
+    def update_owner_count(self, db: Session, owner_id: int):
         db_user = (
             db.query(models.User)
             .filter(models.User.id == owner_id)
@@ -123,6 +127,19 @@ class Comment():
 
         db.commit()
         db.refresh(db_user)
+
+    def update_post_count(self, db: Session, post_id: int):
+        db_post = (
+            db.query(models.Post)
+            .filter(models.Post.id == post_id)
+            .first()
+        )
+        count = self.get_count_by_post_id(db, post_id=post_id)
+
+        setattr(db_post, "comments", count)
+
+        db.commit()
+        db.refresh(db_post)
 
 
 comment = Comment()
