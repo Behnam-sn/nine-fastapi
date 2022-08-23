@@ -12,8 +12,8 @@ class Comment(Base):
     likes = Column(Integer, default=0)
     post_id = Column(Integer, ForeignKey("posts.id"))
     owner_id = Column(Integer, ForeignKey("users.id"))
-    is_modified = Column(Boolean, default=False)
     is_active = Column(Boolean, default=True)
+    is_modified = Column(Boolean, default=False)
     created_at = Column(
         DateTime(timezone=True), server_default=func.now()
     )

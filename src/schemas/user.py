@@ -44,11 +44,5 @@ class User(UserBase):
     created_at: datetime
     modified_at: datetime
 
-    # posts: list[Post] = []
-    # comments: list[Comment] = []
-    # likes: list[Like] = []
-    # followers: list[Follow] = []
-    # followings: list[Follow] = []
-
     class Config:
         orm_mode = True
