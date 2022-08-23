@@ -19,7 +19,7 @@ def create_post(
 def get_all_posts_count(
     db: Session = Depends(deps.get_db)
 ):
-    return crud.post.get_count(db)
+    return crud.post.get_all_count(db)
 
 
 @router.get("/ids", response_model=list[schemas.Id])
@@ -133,7 +133,7 @@ def deactivate_post(
     return crud.post.deactive(db, id=id)
 
 
-@router.delete("/{id}", response_model=schemas.Post)
+@router.delete("/{id}")
 def delete_post(
     id: int,
     current_user: models.User = Depends(deps.get_current_user),
