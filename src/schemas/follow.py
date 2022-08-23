@@ -1,5 +1,5 @@
 from pydantic import BaseModel
-from src.schemas.user import User
+from src.schemas.user import Owner
 
 
 class Follow(BaseModel):
@@ -7,8 +7,8 @@ class Follow(BaseModel):
     follower_id: int
     following_id: int
 
-    follower: User
-    following: User
+    follower: Owner
+    following: Owner
 
     class Config:
         orm_mode = True

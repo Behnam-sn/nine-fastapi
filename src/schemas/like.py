@@ -1,7 +1,7 @@
 from datetime import datetime
 
 from pydantic import BaseModel
-from src.schemas.user import User
+from src.schemas.user import Owner
 
 
 class Like(BaseModel):
@@ -11,7 +11,7 @@ class Like(BaseModel):
     owner_id: int
     created_at: datetime
 
-    owner: User
+    owner: Owner
 
     class Config:
         orm_mode = True

@@ -21,7 +21,17 @@ class PasswordUpdate(BaseModel):
     new_password: str
 
 
-class Author(BaseModel):
+# class Author(BaseModel):
+#     id: int
+#     username: str
+#     name: str
+#     is_superuser: bool
+
+#     class Config:
+#         orm_mode = True
+
+
+class Owner(BaseModel):
     id: int
     username: str
     name: str
