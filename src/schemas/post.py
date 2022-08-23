@@ -1,7 +1,7 @@
 from datetime import datetime
 
 from pydantic import BaseModel
-from src.schemas import Comment
+from src.schemas.user import User
 
 
 class PostBase(BaseModel):
@@ -16,33 +16,17 @@ class PostUpdate(PostBase):
     pass
 
 
-class PostLike(BaseModel):
-    id: int
-    post_id: int
-    owner_id: int
-    created_at: datetime
-
-    class Config:
-        orm_mode = True
-
-
 class Post(PostBase):
     id: int
+    comments: int
+    likes: int
     owner_id: int
     is_edited: bool
     is_active: bool
     created_at: datetime
     modified_at: datetime
 
-    comments: list[Comment] = []
-    likes: list[PostLike] = []
-
-    class Config:
-        orm_mode = True
-
-
-class PostId(BaseModel):
-    id: int
+    owner: User
 
     class Config:
         orm_mode = True

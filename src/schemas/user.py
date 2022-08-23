@@ -1,7 +1,6 @@
 from datetime import datetime
 
 from pydantic import BaseModel
-from src.schemas import Comment, Follow, Like, Post
 
 
 class UserBase(BaseModel):
@@ -35,16 +34,21 @@ class Author(BaseModel):
 class User(UserBase):
     id: int
     bio: str | None = None
+    posts: int
+    comments: int
+    likes: int
+    followers: int
+    followings: int
     is_active: bool
     is_superuser: bool
     created_at: datetime
     modified_at: datetime
 
-    posts: list[Post] = []
-    comments: list[Comment] = []
-    likes: list[Like] = []
-    followers: list[Follow] = []
-    followings: list[Follow] = []
+    # posts: list[Post] = []
+    # comments: list[Comment] = []
+    # likes: list[Like] = []
+    # followers: list[Follow] = []
+    # followings: list[Follow] = []
 
     class Config:
         orm_mode = True

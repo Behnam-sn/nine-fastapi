@@ -1,6 +1,7 @@
 from datetime import datetime
 
 from pydantic import BaseModel
+from src.schemas.user import User
 
 
 class CommentBase(BaseModel):
@@ -15,18 +16,9 @@ class CommentUpdate(CommentBase):
     pass
 
 
-class CommentLike(BaseModel):
-    id: int
-    comment_id: int
-    owner_id: int
-    created_at: datetime
-
-    class Config:
-        orm_mode = True
-
-
 class Comment(CommentBase):
     id: int
+    likes: int
     post_id: int
     owner_id: int
     is_edited: bool
@@ -34,7 +26,7 @@ class Comment(CommentBase):
     created_at: datetime
     modified_at: datetime
 
-    likes: list[CommentLike] = []
+    owner: User
 
     class Config:
         orm_mode = True
