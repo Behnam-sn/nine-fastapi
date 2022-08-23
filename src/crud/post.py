@@ -14,6 +14,9 @@ class Post():
         db.refresh(db_post)
         return db_post
 
+    def get_count(self, db: Session) -> int:
+        return db.query(models.Post).count()
+
     def get_all(self, db: Session, skip: int = 0, limit: int = 100) -> list[models.Post]:
         return (
             db.query(models.Post)
@@ -23,14 +26,24 @@ class Post():
             .all()
         )
 
-    def get_length(self, db: Session) -> int:
-        return db.query(models.Post).count()
-
     def get_by_id(self, db: Session, id: int) -> models.Post | None:
         return (
             db.query(models.Post)
             .filter(models.Post.id == id)
             .first()
+        )
+
+    def get_count_by_owner_id(self, db: Session, owner_id: int) -> int:
+        return db.query(models.Post).filter(models.Post.owner_id == owner_id).count()
+
+    def get_by_owner_id(self, db: Session, owner_id: int, skip: int = 0, limit: int = 100) -> list[models.Post]:
+        return (
+            db.query(models.Post)
+            .filter(models.Post.owner_id == owner_id)
+            .order_by(models.Post.id)
+            .offset(skip)
+            .limit(limit)
+            .all()
         )
 
     def update(self, db: Session, id: int, post_update: schemas.PostUpdate) -> models.Post:

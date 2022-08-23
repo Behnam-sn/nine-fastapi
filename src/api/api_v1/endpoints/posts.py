@@ -15,14 +15,23 @@ def create_post(
     return crud.post.create(db, post=post, owner_id=current_user.id)
 
 
-@router.get("/length", response_model=int)
-def get_posts_length(
+@router.get("/count", response_model=int)
+def get_all_posts_count(
     db: Session = Depends(deps.get_db)
 ):
-    return crud.post.get_length(db)
+    return crud.post.get_count(db)
 
 
-@router.get("/", response_model=list[schemas.PostId])
+@router.get("/ids", response_model=list[schemas.Id])
+def get_all_posts_ids(
+    skip: int = 0,
+    limit: int = 100,
+    db: Session = Depends(deps.get_db)
+):
+    return crud.post.get_all(db, skip=skip, limit=limit)
+
+
+@router.get("/all", response_model=list[schemas.Post])
 def get_all_posts(
     skip: int = 0,
     limit: int = 100,
@@ -42,6 +51,34 @@ def get_post_by_id(
         raise HTTPException(status_code=404, detail="Post not found")
 
     return db_post
+
+
+@router.get("/owner/{owner_id}/count", response_model=int)
+def get_posts_count_by_owner_id(
+    owner_id: int,
+    db: Session = Depends(deps.get_db)
+):
+    db_user = crud.user.get_by_id(db, id=owner_id)
+
+    if db_user is None:
+        raise HTTPException(status_code=404, detail="User not found")
+
+    return crud.post.get_count_by_owner_id(db, owner_id=owner_id)
+
+
+@router.get("/owner/{owner_id}", response_model=list[schemas.Id])
+def get_posts_ids_by_owner_id(
+    owner_id: int,
+    skip: int = 0,
+    limit: int = 100,
+    db: Session = Depends(deps.get_db),
+):
+    db_user = crud.user.get_by_id(db, id=owner_id)
+
+    if db_user is None:
+        raise HTTPException(status_code=404, detail="User not found")
+
+    return crud.post.get_by_owner_id(db, skip=skip, limit=limit, owner_id=owner_id)
 
 
 @router.put("/{id}", response_model=schemas.Post)
