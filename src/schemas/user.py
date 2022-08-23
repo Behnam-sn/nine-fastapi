@@ -3,16 +3,15 @@ from datetime import datetime
 from pydantic import BaseModel
 
 
-class UserBase(BaseModel):
+class UserCreate(BaseModel):
     username: str
     name: str
-
-
-class UserCreate(UserBase):
     password: str
 
 
-class UserUpdate(UserBase):
+class UserUpdate(BaseModel):
+    username: str
+    name: str
     bio: str
 
 
@@ -41,8 +40,10 @@ class Owner(BaseModel):
         orm_mode = True
 
 
-class User(UserBase):
+class User(BaseModel):
     id: int
+    username: str
+    name: str
     bio: str | None = None
     posts: int
     comments: int

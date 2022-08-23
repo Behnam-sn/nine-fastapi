@@ -4,20 +4,18 @@ from pydantic import BaseModel
 from src.schemas.user import Owner
 
 
-class CommentBase(BaseModel):
+class CommentCreate(BaseModel):
     text: str
-
-
-class CommentCreate(CommentBase):
     post_id: int
 
 
-class CommentUpdate(CommentBase):
-    pass
+class CommentUpdate(BaseModel):
+    text: str
 
 
-class Comment(CommentBase):
+class Comment(BaseModel):
     id: int
+    text: str
     likes: int
     post_id: int
     owner_id: int
