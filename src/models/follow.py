@@ -10,9 +10,9 @@ class Follow(Base):
     follower_id = Column(Integer, ForeignKey("users.id"))
     following_id = Column(Integer, ForeignKey("users.id"))
 
-    follower = relationship(
-        "User", back_populates="followers", foreign_keys=[follower_id]
-    )
-    following = relationship(
-        "User", back_populates="followers", foreign_keys=[following_id]
-    )
+    # follower = relationship(
+    #     "User", back_populates="followers", foreign_keys=[follower_id]
+    # )
+    # following = relationship(
+    #     "User", back_populates="followers", foreign_keys=[following_id]
+    # )

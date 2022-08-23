@@ -12,6 +12,11 @@ class User(Base):
     hashed_password = Column(String)
     name = Column(String, index=True, nullable=True)
     bio = Column(String, index=True, nullable=True)
+    posts = Column(Integer, default=0)
+    comments = Column(Integer, default=0)
+    likes = Column(Integer, default=0)
+    followers = Column(Integer, default=0)
+    followings = Column(Integer, default=0)
     is_active = Column(Boolean, default=True)
     is_superuser = Column(Boolean, default=False)
     created_at = Column(
@@ -21,12 +26,13 @@ class User(Base):
         DateTime(timezone=True), server_default=func.now()
     )
 
-    posts = relationship("Post", back_populates="owner")
-    comments = relationship("Comment", back_populates="owner")
-    likes = relationship("Like", back_populates="owner")
-    followers = relationship(
-        "Follow", back_populates="following", foreign_keys='Follow.following_id'
-    )
-    followings = relationship(
-        "Follow", back_populates="follower", foreign_keys='Follow.follower_id'
-    )
+    post_owner = relationship("Post", back_populates="owner")
+    comment_owner = relationship("Comment", back_populates="owner")
+    like_owner = relationship("Like", back_populates="owner")
+
+    # followers = relationship(
+    #     "Follow", back_populates="following", foreign_keys='Follow.following_id'
+    # )
+    # followings = relationship(
+    #     "Follow", back_populates="follower", foreign_keys='Follow.follower_id'
+    # )

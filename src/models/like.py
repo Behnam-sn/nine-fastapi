@@ -15,6 +15,6 @@ class Like(Base):
         DateTime(timezone=True), server_default=func.now()
     )
 
-    owner = relationship("User", back_populates="likes")
-    post = relationship("Post", back_populates="likes")
-    comment = relationship("Comment", back_populates="likes")
+    owner = relationship("User", back_populates="like_owner")
+    # post = relationship("Post", back_populates="likes")
+    # comment = relationship("Comment", back_populates="likes")
