@@ -14,10 +14,13 @@ class Comment():
         db.refresh(db_comment)
         return db_comment
 
+    def get_count(self, db: Session) -> int:
+        return db.query(models.Comment).count()
+
     def get_all(self, db: Session, skip: int = 0, limit: int = 100) -> list[models.Comment]:
         return (
             db.query(models.Comment)
-            .order_by(models.Comment.id.desc())
+            .order_by(models.Comment.id)
             .offset(skip)
             .limit(limit)
             .all()
@@ -30,24 +33,31 @@ class Comment():
             .first()
         )
 
-    # def get_by_owner_id(self, db: Session, owner_id: int, skip: int = 0, limit: int = 100) -> list[models.Comment]:
-    #     return (
-    #         db.query(models.Comment)
-    #         .filter(models.Comment.owner_id == owner_id)
-    #         .order_by(models.Comment.id.desc())
-    #         .offset(skip)
-    #         .limit(limit)
-    #         .all()
-    #     )
+    def get_count_by_owner_id(self, db: Session, owner_id: int) -> int:
+        return db.query(models.Post).filter(models.Comment.owner_id == owner_id).count()
 
-    # def get_by_post_id(self, db: Session, post_id: int, skip: int = 0, limit: int = 100) -> list[models.Comment]:
-    #     return (
-    #         db.query(models.Comment)
-    #         .filter(models.Comment.post_id == post_id)
-    #         .offset(skip)
-    #         .limit(limit)
-    #         .all()
-    #     )
+    def get_by_owner_id(self, db: Session, owner_id: int, skip: int = 0, limit: int = 100) -> list[models.Comment]:
+        return (
+            db.query(models.Comment)
+            .filter(models.Comment.owner_id == owner_id)
+            .order_by(models.Comment.id)
+            .offset(skip)
+            .limit(limit)
+            .all()
+        )
+
+    def get_count_by_post_id(self, db: Session, post_id: int) -> int:
+        return db.query(models.Post).filter(models.Comment.post_id == post_id).count()
+
+    def get_by_post_id(self, db: Session, post_id: int, skip: int = 0, limit: int = 100) -> list[models.Comment]:
+        return (
+            db.query(models.Comment)
+            .filter(models.Comment.post_id == post_id)
+            .order_by(models.Comment.id)
+            .offset(skip)
+            .limit(limit)
+            .all()
+        )
 
     def update(self, db: Session, id: int, comment_update: schemas.CommentUpdate) -> models.Comment:
         db_comment = self.get_by_id(db, id=id)

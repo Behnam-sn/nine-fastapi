@@ -20,7 +20,23 @@ def create_comment(
     return crud.comment.create(db, comment=comment, owner_id=current_user.id)
 
 
-@router.get("/", response_model=list[schemas.Comment])
+@router.get("/count", response_model=int)
+def get_all_comments_count(
+    db: Session = Depends(deps.get_db)
+):
+    return crud.comment.get_count(db)
+
+
+@router.get("/ids", response_model=list[schemas.Id])
+def get_all_comments_ids(
+    skip: int = 0,
+    limit: int = 100,
+    db: Session = Depends(deps.get_db)
+):
+    return crud.comment.get_all(db, skip=skip, limit=limit)
+
+
+@router.get("/all", response_model=list[schemas.Comment])
 def get_all_comments(
     skip: int = 0,
     limit: int = 100,
@@ -40,6 +56,62 @@ def get_comment_by_id(
         raise HTTPException(status_code=404, detail="Comment not found")
 
     return db_comment
+
+
+@router.get("/owner/{owner_id}/count", response_model=int)
+def get_comments_count_by_owner_id(
+    owner_id: int,
+    db: Session = Depends(deps.get_db)
+):
+    db_user = crud.user.get_by_id(db, id=owner_id)
+
+    if db_user is None:
+        raise HTTPException(status_code=404, detail="User not found")
+
+    return crud.comment.get_count_by_owner_id(db, owner_id=owner_id)
+
+
+@router.get("/owner/{owner_id}", response_model=list[schemas.Id])
+def get_comments_ids_by_owner_id(
+    owner_id: int,
+    skip: int = 0,
+    limit: int = 100,
+    db: Session = Depends(deps.get_db),
+):
+    db_user = crud.user.get_by_id(db, id=owner_id)
+
+    if db_user is None:
+        raise HTTPException(status_code=404, detail="User not found")
+
+    return crud.comment.get_by_owner_id(db, skip=skip, limit=limit, owner_id=owner_id)
+
+
+@router.get("/post/{post_id}/count", response_model=int)
+def get_comments_count_by_post_id(
+    post_id: int,
+    db: Session = Depends(deps.get_db)
+):
+    db_post = crud.post.get_by_id(db, id=post_id)
+
+    if db_post is None:
+        raise HTTPException(status_code=404, detail="Post not found")
+
+    return crud.comment.get_count_by_post_id(db, post_id=post_id)
+
+
+@router.get("/post/{post_id}", response_model=list[schemas.Id])
+def get_comments_ids_by_post_id(
+    post_id: int,
+    skip: int = 0,
+    limit: int = 100,
+    db: Session = Depends(deps.get_db),
+):
+    db_post = crud.post.get_by_id(db, id=post_id)
+
+    if db_post is None:
+        raise HTTPException(status_code=404, detail="Post not found")
+
+    return crud.comment.get_by_post_id(db, skip=skip, limit=limit, post_id=post_id)
 
 
 @router.put("/{id}", response_model=schemas.Comment)
