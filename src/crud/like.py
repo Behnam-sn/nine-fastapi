@@ -11,11 +11,17 @@ class Like():
         db.add(db_like)
         db.commit()
 
+        self.update_owner_count(db, owner_id=owner_id)
+        self.update_post_count(db, post_id=getattr(db_like, "post_id"))
+
     def unlike_post(self, db: Session, post_id: int, owner_id: int):
         db_like = self.get_post_by_owner_id(
             db, post_id=post_id, owner_id=owner_id)
         db.delete(db_like)
         db.commit()
+
+        self.update_owner_count(db, owner_id=owner_id)
+        self.update_post_count(db, post_id=getattr(db_like, "post_id"))
 
     def like_comment(self, db: Session, comment_id: int, owner_id: int) -> models.Like:
         db_like = models.Like(
@@ -25,12 +31,22 @@ class Like():
         db.add(db_like)
         db.commit()
 
+        self.update_owner_count(db, owner_id=owner_id)
+        self.update_comment_count(
+            db, comment_id=getattr(db_like, "comment_id")
+        )
+
     def unlike_comment(self, db: Session, comment_id: int, owner_id: int):
         db_like = self.get_comment_by_owner_id(
             db, comment_id=comment_id, owner_id=owner_id
         )
         db.delete(db_like)
         db.commit()
+
+        self.update_owner_count(db, owner_id=owner_id)
+        self.update_comment_count(
+            db, comment_id=getattr(db_like, "comment_id")
+        )
 
     def get_all(self, db: Session, skip: int = 0, limit: int = 100) -> list[models.Like]:
         return (
@@ -112,6 +128,45 @@ class Like():
             .limit(limit)
             .all()
         )
+
+    def update_owner_count(self, db: Session, owner_id: int):
+        db_user = (
+            db.query(models.User)
+            .filter(models.User.id == owner_id)
+            .first()
+        )
+        count = self.get_count_by_owner_id(db, owner_id=owner_id)
+
+        setattr(db_user, "likes", count)
+
+        db.commit()
+        db.refresh(db_user)
+
+    def update_post_count(self, db: Session, post_id: int):
+        db_post = (
+            db.query(models.Post)
+            .filter(models.Post.id == post_id)
+            .first()
+        )
+        count = self.get_count_by_post_id(db, post_id=post_id)
+
+        setattr(db_post, "likes", count)
+
+        db.commit()
+        db.refresh(db_post)
+
+    def update_comment_count(self, db: Session, comment_id: int):
+        db_commnet = (
+            db.query(models.Comment)
+            .filter(models.Comment.id == comment_id)
+            .first()
+        )
+        count = self.get_count_by_comment_id(db, comment_id=comment_id)
+
+        setattr(db_commnet, "likes", count)
+
+        db.commit()
+        db.refresh(db_commnet)
 
 
 like = Like()

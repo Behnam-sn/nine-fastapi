@@ -6,6 +6,28 @@ from src.api import deps
 router = APIRouter()
 
 
+@router.get("/all", response_model=list[schemas.Like])
+def get_all_likes(
+    skip: int = 0,
+    limit: int = 100,
+    db: Session = Depends(deps.get_db)
+):
+    return crud.like.get_all(db, skip=skip, limit=limit)
+
+
+@router.get("/{id}", response_model=schemas.Like)
+def get_like_by_id(
+    id: int,
+    db: Session = Depends(deps.get_db),
+):
+    db_like = crud.like.get_by_id(db, id=id)
+
+    if db_like is None:
+        raise HTTPException(status_code=404, detail="Like not found")
+
+    return db_like
+
+
 @router.post("/post/{post_id}")
 def like_post(
     post_id: int,
@@ -100,28 +122,6 @@ def unlike_comment(
         comment_id=comment_id,
         owner_id=current_user.id
     )
-
-
-@router.get("/all", response_model=list[schemas.Like])
-def get_all_likes(
-    skip: int = 0,
-    limit: int = 100,
-    db: Session = Depends(deps.get_db)
-):
-    return crud.like.get_all(db, skip=skip, limit=limit)
-
-
-@router.get("/{id}", response_model=schemas.Like)
-def get_like_by_id(
-    id: int,
-    db: Session = Depends(deps.get_db),
-):
-    db_like = crud.like.get_by_id(db, id=id)
-
-    if db_like is None:
-        raise HTTPException(status_code=404, detail="Like not found")
-
-    return db_like
 
 
 @router.get("/owner/count/{owner_id}", response_model=int)
