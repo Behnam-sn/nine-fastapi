@@ -11,10 +11,13 @@ class Comment():
         )
         db.add(db_comment)
         db.commit()
+
+        self.update_count(db, owner_id=owner_id)
+
         db.refresh(db_comment)
         return db_comment
 
-    def get_count(self, db: Session) -> int:
+    def get_all_count(self, db: Session) -> int:
         return db.query(models.Comment).count()
 
     def get_all(self, db: Session, skip: int = 0, limit: int = 100) -> list[models.Comment]:
@@ -34,7 +37,11 @@ class Comment():
         )
 
     def get_count_by_owner_id(self, db: Session, owner_id: int) -> int:
-        return db.query(models.Post).filter(models.Comment.owner_id == owner_id).count()
+        return (
+            db.query(models.Comment)
+            .filter(models.Comment.owner_id == owner_id, models.Comment.is_active == True)
+            .count()
+        )
 
     def get_by_owner_id(self, db: Session, owner_id: int, skip: int = 0, limit: int = 100) -> list[models.Comment]:
         return (
@@ -47,7 +54,11 @@ class Comment():
         )
 
     def get_count_by_post_id(self, db: Session, post_id: int) -> int:
-        return db.query(models.Post).filter(models.Comment.post_id == post_id).count()
+        return (
+            db.query(models.Comment)
+            .filter(models.Comment.post_id == post_id, models.Comment.is_active == True)
+            .count()
+        )
 
     def get_by_post_id(self, db: Session, post_id: int, skip: int = 0, limit: int = 100) -> list[models.Comment]:
         return (
@@ -73,16 +84,20 @@ class Comment():
         db.refresh(db_comment)
         return db_comment
 
-    def delete(self, db: Session, id: int) -> models.Comment:
+    def delete(self, db: Session, id: int):
         db_comment = self.get_by_id(db, id=id)
         db.delete(db_comment)
         db.commit()
-        return db_comment
+
+        self.update_count(db, owner_id=getattr(db_comment, "owner_id"))
 
     def active(self, db: Session, id: int) -> models.Comment:
         db_comment = self.get_by_id(db, id=id)
         setattr(db_comment, "is_active", True)
         db.commit()
+
+        self.update_count(db, owner_id=getattr(db_comment, "owner_id"))
+
         db.refresh(db_comment)
         return db_comment
 
@@ -90,8 +105,24 @@ class Comment():
         db_comment = self.get_by_id(db, id=id)
         setattr(db_comment, "is_active", False)
         db.commit()
+
+        self.update_count(db, owner_id=getattr(db_comment, "owner_id"))
+
         db.refresh(db_comment)
         return db_comment
+
+    def update_count(self, db: Session, owner_id: int):
+        db_user = (
+            db.query(models.User)
+            .filter(models.User.id == owner_id)
+            .first()
+        )
+        count = self.get_count_by_owner_id(db, owner_id=owner_id)
+
+        setattr(db_user, "comments", count)
+
+        db.commit()
+        db.refresh(db_user)
 
 
 comment = Comment()

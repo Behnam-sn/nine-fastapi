@@ -24,7 +24,7 @@ def create_comment(
 def get_all_comments_count(
     db: Session = Depends(deps.get_db)
 ):
-    return crud.comment.get_count(db)
+    return crud.comment.get_all_count(db)
 
 
 @router.get("/ids", response_model=list[schemas.Id])
@@ -166,7 +166,7 @@ def deactivate_comment(
     return crud.comment.deactive(db, id=id)
 
 
-@router.delete("/{id}", response_model=schemas.Comment)
+@router.delete("/{id}")
 def delete_comment(
     id: int,
     current_user: models.User = Depends(deps.get_current_user),
@@ -180,4 +180,4 @@ def delete_comment(
     if not current_user.is_superuser:
         raise HTTPException(status_code=400, detail="Permission Denied")
 
-    return crud.comment.delete(db, id=id)
+    crud.comment.delete(db, id=id)
