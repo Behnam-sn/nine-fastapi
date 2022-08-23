@@ -53,7 +53,7 @@ def get_post_by_id(
     return db_post
 
 
-@router.get("/owner/{owner_id}/count", response_model=int)
+@router.get("/owner/count/{owner_id}", response_model=int)
 def get_posts_count_by_owner_id(
     owner_id: int,
     db: Session = Depends(deps.get_db)
@@ -66,7 +66,7 @@ def get_posts_count_by_owner_id(
     return crud.post.get_count_by_owner_id(db, owner_id=owner_id)
 
 
-@router.get("/owner/{owner_id}", response_model=list[schemas.Id])
+@router.get("/owner/ids/{owner_id}", response_model=list[schemas.Id])
 def get_posts_ids_by_owner_id(
     owner_id: int,
     skip: int = 0,
@@ -78,7 +78,7 @@ def get_posts_ids_by_owner_id(
     if db_user is None:
         raise HTTPException(status_code=404, detail="User not found")
 
-    return crud.post.get_by_owner_id(db, skip=skip, limit=limit, owner_id=owner_id)
+    return crud.post.get_by_owner_id(db, owner_id=owner_id, skip=skip, limit=limit)
 
 
 @router.put("/{id}", response_model=schemas.Post)

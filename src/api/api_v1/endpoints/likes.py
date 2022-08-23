@@ -28,7 +28,7 @@ def get_like_by_id(
     return db_like
 
 
-@router.get("/owner/{owner_id}/count", response_model=int)
+@router.get("/owner/count/{owner_id}", response_model=int)
 def get_likes_count_by_owner_id(
     owner_id: int,
     db: Session = Depends(deps.get_db)
@@ -41,7 +41,7 @@ def get_likes_count_by_owner_id(
     return crud.like.get_likes_count_by_owner_id(db, owner_id=owner_id)
 
 
-@router.get("/owner/{owner_id}", response_model=list[schemas.Id])
+@router.get("/owner/ids/{owner_id}", response_model=list[schemas.Id])
 def get_likes_ids_by_owner_id(
     owner_id: int,
     skip: int = 0,
@@ -53,10 +53,10 @@ def get_likes_ids_by_owner_id(
     if db_user is None:
         raise HTTPException(status_code=404, detail="User not found")
 
-    return crud.like.get_likes_by_owner_id(db, skip=skip, limit=limit, owner_id=owner_id)
+    return crud.like.get_likes_by_owner_id(db, owner_id=owner_id, skip=skip, limit=limit)
 
 
-@router.get("/post/{post_id}/count", response_model=int)
+@router.get("/post/count/{post_id}", response_model=int)
 def get_likes_count_by_post_id(
     post_id: int,
     db: Session = Depends(deps.get_db)
@@ -69,7 +69,7 @@ def get_likes_count_by_post_id(
     return crud.like.get_likes_count_by_post_id(db, post_id=post_id)
 
 
-@router.get("/post/{post_id}", response_model=list[schemas.Id])
+@router.get("/post/ids/{post_id}", response_model=list[schemas.Id])
 def get_likes_ids_by_post_id(
     post_id: int,
     skip: int = 0,
@@ -81,7 +81,7 @@ def get_likes_ids_by_post_id(
     if db_post is None:
         raise HTTPException(status_code=404, detail="Post not found")
 
-    return crud.like.get_likes_by_post_id(db, skip=skip, limit=limit, post_id=post_id)
+    return crud.like.get_likes_by_post_id(db, post_id=post_id, skip=skip, limit=limit)
 
 
 @router.post("/post/{post_id}", response_model=schemas.Like)
@@ -130,7 +130,7 @@ def unlike_post(
     return crud.like.unlike_post(db, post_id=post_id, owner_id=current_user.id)
 
 
-@router.get("/comment/{comment_id}/count", response_model=int)
+@router.get("/comment/count/{comment_id}", response_model=int)
 def get_likes_count_by_comment_id(
     comment_id: int,
     db: Session = Depends(deps.get_db)
@@ -143,7 +143,7 @@ def get_likes_count_by_comment_id(
     return crud.like.get_likes_count_by_comment_id(db, comment_id=comment_id)
 
 
-@router.get("/comment/{comment_id}", response_model=list[schemas.Id])
+@router.get("/comment/ids/{comment_id}", response_model=list[schemas.Id])
 def get_likes_ids_by_post_id(
     comment_id: int,
     skip: int = 0,
