@@ -1,6 +1,6 @@
 from src.core.config import settings
 from src.tests.conftest import client
-from src.tests.utils import (create_random_post, create_random_user,
+from src.tests.utils import (create_random_post, create_user, get_user,
                              random_lower_string, user_authentication_headers)
 
 
@@ -8,7 +8,8 @@ def test_create_post():
     username = random_lower_string()
     password = random_lower_string()
 
-    user = create_random_user(username=username, password=password)
+    create_user(username=username, password=password)
+    user = get_user(username=username)
     token = user_authentication_headers(username=username, password=password)
 
     data = {

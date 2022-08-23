@@ -9,7 +9,7 @@ def random_lower_string() -> str:
     return "".join(random.choices(string.ascii_lowercase, k=32))
 
 
-def create_random_user(username: str, password: str):
+def create_user(username: str, password: str):
     data = {
         "username": username,
         "name": random_lower_string(),
@@ -19,6 +19,14 @@ def create_random_user(username: str, password: str):
     response = client.post(
         f"{settings.API_V1_STR}/auth/signup",
         json=data
+    )
+
+    return response.json()
+
+
+def get_user(username: str):
+    response = client.get(
+        f"{settings.API_V1_STR}/users/{username}",
     )
 
     return response.json()
