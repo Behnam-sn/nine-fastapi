@@ -6,6 +6,102 @@ from src.api import deps
 router = APIRouter()
 
 
+@router.post("/post/{post_id}")
+def like_post(
+    post_id: int,
+    current_user: models.User = Depends(deps.get_current_user),
+    db: Session = Depends(deps.get_db),
+):
+    db_post = crud.post.get_by_id(db, id=post_id)
+
+    if db_post is None:
+        raise HTTPException(status_code=404, detail="Post not found")
+
+    db_like = crud.like.get_post_by_owner_id(
+        db, post_id=post_id, owner_id=current_user.id
+    )
+
+    if db_like is not None:
+        raise HTTPException(
+            status_code=400, detail="You already liked this post"
+        )
+
+    crud.like.like_post(db, post_id=post_id, owner_id=current_user.id)
+
+
+@router.delete("/post/{post_id}")
+def unlike_post(
+    post_id: int,
+    current_user: models.User = Depends(deps.get_current_user),
+    db: Session = Depends(deps.get_db),
+):
+    db_post = crud.post.get_by_id(db, id=post_id)
+
+    if db_post is None:
+        raise HTTPException(status_code=404, detail="Post not found")
+
+    db_like = crud.like.get_post_by_owner_id(
+        db, post_id=post_id, owner_id=current_user.id
+    )
+
+    if db_like is None:
+        raise HTTPException(
+            status_code=400, detail="You have not liked this post"
+        )
+
+    crud.like.unlike_post(db, post_id=post_id, owner_id=current_user.id)
+
+
+@router.post("/comment/{comment_id}")
+def like_comment(
+    comment_id: int,
+    current_user: models.User = Depends(deps.get_current_user),
+    db: Session = Depends(deps.get_db),
+):
+    db_comment = crud.comment.get_by_id(db, id=comment_id)
+
+    if db_comment is None:
+        raise HTTPException(status_code=404, detail="Comment not found")
+
+    db_like = crud.like.get_comment_by_owner_id(
+        db, comment_id=comment_id, owner_id=current_user.id
+    )
+
+    if db_like is not None:
+        raise HTTPException(
+            status_code=400, detail="You already liked this comment"
+        )
+
+    crud.like.like_comment(db, comment_id=comment_id, owner_id=current_user.id)
+
+
+@router.delete("/comment/{comment_id}")
+def unlike_comment(
+    comment_id: int,
+    current_user: models.User = Depends(deps.get_current_user),
+    db: Session = Depends(deps.get_db),
+):
+    db_comment = crud.comment.get_by_id(db, id=comment_id)
+
+    if db_comment is None:
+        raise HTTPException(status_code=404, detail="Comment not found")
+
+    db_like = crud.like.get_comment_by_owner_id(
+        db, comment_id=comment_id, owner_id=current_user.id
+    )
+
+    if db_like is None:
+        raise HTTPException(
+            status_code=400, detail="You have not liked this comment"
+        )
+
+    crud.like.unlike_comment(
+        db,
+        comment_id=comment_id,
+        owner_id=current_user.id
+    )
+
+
 @router.get("/all", response_model=list[schemas.Like])
 def get_all_likes(
     skip: int = 0,
@@ -84,52 +180,6 @@ def get_likes_ids_by_post_id(
     return crud.like.get_likes_by_post_id(db, post_id=post_id, skip=skip, limit=limit)
 
 
-@router.post("/post/{post_id}", response_model=schemas.Like)
-def like_post(
-    post_id: int,
-    current_user: models.User = Depends(deps.get_current_user),
-    db: Session = Depends(deps.get_db),
-):
-    db_post = crud.post.get_by_id(db, id=post_id)
-
-    if db_post is None:
-        raise HTTPException(status_code=404, detail="Post not found")
-
-    db_like = crud.like.get_post_like(
-        db, post_id=post_id, owner_id=current_user.id
-    )
-
-    if db_like is not None:
-        raise HTTPException(
-            status_code=400, detail="You already liked this post"
-        )
-
-    return crud.like.like_post(db, post_id=post_id, owner_id=current_user.id)
-
-
-@router.delete("/post/{post_id}", response_model=schemas.Like)
-def unlike_post(
-    post_id: int,
-    current_user: models.User = Depends(deps.get_current_user),
-    db: Session = Depends(deps.get_db),
-):
-    db_post = crud.post.get_by_id(db, id=post_id)
-
-    if db_post is None:
-        raise HTTPException(status_code=404, detail="Post not found")
-
-    db_like = crud.like.get_post_like(
-        db, post_id=post_id, owner_id=current_user.id
-    )
-
-    if db_like is None:
-        raise HTTPException(
-            status_code=400, detail="You have not liked this post"
-        )
-
-    return crud.like.unlike_post(db, post_id=post_id, owner_id=current_user.id)
-
-
 @router.get("/comment/count/{comment_id}", response_model=int)
 def get_likes_count_by_comment_id(
     comment_id: int,
@@ -156,49 +206,3 @@ def get_likes_ids_by_post_id(
         raise HTTPException(status_code=404, detail="Comment not found")
 
     return crud.like.get_likes_by_comment_id(db, comment_id=comment_id, skip=skip, limit=limit)
-
-
-@router.post("/comment/{comment_id}", response_model=schemas.Like)
-def like_comment(
-    comment_id: int,
-    current_user: models.User = Depends(deps.get_current_user),
-    db: Session = Depends(deps.get_db),
-):
-    db_comment = crud.comment.get_by_id(db, id=comment_id)
-
-    if db_comment is None:
-        raise HTTPException(status_code=404, detail="Comment not found")
-
-    db_like = crud.like.get_comment_like(
-        db, comment_id=comment_id, owner_id=current_user.id
-    )
-
-    if db_like is not None:
-        raise HTTPException(
-            status_code=400, detail="You already liked this comment"
-        )
-
-    return crud.like.like_comment(db, comment_id=comment_id, owner_id=current_user.id)
-
-
-@router.delete("/comment/{comment_id}", response_model=schemas.Like)
-def unlike_comment(
-    comment_id: int,
-    current_user: models.User = Depends(deps.get_current_user),
-    db: Session = Depends(deps.get_db),
-):
-    db_comment = crud.comment.get_by_id(db, id=comment_id)
-
-    if db_comment is None:
-        raise HTTPException(status_code=404, detail="Comment not found")
-
-    db_like = crud.like.get_comment_like(
-        db, comment_id=comment_id, owner_id=current_user.id
-    )
-
-    if db_like is None:
-        raise HTTPException(
-            status_code=400, detail="You have not liked this comment"
-        )
-
-    return crud.like.unlike_comment(db, comment_id=comment_id, owner_id=current_user.id)
