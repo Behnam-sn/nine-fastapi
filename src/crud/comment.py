@@ -18,8 +18,56 @@ class Comment():
         db.refresh(db_comment)
         return db_comment
 
+    def update(self, db: Session, id: int, comment_update: schemas.CommentUpdate) -> models.Comment:
+        db_comment = self.get_by_id(db, id=id)
+
+        update_data = comment_update.dict(exclude_unset=True)
+        update_data["is_modified"] = True
+        update_data["modified_at"] = func.now()
+
+        for field, value in update_data.items():
+            setattr(db_comment, field, value)
+
+        db.commit()
+        db.refresh(db_comment)
+        return db_comment
+
+    def delete(self, db: Session, id: int):
+        db_comment = self.get_by_id(db, id=id)
+        db.delete(db_comment)
+        db.commit()
+
+        self.update_post_count(db, post_id=getattr(db_comment, "post_id"))
+        self.update_owner_count(db, owner_id=getattr(db_comment, "owner_id"))
+
+    def active(self, db: Session, id: int) -> models.Comment:
+        db_comment = self.get_by_id(db, id=id)
+        setattr(db_comment, "is_active", True)
+        db.commit()
+
+        self.update_post_count(db, post_id=getattr(db_comment, "post_id"))
+        self.update_owner_count(db, owner_id=getattr(db_comment, "owner_id"))
+
+        db.refresh(db_comment)
+        return db_comment
+
+    def deactive(self, db: Session, id: int) -> models.Comment:
+        db_comment = self.get_by_id(db, id=id)
+        setattr(db_comment, "is_active", False)
+        db.commit()
+
+        self.update_post_count(db, post_id=getattr(db_comment, "post_id"))
+        self.update_owner_count(db, owner_id=getattr(db_comment, "owner_id"))
+
+        db.refresh(db_comment)
+        return db_comment
+
     def get_all_count(self, db: Session) -> int:
-        return db.query(models.Comment).count()
+        return (
+            db.query(models.Comment)
+            .filter(models.Comment.is_active == True)
+            .count()
+        )
 
     def get_all(self, db: Session, skip: int = 0, limit: int = 100) -> list[models.Comment]:
         return (
@@ -70,50 +118,6 @@ class Comment():
             .limit(limit)
             .all()
         )
-
-    def update(self, db: Session, id: int, comment_update: schemas.CommentUpdate) -> models.Comment:
-        db_comment = self.get_by_id(db, id=id)
-
-        update_data = comment_update.dict(exclude_unset=True)
-        update_data["is_modified"] = True
-        update_data["modified_at"] = func.now()
-
-        for field, value in update_data.items():
-            setattr(db_comment, field, value)
-
-        db.commit()
-        db.refresh(db_comment)
-        return db_comment
-
-    def delete(self, db: Session, id: int):
-        db_comment = self.get_by_id(db, id=id)
-        db.delete(db_comment)
-        db.commit()
-
-        self.update_post_count(db, post_id=getattr(db_comment, "post_id"))
-        self.update_owner_count(db, owner_id=getattr(db_comment, "owner_id"))
-
-    def active(self, db: Session, id: int) -> models.Comment:
-        db_comment = self.get_by_id(db, id=id)
-        setattr(db_comment, "is_active", True)
-        db.commit()
-
-        self.update_post_count(db, post_id=getattr(db_comment, "post_id"))
-        self.update_owner_count(db, owner_id=getattr(db_comment, "owner_id"))
-
-        db.refresh(db_comment)
-        return db_comment
-
-    def deactive(self, db: Session, id: int) -> models.Comment:
-        db_comment = self.get_by_id(db, id=id)
-        setattr(db_comment, "is_active", False)
-        db.commit()
-
-        self.update_post_count(db, post_id=getattr(db_comment, "post_id"))
-        self.update_owner_count(db, owner_id=getattr(db_comment, "owner_id"))
-
-        db.refresh(db_comment)
-        return db_comment
 
     def update_owner_count(self, db: Session, owner_id: int):
         db_user = (

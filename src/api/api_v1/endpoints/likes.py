@@ -28,7 +28,7 @@ def get_like_by_id(
     return db_like
 
 
-@router.post("/post/{post_id}")
+@router.post("/post/{post_id}", response_model=schemas.Like)
 def like_post(
     post_id: int,
     current_user: models.User = Depends(deps.get_current_user),
@@ -48,10 +48,10 @@ def like_post(
             status_code=400, detail="You already liked this post"
         )
 
-    crud.like.like_post(db, post_id=post_id, owner_id=current_user.id)
+    return crud.like.like_post(db, post_id=post_id, owner_id=current_user.id)
 
 
-@router.delete("/post/{post_id}")
+@router.delete("/post/{post_id}", response_model=schemas.Like)
 def unlike_post(
     post_id: int,
     current_user: models.User = Depends(deps.get_current_user),
@@ -71,10 +71,10 @@ def unlike_post(
             status_code=400, detail="You have not liked this post"
         )
 
-    crud.like.unlike_post(db, post_id=post_id, owner_id=current_user.id)
+    return crud.like.unlike_post(db, post_id=post_id, owner_id=current_user.id)
 
 
-@router.post("/comment/{comment_id}")
+@router.post("/comment/{comment_id}", response_model=schemas.Like)
 def like_comment(
     comment_id: int,
     current_user: models.User = Depends(deps.get_current_user),
@@ -94,10 +94,10 @@ def like_comment(
             status_code=400, detail="You already liked this comment"
         )
 
-    crud.like.like_comment(db, comment_id=comment_id, owner_id=current_user.id)
+    return crud.like.like_comment(db, comment_id=comment_id, owner_id=current_user.id)
 
 
-@router.delete("/comment/{comment_id}")
+@router.delete("/comment/{comment_id}", response_model=schemas.Like)
 def unlike_comment(
     comment_id: int,
     current_user: models.User = Depends(deps.get_current_user),
@@ -117,11 +117,7 @@ def unlike_comment(
             status_code=400, detail="You have not liked this comment"
         )
 
-    crud.like.unlike_comment(
-        db,
-        comment_id=comment_id,
-        owner_id=current_user.id
-    )
+    return crud.like.unlike_comment(db, comment_id=comment_id, owner_id=current_user.id)
 
 
 @router.get("/owner/count/{owner_id}", response_model=int)

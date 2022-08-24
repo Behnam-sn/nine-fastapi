@@ -14,7 +14,10 @@ class Like():
         self.update_owner_count(db, owner_id=owner_id)
         self.update_post_count(db, post_id=getattr(db_like, "post_id"))
 
-    def unlike_post(self, db: Session, post_id: int, owner_id: int):
+        db.refresh(db_like)
+        return db_like
+
+    def unlike_post(self, db: Session, post_id: int, owner_id: int) -> models.Like:
         db_like = self.get_post_by_owner_id(
             db, post_id=post_id, owner_id=owner_id)
         db.delete(db_like)
@@ -22,6 +25,8 @@ class Like():
 
         self.update_owner_count(db, owner_id=owner_id)
         self.update_post_count(db, post_id=getattr(db_like, "post_id"))
+
+        return db_like
 
     def like_comment(self, db: Session, comment_id: int, owner_id: int) -> models.Like:
         db_like = models.Like(
@@ -36,7 +41,10 @@ class Like():
             db, comment_id=getattr(db_like, "comment_id")
         )
 
-    def unlike_comment(self, db: Session, comment_id: int, owner_id: int):
+        db.refresh(db_like)
+        return db_like
+
+    def unlike_comment(self, db: Session, comment_id: int, owner_id: int) -> models.Like:
         db_like = self.get_comment_by_owner_id(
             db, comment_id=comment_id, owner_id=owner_id
         )
@@ -47,6 +55,8 @@ class Like():
         self.update_comment_count(
             db, comment_id=getattr(db_like, "comment_id")
         )
+
+        return db_like
 
     def get_all(self, db: Session, skip: int = 0, limit: int = 100) -> list[models.Like]:
         return (
