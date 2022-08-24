@@ -18,7 +18,10 @@ class Post():
         return db_post
 
     def get_all_count(self, db: Session) -> int:
-        return db.query(models.Post).count()
+        return (
+            db.query(models.Post)
+            .count()
+        )
 
     def get_all(self, db: Session, skip: int = 0, limit: int = 100) -> list[models.Post]:
         return (
