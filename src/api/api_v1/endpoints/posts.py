@@ -6,7 +6,7 @@ from src.api import deps
 router = APIRouter()
 
 
-@router.get("/all", response_model=list[schemas.Post])
+@router.get("/all/", response_model=list[schemas.Post])
 def get_all_posts(
     skip: int = 0,
     limit: int = 100,
@@ -106,14 +106,14 @@ def deactivate_post(
     return crud.post.deactive(db, id=id)
 
 
-@router.get("/count", response_model=int)
+@router.get("/count/", response_model=int)
 def get_all_posts_count(
     db: Session = Depends(deps.get_db)
 ):
     return crud.post.get_all_count(db)
 
 
-@router.get("/ids", response_model=list[schemas.Id])
+@router.get("/ids/", response_model=list[schemas.Id])
 def get_all_posts_ids(
     skip: int = 0,
     limit: int = 100,
