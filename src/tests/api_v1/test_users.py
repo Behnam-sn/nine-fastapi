@@ -6,7 +6,7 @@ from src.tests.utils import (create_random_user, random_lower_string,
 
 def test_get_all_users():
     response = client.get(
-        f"{settings.API_V1_STR}/users/all",
+        f"{settings.API_V1_STR}/users/all/",
     )
 
     assert response.status_code == 200
@@ -16,35 +16,20 @@ def test_get_current_user():
     username = random_lower_string()
     password = random_lower_string()
 
-    create_random_user(username=username, password=password)
-    token = user_authentication_headers(username=username, password=password)
+    token = create_random_user(username=username, password=password)
 
     response = client.get(
-        f"{settings.API_V1_STR}/users/current-user",
+        f"{settings.API_V1_STR}/users/current-user/",
         headers=token,
     )
 
     assert response.status_code == 200
 
 
-# def test_get_user_by_id():
-#     username = random_lower_string()
-#     password = random_lower_string()
-#     random_user = create_random_user(username=username, password=password)
-
-#     response = client.get(
-#         f"{settings.API_V1_STR}/users/id/{random_user['id']}",
-#     )
-#     user = response.json()
-
-#     assert response.status_code == 200
-#     assert user == random_user
-
-
 def test_get_user_by_username():
     username = random_lower_string()
     password = random_lower_string()
-    random_user = create_random_user(username=username, password=password)
+    create_random_user(username=username, password=password)
 
     response = client.get(
         f"{settings.API_V1_STR}/users/{username}",
@@ -52,31 +37,24 @@ def test_get_user_by_username():
     user = response.json()
 
     assert response.status_code == 200
-    assert user == random_user
+    assert user["username"] == username
 
 
-def test_get_author_by_id():
+def test_get_not_existing_user():
     username = random_lower_string()
-    password = random_lower_string()
-    user = create_random_user(username=username, password=password)
 
     response = client.get(
-        f"{settings.API_V1_STR}/users/author/{user['id']}",
+        f"{settings.API_V1_STR}/users/{username}",
     )
-    author = response.json()
 
-    assert response.status_code == 200
-    assert author["id"] == user["id"]
-    assert author["username"] == user["username"]
-    assert author["name"] == user["name"]
+    assert response.status_code == 404
 
 
 def test_update_user():
     username = random_lower_string()
     password = random_lower_string()
 
-    create_random_user(username=username, password=password)
-    token = user_authentication_headers(username=username, password=password)
+    token = create_random_user(username=username, password=password)
 
     data = {
         "username": random_lower_string(),
@@ -101,8 +79,7 @@ def test_activate_user():
     username = random_lower_string()
     password = random_lower_string()
 
-    create_random_user(username=username, password=password)
-    token = user_authentication_headers(username=username, password=password)
+    token = create_random_user(username=username, password=password)
 
     response = client.put(
         f"{settings.API_V1_STR}/users/activate/{username}",
@@ -138,8 +115,7 @@ def test_deactivate_user():
     username = random_lower_string()
     password = random_lower_string()
 
-    create_random_user(username=username, password=password)
-    token = user_authentication_headers(username=username, password=password)
+    token = create_random_user(username=username, password=password)
 
     response = client.put(
         f"{settings.API_V1_STR}/users/deactivate/{username}",
