@@ -65,7 +65,6 @@ class Comment():
     def get_all_count(self, db: Session) -> int:
         return (
             db.query(models.Comment)
-            .filter(models.Comment.is_active == True)
             .count()
         )
 
