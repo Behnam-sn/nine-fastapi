@@ -1,7 +1,6 @@
 from src.core.config import settings
 from src.tests.conftest import client
-from src.tests.utils import (create_random_user, random_lower_string,
-                             user_authentication_headers)
+from src.tests.utils import create_random_user, random_lower_string
 
 
 def test_signup():
@@ -97,14 +96,11 @@ def test_test_token():
     username = random_lower_string()
     password = random_lower_string()
 
-    random_user = create_random_user(username=username, password=password)
-    token = user_authentication_headers(username=username, password=password)
+    token = create_random_user(username=username, password=password)
 
     response = client.post(
         f"{settings.API_V1_STR}/auth/test-token",
         headers=token,
     )
-    user = response.json()
 
     assert response.status_code == 200
-    assert user == random_user
