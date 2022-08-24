@@ -6,7 +6,7 @@ from src.api import deps
 router = APIRouter()
 
 
-@router.get("/all", response_model=list[schemas.Comment])
+@router.get("/all/", response_model=list[schemas.Comment])
 def get_all_comments(
     skip: int = 0,
     limit: int = 100,
@@ -27,6 +27,19 @@ def create_comment(
         raise HTTPException(status_code=404, detail="Post not found")
 
     return crud.comment.create(db, comment=comment, owner_id=current_user.id)
+
+
+@router.get("/{id}", response_model=schemas.Comment)
+def get_comment_by_id(
+    id: int,
+    db: Session = Depends(deps.get_db),
+):
+    db_comment = crud.comment.get_by_id(db, id=id)
+
+    if db_comment is None:
+        raise HTTPException(status_code=404, detail="Comment not found")
+
+    return db_comment
 
 
 @router.put("/{id}", response_model=schemas.Comment)
@@ -98,27 +111,14 @@ def deactivate_comment(
     return crud.comment.deactive(db, id=id)
 
 
-@router.get("/{id}", response_model=schemas.Comment)
-def get_comment_by_id(
-    id: int,
-    db: Session = Depends(deps.get_db),
-):
-    db_comment = crud.comment.get_by_id(db, id=id)
-
-    if db_comment is None:
-        raise HTTPException(status_code=404, detail="Comment not found")
-
-    return db_comment
-
-
-@router.get("/count", response_model=int)
+@router.get("/count/", response_model=int)
 def get_all_comments_count(
     db: Session = Depends(deps.get_db)
 ):
     return crud.comment.get_all_count(db)
 
 
-@router.get("/ids", response_model=list[schemas.Id])
+@router.get("/ids/", response_model=list[schemas.Id])
 def get_all_comments_ids(
     skip: int = 0,
     limit: int = 100,
