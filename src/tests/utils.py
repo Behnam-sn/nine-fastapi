@@ -64,6 +64,41 @@ def create_random_post(token, text: str = random_lower_string()):
     return response.json()
 
 
+def deactive_post(id: int, token: str):
+    client.put(
+        f"{settings.API_V1_STR}/posts/deactivate/{id}",
+        headers=token,
+    )
+
+
+def all_active_posts_count():
+    response = client.get(
+        f"{settings.API_V1_STR}/posts/count/",
+    )
+    return response.json()
+
+
+def all_active_posts_ids(count: int):
+    response = client.get(
+        f"{settings.API_V1_STR}/posts/ids/?limit={count + 10}",
+    )
+    return response.json()
+
+
+def active_posts_count_by_owner_id(owner_id: int):
+    response = client.get(
+        f"{settings.API_V1_STR}/posts/owner/count/{owner_id}",
+    )
+    return response.json()
+
+
+def active_posts_ids_by_owner_id(owner_id: int):
+    response = client.get(
+        f"{settings.API_V1_STR}/posts/owner/ids/{owner_id}",
+    )
+    return response.json()
+
+
 def create_random_comment(token, post_id: int, text: str = random_lower_string()):
     data = {
         "text": text,

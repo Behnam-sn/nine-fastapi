@@ -7,12 +7,12 @@ router = APIRouter()
 
 
 @router.get("/all/", response_model=list[schemas.Post])
-def get_all_posts(
+def get_all_active_posts(
     skip: int = 0,
     limit: int = 100,
     db: Session = Depends(deps.get_db)
 ):
-    return crud.post.get_all(db, skip=skip, limit=limit)
+    return crud.post.get_all_active(db, skip=skip, limit=limit)
 
 
 @router.post("/", response_model=schemas.Post)
@@ -25,7 +25,7 @@ def create_post(
 
 
 @router.get("/{id}", response_model=schemas.Post)
-def get_post_by_id(
+def get_active_post_by_id(
     id: int,
     db: Session = Depends(deps.get_db),
 ):
@@ -33,6 +33,9 @@ def get_post_by_id(
 
     if db_post is None:
         raise HTTPException(status_code=404, detail="Post not found")
+
+    if not db_post.is_active:
+        raise HTTPException(status_code=403, detail="Post is not available")
 
     return db_post
 
@@ -49,8 +52,11 @@ def update_post(
     if db_post is None:
         raise HTTPException(status_code=404, detail="Post not found")
 
+    if not db_post.is_active:
+        raise HTTPException(status_code=403, detail="Post is not available")
+
     if db_post.owner_id != current_user.id:
-        raise HTTPException(status_code=400, detail="Permission Denied")
+        raise HTTPException(status_code=401, detail="Permission Denied")
 
     return crud.post.update(db, id=id, post_update=post_update)
 
@@ -67,7 +73,7 @@ def delete_post(
         raise HTTPException(status_code=404, detail="Post not found")
 
     if not current_user.is_superuser:
-        raise HTTPException(status_code=400, detail="Permission Denied")
+        raise HTTPException(status_code=401, detail="Permission Denied")
 
     crud.post.delete(db, id=id)
 
@@ -84,7 +90,7 @@ def activate_post(
         raise HTTPException(status_code=404, detail="Post not found")
 
     if not current_user.is_superuser:
-        raise HTTPException(status_code=400, detail="Not Authenticated")
+        raise HTTPException(status_code=401, detail="Not Authenticated")
 
     return crud.post.active(db, id=id)
 
@@ -101,29 +107,29 @@ def deactivate_post(
         raise HTTPException(status_code=404, detail="Post not found")
 
     if current_user.is_superuser is False and current_user.id != db_post.owner_id:
-        raise HTTPException(status_code=400, detail="Not Authenticated")
+        raise HTTPException(status_code=401, detail="Not Authenticated")
 
     return crud.post.deactive(db, id=id)
 
 
 @router.get("/count/", response_model=int)
-def get_all_posts_count(
+def get_all_active_posts_count(
     db: Session = Depends(deps.get_db)
 ):
-    return crud.post.get_all_count(db)
+    return crud.post.get_all_active_count(db)
 
 
 @router.get("/ids/", response_model=list[schemas.Id])
-def get_all_posts_ids(
+def get_all_active_posts_ids(
     skip: int = 0,
     limit: int = 100,
     db: Session = Depends(deps.get_db)
 ):
-    return crud.post.get_all(db, skip=skip, limit=limit)
+    return crud.post.get_all_active(db, skip=skip, limit=limit)
 
 
 @router.get("/owner/count/{owner_id}", response_model=int)
-def get_posts_count_by_owner_id(
+def get_active_posts_count_by_owner_id(
     owner_id: int,
     db: Session = Depends(deps.get_db)
 ):
@@ -132,11 +138,11 @@ def get_posts_count_by_owner_id(
     if db_user is None:
         raise HTTPException(status_code=404, detail="User not found")
 
-    return crud.post.get_count_by_owner_id(db, owner_id=owner_id)
+    return crud.post.get_active_posts_count_by_owner_id(db, owner_id=owner_id)
 
 
 @router.get("/owner/ids/{owner_id}", response_model=list[schemas.Id])
-def get_posts_ids_by_owner_id(
+def get_active_posts_ids_by_owner_id(
     owner_id: int,
     skip: int = 0,
     limit: int = 100,
@@ -147,4 +153,4 @@ def get_posts_ids_by_owner_id(
     if db_user is None:
         raise HTTPException(status_code=404, detail="User not found")
 
-    return crud.post.get_by_owner_id(db, owner_id=owner_id, skip=skip, limit=limit)
+    return crud.post.get_active_posts_by_owner_id(db, owner_id=owner_id, skip=skip, limit=limit)
