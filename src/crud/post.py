@@ -42,7 +42,7 @@ class Post():
     def get_count_by_owner_id(self, db: Session, owner_id: int) -> int:
         return (
             db.query(models.Post)
-            .filter(models.Post.owner_id == owner_id, models.Post.is_active == True)
+            .filter(models.Post.owner_id == owner_id)
             .count()
         )
 

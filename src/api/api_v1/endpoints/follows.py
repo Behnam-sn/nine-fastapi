@@ -6,7 +6,7 @@ from src.api import deps
 router = APIRouter()
 
 
-@router.get("/all", response_model=list[schemas.Follow])
+@router.get("/all/", response_model=list[schemas.Follow])
 def get_all_follows(
     skip: int = 0,
     limit: int = 100,

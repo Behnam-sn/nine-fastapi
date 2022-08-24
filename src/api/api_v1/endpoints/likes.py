@@ -6,7 +6,7 @@ from src.api import deps
 router = APIRouter()
 
 
-@router.get("/all", response_model=list[schemas.Like])
+@router.get("/all/", response_model=list[schemas.Like])
 def get_all_likes(
     skip: int = 0,
     limit: int = 100,

@@ -87,7 +87,7 @@ class Comment():
     def get_count_by_owner_id(self, db: Session, owner_id: int) -> int:
         return (
             db.query(models.Comment)
-            .filter(models.Comment.owner_id == owner_id, models.Comment.is_active == True)
+            .filter(models.Comment.owner_id == owner_id)
             .count()
         )
 
@@ -104,7 +104,7 @@ class Comment():
     def get_count_by_post_id(self, db: Session, post_id: int) -> int:
         return (
             db.query(models.Comment)
-            .filter(models.Comment.post_id == post_id, models.Comment.is_active == True)
+            .filter(models.Comment.post_id == post_id)
             .count()
         )
 
