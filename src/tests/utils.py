@@ -26,7 +26,7 @@ def create_random_user(username: str, password: str):
     return {"Authorization": f"Bearer {auth_token}"}
 
 
-def get_random_user(username: str):
+def get_user(username: str):
     response = client.get(
         f"{settings.API_V1_STR}/users/{username}",
     )
@@ -34,7 +34,7 @@ def get_random_user(username: str):
     return response.json()
 
 
-def user_authentication_headers(username: str, password: str):
+def authentication_headers(username: str, password: str):
     data = {
         "username": username,
         "password": password
@@ -57,7 +57,7 @@ def deactive_user(username: str, token: str):
     )
 
 
-def create_random_post(token, text: str = random_lower_string()):
+def create_random_post(token: str, text: str = random_lower_string()):
     data = {
         "text": text
     }
@@ -106,7 +106,7 @@ def active_posts_ids_by_owner_id(owner_id: int):
     return response.json()
 
 
-def create_random_comment(token, post_id: int, text: str = random_lower_string()):
+def create_random_comment(post_id: int, token: str, text: str = random_lower_string()):
     data = {
         "text": text,
         "post_id": post_id
@@ -170,7 +170,7 @@ def active_comments_ids_by_post_id(post_id: int):
     return response.json()
 
 
-def like_post(token, post_id: int):
+def like_post(post_id: int, token: str):
     response = client.post(
         f"{settings.API_V1_STR}/likes/post/{post_id}",
         headers=token,
@@ -179,7 +179,7 @@ def like_post(token, post_id: int):
     return response.json()
 
 
-def unlike_post(token, post_id: int):
+def unlike_post(post_id: int, token: str):
     response = client.delete(
         f"{settings.API_V1_STR}/likes/post/{post_id}",
         headers=token,
@@ -188,7 +188,7 @@ def unlike_post(token, post_id: int):
     return response.json()
 
 
-def like_comment(token, comment_id: int):
+def like_comment(comment_id: int, token: str):
     response = client.post(
         f"{settings.API_V1_STR}/likes/comment/{comment_id}",
         headers=token,
@@ -197,7 +197,7 @@ def like_comment(token, comment_id: int):
     return response.json()
 
 
-def unlike_comment(token, comment_id: int):
+def unlike_comment(comment_id: int, token: str):
     response = client.delete(
         f"{settings.API_V1_STR}/likes/comment/{comment_id}",
         headers=token,
@@ -206,7 +206,7 @@ def unlike_comment(token, comment_id: int):
     return response.json()
 
 
-def follow_user(token, following_id: int):
+def follow_user(following_id: int, token: str):
     response = client.post(
         f"{settings.API_V1_STR}/follows/{following_id}",
         headers=token,

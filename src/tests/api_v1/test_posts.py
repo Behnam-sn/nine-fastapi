@@ -3,9 +3,9 @@ from src.tests.conftest import client
 from src.tests.utils import (active_posts_count_by_owner_id,
                              active_posts_ids_by_owner_id,
                              all_active_posts_count, all_active_posts_ids,
-                             create_random_post, create_random_user,
-                             deactive_post, get_random_user,
-                             random_lower_string, user_authentication_headers)
+                             authentication_headers, create_random_post,
+                             create_random_user, deactive_post, get_user,
+                             random_lower_string)
 
 
 def test_create_post():
@@ -13,7 +13,7 @@ def test_create_post():
     password = random_lower_string()
 
     token = create_random_user(username=username, password=password)
-    user = get_random_user(username=username)
+    user = get_user(username=username)
 
     data = {
         "text": random_lower_string()
@@ -185,7 +185,7 @@ def test_delete_post_as_superuser():
     token = create_random_user(username=username, password=password)
     post = create_random_post(token=token)
 
-    superuser_token = user_authentication_headers(
+    superuser_token = authentication_headers(
         username=settings.SUPERUSER_USERNAME,
         password=settings.SUPERUSER_PASSWORD
     )
@@ -235,7 +235,7 @@ def test_activate_post_as_superuser():
     token = create_random_user(username=username, password=password)
     random_post = create_random_post(token=token)
 
-    superuser_token = user_authentication_headers(
+    superuser_token = authentication_headers(
         username=settings.SUPERUSER_USERNAME,
         password=settings.SUPERUSER_PASSWORD
     )
@@ -287,7 +287,7 @@ def test_deactivate_post_as_superuser():
     token = create_random_user(username=username, password=password)
     random_post = create_random_post(token=token)
 
-    superuser_token = user_authentication_headers(
+    superuser_token = authentication_headers(
         username=settings.SUPERUSER_USERNAME,
         password=settings.SUPERUSER_PASSWORD
     )
@@ -427,7 +427,7 @@ def test_get_active_posts_count_by_owner_id():
     password = random_lower_string()
 
     token = create_random_user(username=username, password=password)
-    user = get_random_user(username=username)
+    user = get_user(username=username)
     create_random_post(token=token)
 
     response = client.get(
@@ -444,7 +444,7 @@ def test_get_active_posts_count_by_owner_id_is_all_active():
     password = random_lower_string()
 
     token = create_random_user(username=username, password=password)
-    user = get_random_user(username=username)
+    user = get_user(username=username)
     post = create_random_post(token=token)
 
     count = active_posts_count_by_owner_id(owner_id=user["id"])
@@ -459,7 +459,7 @@ def test_get_active_posts_count_by_not_existing_owner_id():
     password = random_lower_string()
 
     create_random_user(username=username, password=password)
-    user = get_random_user(username=username)
+    user = get_user(username=username)
 
     response = client.get(
         f"{settings.API_V1_STR}/posts/owner/count/{user['id'] + 1}",
@@ -473,7 +473,7 @@ def test_get_active_posts_ids_by_owner_id():
     password = random_lower_string()
 
     token = create_random_user(username=username, password=password)
-    user = get_random_user(username=username)
+    user = get_user(username=username)
     create_random_post(token=token)
 
     response = client.get(
@@ -490,7 +490,7 @@ def test_get_active_posts_ids_by_owner_id_is_all_active():
     password = random_lower_string()
 
     token = create_random_user(username=username, password=password)
-    user = get_random_user(username=username)
+    user = get_user(username=username)
     post = create_random_post(token=token)
 
     ids = active_posts_ids_by_owner_id(owner_id=user["id"])
@@ -505,7 +505,7 @@ def test_get_active_posts_ids_by_not_existing_owner_id():
     password = random_lower_string()
 
     create_random_user(username=username, password=password)
-    user = get_random_user(username=username)
+    user = get_user(username=username)
 
     response = client.get(
         f"{settings.API_V1_STR}/posts/owner/ids/{user['id'] + 1}",

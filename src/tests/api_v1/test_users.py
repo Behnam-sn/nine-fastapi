@@ -1,7 +1,7 @@
 from src.core.config import settings
 from src.tests.conftest import client
-from src.tests.utils import (create_random_user, deactive_user,
-                             random_lower_string, user_authentication_headers)
+from src.tests.utils import (authentication_headers, create_random_user,
+                             deactive_user, random_lower_string)
 
 
 def test_get_all_active_users():
@@ -144,7 +144,7 @@ def test_activate_user_as_superuser():
     password = random_lower_string()
 
     create_random_user(username=username, password=password)
-    superuser_token = user_authentication_headers(
+    superuser_token = authentication_headers(
         username=settings.SUPERUSER_USERNAME,
         password=settings.SUPERUSER_PASSWORD
     )
@@ -178,7 +178,7 @@ def test_activate_user_as_normal_user():
 def test_activate_not_existing_user():
     username = random_lower_string()
 
-    superuser_token = user_authentication_headers(
+    superuser_token = authentication_headers(
         username=settings.SUPERUSER_USERNAME,
         password=settings.SUPERUSER_PASSWORD
     )
@@ -217,7 +217,7 @@ def test_deactivate_user_as_superuser():
     password = random_lower_string()
 
     create_random_user(username=username, password=password)
-    superuser_token = user_authentication_headers(
+    superuser_token = authentication_headers(
         username=settings.SUPERUSER_USERNAME,
         password=settings.SUPERUSER_PASSWORD
     )
@@ -251,7 +251,7 @@ def test_deactivate_user_as_normal_user():
 def test_deactivate_not_existing_user():
     username = random_lower_string()
 
-    superuser_token = user_authentication_headers(
+    superuser_token = authentication_headers(
         username=settings.SUPERUSER_USERNAME,
         password=settings.SUPERUSER_PASSWORD
     )
