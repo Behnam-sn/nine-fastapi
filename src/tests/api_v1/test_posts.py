@@ -90,23 +90,23 @@ def test_update_post():
     password = random_lower_string()
 
     token = create_random_user(username=username, password=password)
-    random_post = create_random_post(token=token)
+    post = create_random_post(token=token)
 
     data = {
         "text": random_lower_string()
     }
 
     response = client.put(
-        f"{settings.API_V1_STR}/posts/{random_post['id']}",
+        f"{settings.API_V1_STR}/posts/{post['id']}",
         headers=token,
         json=data
     )
-    post = response.json()
+    updated_post = response.json()
 
     assert response.status_code == 200
-    assert post["id"] == random_post["id"]
-    assert post["is_modified"] == True
-    assert post["text"] == data["text"]
+    assert updated_post["id"] == post["id"]
+    assert updated_post["is_modified"] == True
+    assert updated_post["text"] == data["text"]
 
 
 def test_update_not_existing_post():
