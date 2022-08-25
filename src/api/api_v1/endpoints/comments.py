@@ -7,12 +7,12 @@ router = APIRouter()
 
 
 @router.get("/all/", response_model=list[schemas.Comment])
-def get_all_comments(
+def get_all_active_comments(
     skip: int = 0,
     limit: int = 100,
     db: Session = Depends(deps.get_db)
 ):
-    return crud.comment.get_all(db, skip=skip, limit=limit)
+    return crud.comment.get_all_active_comments(db, skip=skip, limit=limit)
 
 
 @router.post("/", response_model=schemas.Comment)
@@ -26,11 +26,14 @@ def create_comment(
     if db_post is None:
         raise HTTPException(status_code=404, detail="Post not found")
 
+    if not db_post.is_active:
+        raise HTTPException(status_code=403, detail="Post is not available")
+
     return crud.comment.create(db, comment=comment, owner_id=current_user.id)
 
 
 @router.get("/{id}", response_model=schemas.Comment)
-def get_comment_by_id(
+def get_active_comment_by_id(
     id: int,
     db: Session = Depends(deps.get_db),
 ):
@@ -38,6 +41,9 @@ def get_comment_by_id(
 
     if db_comment is None:
         raise HTTPException(status_code=404, detail="Comment not found")
+
+    if not db_comment.is_active:
+        raise HTTPException(status_code=403, detail="Comment is not available")
 
     return db_comment
 
@@ -54,8 +60,11 @@ def update_comment(
     if db_comment is None:
         raise HTTPException(status_code=404, detail="Comment not found")
 
+    if not db_comment.is_active:
+        raise HTTPException(status_code=403, detail="Comment is not available")
+
     if db_comment.owner_id != current_user.id:
-        raise HTTPException(status_code=400, detail="Permission Denied")
+        raise HTTPException(status_code=401, detail="Permission Denied")
 
     return crud.comment.update(db, id=id, comment_update=comment_update)
 
@@ -72,7 +81,7 @@ def delete_comment(
         raise HTTPException(status_code=404, detail="Comment not found")
 
     if not current_user.is_superuser:
-        raise HTTPException(status_code=400, detail="Permission Denied")
+        raise HTTPException(status_code=401, detail="Permission Denied")
 
     crud.comment.delete(db, id=id)
 
@@ -89,7 +98,7 @@ def activate_comment(
         raise HTTPException(status_code=404, detail="Comment not found")
 
     if not current_user.is_superuser:
-        raise HTTPException(status_code=400, detail="Not Authenticated")
+        raise HTTPException(status_code=401, detail="Not Authenticated")
 
     return crud.comment.active(db, id=id)
 
@@ -106,29 +115,29 @@ def deactivate_comment(
         raise HTTPException(status_code=404, detail="Comment not found")
 
     if current_user.is_superuser is False and current_user.id != db_comment.owner_id:
-        raise HTTPException(status_code=400, detail="Not Authenticated")
+        raise HTTPException(status_code=401, detail="Not Authenticated")
 
     return crud.comment.deactive(db, id=id)
 
 
 @router.get("/count/", response_model=int)
-def get_all_comments_count(
+def get_all_active_comments_count(
     db: Session = Depends(deps.get_db)
 ):
-    return crud.comment.get_all_count(db)
+    return crud.comment.get_all_active_comments_count(db)
 
 
 @router.get("/ids/", response_model=list[schemas.Id])
-def get_all_comments_ids(
+def get_all_active_comments_ids(
     skip: int = 0,
     limit: int = 100,
     db: Session = Depends(deps.get_db)
 ):
-    return crud.comment.get_all(db, skip=skip, limit=limit)
+    return crud.comment.get_all_active_comments(db, skip=skip, limit=limit)
 
 
 @router.get("/owner/count/{owner_id}", response_model=int)
-def get_comments_count_by_owner_id(
+def get_active_comments_count_by_owner_id(
     owner_id: int,
     db: Session = Depends(deps.get_db)
 ):
@@ -137,11 +146,11 @@ def get_comments_count_by_owner_id(
     if db_user is None:
         raise HTTPException(status_code=404, detail="User not found")
 
-    return crud.comment.get_count_by_owner_id(db, owner_id=owner_id)
+    return crud.comment.get_active_comments_count_by_owner_id(db, owner_id=owner_id)
 
 
 @router.get("/owner/ids/{owner_id}", response_model=list[schemas.Id])
-def get_comments_ids_by_owner_id(
+def get_active_comments_ids_by_owner_id(
     owner_id: int,
     skip: int = 0,
     limit: int = 100,
@@ -152,11 +161,11 @@ def get_comments_ids_by_owner_id(
     if db_user is None:
         raise HTTPException(status_code=404, detail="User not found")
 
-    return crud.comment.get_by_owner_id(db, owner_id=owner_id, skip=skip, limit=limit)
+    return crud.comment.get_active_comments_by_owner_id(db, owner_id=owner_id, skip=skip, limit=limit)
 
 
 @router.get("/post/count/{post_id}", response_model=int)
-def get_comments_count_by_post_id(
+def get_active_comments_count_by_post_id(
     post_id: int,
     db: Session = Depends(deps.get_db)
 ):
@@ -165,11 +174,11 @@ def get_comments_count_by_post_id(
     if db_post is None:
         raise HTTPException(status_code=404, detail="Post not found")
 
-    return crud.comment.get_count_by_post_id(db, post_id=post_id)
+    return crud.comment.get_active_comments_count_by_post_id(db, post_id=post_id)
 
 
 @router.get("/post/ids/{post_id}", response_model=list[schemas.Id])
-def get_comments_ids_by_post_id(
+def get_active_comments_ids_by_post_id(
     post_id: int,
     skip: int = 0,
     limit: int = 100,
@@ -180,4 +189,4 @@ def get_comments_ids_by_post_id(
     if db_post is None:
         raise HTTPException(status_code=404, detail="Post not found")
 
-    return crud.comment.get_by_post_id(db, post_id=post_id, skip=skip, limit=limit)
+    return crud.comment.get_active_comments_by_post_id(db, post_id=post_id, skip=skip, limit=limit)

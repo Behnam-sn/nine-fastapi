@@ -51,11 +51,10 @@ def user_authentication_headers(username: str, password: str):
 
 
 def deactive_user(username: str, token: str):
-    response = client.put(
+    client.put(
         f"{settings.API_V1_STR}/users/deactivate/{username}",
         headers=token,
     )
-    response.json()
 
 
 def create_random_post(token, text: str = random_lower_string()):
@@ -119,6 +118,55 @@ def create_random_comment(token, post_id: int, text: str = random_lower_string()
         json=data
     )
 
+    return response.json()
+
+
+def deactive_comment(id: int, token: str):
+    client.put(
+        f"{settings.API_V1_STR}/comments/deactivate/{id}",
+        headers=token,
+    )
+
+
+def all_active_comments_count():
+    response = client.get(
+        f"{settings.API_V1_STR}/comments/count/",
+    )
+    return response.json()
+
+
+def all_active_comments_ids(count: int):
+    response = client.get(
+        f"{settings.API_V1_STR}/comments/ids/?limit={count + 10}",
+    )
+    return response.json()
+
+
+def active_comments_count_by_owner_id(owner_id: int):
+    response = client.get(
+        f"{settings.API_V1_STR}/comments/owner/count/{owner_id}",
+    )
+    return response.json()
+
+
+def active_comments_ids_by_owner_id(owner_id: int):
+    response = client.get(
+        f"{settings.API_V1_STR}/comments/owner/ids/{owner_id}",
+    )
+    return response.json()
+
+
+def active_comments_count_by_post_id(post_id: int):
+    response = client.get(
+        f"{settings.API_V1_STR}/comments/post/count/{post_id}",
+    )
+    return response.json()
+
+
+def active_comments_ids_by_post_id(post_id: int):
+    response = client.get(
+        f"{settings.API_V1_STR}/comments/post/ids/{post_id}",
+    )
     return response.json()
 
 
