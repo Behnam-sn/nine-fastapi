@@ -53,11 +53,11 @@ def test_signin():
         f"{settings.API_V1_STR}/auth/signin",
         data=data
     )
-    tokens = response.json()
+    token = response.json()
 
     assert response.status_code == 200
-    assert "access_token" in tokens
-    assert tokens["access_token"]
+    assert "access_token" in token
+    assert token["access_token"]
 
 
 def test_signin_as_superuser():

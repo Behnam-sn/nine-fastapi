@@ -183,7 +183,7 @@ def test_delete_post_as_superuser():
     password = random_lower_string()
 
     token = create_random_user(username=username, password=password)
-    random_post = create_random_post(token=token)
+    post = create_random_post(token=token)
 
     superuser_token = user_authentication_headers(
         username=settings.SUPERUSER_USERNAME,
@@ -191,7 +191,7 @@ def test_delete_post_as_superuser():
     )
 
     response = client.delete(
-        f"{settings.API_V1_STR}/posts/{random_post['id']}",
+        f"{settings.API_V1_STR}/posts/{post['id']}",
         headers=superuser_token,
     )
 
@@ -203,10 +203,10 @@ def test_delete_post_as_normal_user():
     password = random_lower_string()
 
     token = create_random_user(username=username, password=password)
-    random_post = create_random_post(token=token)
+    post = create_random_post(token=token)
 
     response = client.delete(
-        f"{settings.API_V1_STR}/posts/{random_post['id']}",
+        f"{settings.API_V1_STR}/posts/{post['id']}",
         headers=token,
     )
 
@@ -218,10 +218,10 @@ def test_delete_not_existing_post():
     password = random_lower_string()
 
     token = create_random_user(username=username, password=password)
-    random_post = create_random_post(token=token)
+    post = create_random_post(token=token)
 
     response = client.delete(
-        f"{settings.API_V1_STR}/posts/{random_post['id'] + 1}",
+        f"{settings.API_V1_STR}/posts/{post['id'] + 1}",
         headers=token,
     )
 
@@ -255,10 +255,10 @@ def test_activate_post_as_normal_user():
     password = random_lower_string()
 
     token = create_random_user(username=username, password=password)
-    random_post = create_random_post(token=token)
+    post = create_random_post(token=token)
 
     response = client.put(
-        f"{settings.API_V1_STR}/posts/activate/{random_post['id']}",
+        f"{settings.API_V1_STR}/posts/activate/{post['id']}",
         headers=token,
     )
 
@@ -270,10 +270,10 @@ def test_activate_not_existing_post():
     password = random_lower_string()
 
     token = create_random_user(username=username, password=password)
-    random_post = create_random_post(token=token)
+    post = create_random_post(token=token)
 
     response = client.put(
-        f"{settings.API_V1_STR}/posts/activate/{random_post['id'] + 1}",
+        f"{settings.API_V1_STR}/posts/activate/{post['id'] + 1}",
         headers=token,
     )
 
@@ -324,10 +324,10 @@ def test_deactivate_not_existing_post():
     password = random_lower_string()
 
     token = create_random_user(username=username, password=password)
-    random_post = create_random_post(token=token)
+    post = create_random_post(token=token)
 
     response = client.put(
-        f"{settings.API_V1_STR}/posts/deactivate/{random_post['id'] + 1}",
+        f"{settings.API_V1_STR}/posts/deactivate/{post['id'] + 1}",
         headers=token,
     )
 
