@@ -17,14 +17,21 @@ class Post():
         db.refresh(db_post)
         return db_post
 
-    def get_all_active_count(self, db: Session) -> int:
+    def get_by_id(self, db: Session, id: int) -> models.Post | None:
+        return (
+            db.query(models.Post)
+            .filter(models.Post.id == id)
+            .first()
+        )
+
+    def get_all_active_posts_count(self, db: Session) -> int:
         return (
             db.query(models.Post)
             .filter(models.Post.is_active == True)
             .count()
         )
 
-    def get_all_active(self, db: Session, skip: int = 0, limit: int = 100) -> list[models.Post]:
+    def get_all_active_posts(self, db: Session, skip: int = 0, limit: int = 100) -> list[models.Post]:
         return (
             db.query(models.Post)
             .filter(models.Post.is_active == True)
@@ -32,13 +39,6 @@ class Post():
             .offset(skip)
             .limit(limit)
             .all()
-        )
-
-    def get_by_id(self, db: Session, id: int) -> models.Post | None:
-        return (
-            db.query(models.Post)
-            .filter(models.Post.id == id)
-            .first()
         )
 
     def get_active_posts_count_by_owner_id(self, db: Session, owner_id: int) -> int:

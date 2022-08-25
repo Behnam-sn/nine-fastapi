@@ -12,7 +12,7 @@ def get_all_active_posts(
     limit: int = 100,
     db: Session = Depends(deps.get_db)
 ):
-    return crud.post.get_all_active(db, skip=skip, limit=limit)
+    return crud.post.get_all_active_posts(db, skip=skip, limit=limit)
 
 
 @router.post("/", response_model=schemas.Post)
@@ -116,7 +116,7 @@ def deactivate_post(
 def get_all_active_posts_count(
     db: Session = Depends(deps.get_db)
 ):
-    return crud.post.get_all_active_count(db)
+    return crud.post.get_all_active_posts_count(db)
 
 
 @router.get("/ids/", response_model=list[schemas.Id])
@@ -125,7 +125,7 @@ def get_all_active_posts_ids(
     limit: int = 100,
     db: Session = Depends(deps.get_db)
 ):
-    return crud.post.get_all_active(db, skip=skip, limit=limit)
+    return crud.post.get_all_active_posts(db, skip=skip, limit=limit)
 
 
 @router.get("/owner/count/{owner_id}", response_model=int)
