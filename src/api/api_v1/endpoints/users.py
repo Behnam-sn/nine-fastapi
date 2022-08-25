@@ -7,12 +7,12 @@ router = APIRouter()
 
 
 @router.get("/all/", response_model=list[schemas.User])
-def get_all_users(
+def get_all_active_users(
     skip: int = 0,
     limit: int = 100,
     db: Session = Depends(deps.get_db),
 ):
-    return crud.user.get_all(db, skip=skip, limit=limit)
+    return crud.user.get_all_active(db, skip=skip, limit=limit)
 
 
 @router.get("/current-user/", response_model=schemas.User)
@@ -39,7 +39,7 @@ def get_current_user(
 
 
 @router.get("/{username}", response_model=schemas.User)
-def get_user_by_username(
+def get_active_user_by_username(
     username: str,
     db: Session = Depends(deps.get_db),
 ):
@@ -49,25 +49,9 @@ def get_user_by_username(
         raise HTTPException(status_code=404, detail="User not found")
 
     if not db_user.is_active:
-        raise HTTPException(status_code=400, detail="User is not active")
+        raise HTTPException(status_code=403, detail="User is not active")
 
     return db_user
-
-
-# @router.get("/author/{id}", response_model=schemas.Author)
-# def get_author_by_id(
-#     id: int,
-#     db: Session = Depends(deps.get_db),
-# ):
-#     db_user = crud.user.get_by_id(db, id=id)
-
-#     if db_user is None:
-#         raise HTTPException(status_code=404, detail="User not found")
-
-#     if not db_user.is_active:
-#         raise HTTPException(status_code=400, detail="User is not active")
-
-#     return db_user
 
 
 @router.put("/", response_model=schemas.User)
@@ -78,17 +62,14 @@ def update_user(
 ):
     db_user = crud.user.get_by_username(db, username=current_user.username)
 
-    if db_user is None:
-        raise HTTPException(status_code=404, detail="User not found")
+    if not db_user.is_active:
+        raise HTTPException(status_code=403, detail="User is not available")
 
-    if current_user.username != user_update.username:
-        new_name = crud.user.get_by_username(db, username=user_update.username)
-
-        if new_name:
-            raise HTTPException(
-                status_code=400,
-                detail="Username already registered"
-            )
+    if current_user.username != user_update.username and crud.user.get_by_username(db, username=user_update.username):
+        raise HTTPException(
+            status_code=400,
+            detail="Username already registered"
+        )
 
     return crud.user.update(db, username=current_user.username, user_update=user_update)
 
@@ -105,7 +86,7 @@ def activate_user(
         raise HTTPException(status_code=404, detail="User not found")
 
     if current_user.is_superuser is False and current_user.username != username:
-        raise HTTPException(status_code=400, detail="Not Authenticated")
+        raise HTTPException(status_code=401, detail="Not Authenticated")
 
     return crud.user.activate(db, username=username)
 
@@ -122,6 +103,6 @@ def deactivate_user(
         raise HTTPException(status_code=404, detail="User not found")
 
     if current_user.is_superuser is False and current_user.username != username:
-        raise HTTPException(status_code=400, detail="Not Authenticated")
+        raise HTTPException(status_code=401, detail="Not Authenticated")
 
     return crud.user.deactivate(db, username=username)

@@ -50,6 +50,14 @@ def user_authentication_headers(username: str, password: str):
     return {"Authorization": f"Bearer {auth_token}"}
 
 
+def deactive_user(username: str, token: str):
+    response = client.put(
+        f"{settings.API_V1_STR}/users/deactivate/{username}",
+        headers=token,
+    )
+    response.json()
+
+
 def create_random_post(token, text: str = random_lower_string()):
     data = {
         "text": text

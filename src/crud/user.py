@@ -16,9 +16,10 @@ class User():
         db.refresh(db_user)
         return db_user
 
-    def get_all(self, db: Session, skip: int = 0, limit: int = 100) -> list[models.User]:
+    def get_all_active(self, db: Session, skip: int = 0, limit: int = 100) -> list[models.User]:
         return (
             db.query(models.User)
+            .filter(models.User.is_active == True)
             .order_by(models.User.id)
             .offset(skip)
             .limit(limit)
