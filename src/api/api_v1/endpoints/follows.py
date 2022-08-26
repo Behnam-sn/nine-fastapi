@@ -39,6 +39,9 @@ def follow_user(
     if db_user is None:
         raise HTTPException(status_code=404, detail="User not found")
 
+    if not db_user.is_active:
+        raise HTTPException(status_code=403, detail="User is not active")
+
     if following_id == current_user.id:
         raise HTTPException(
             status_code=400, detail="You can't follow yourself"
@@ -48,7 +51,7 @@ def follow_user(
         db, follower_id=current_user.id, following_id=following_id
     )
 
-    if db_follow is not None:
+    if db_follow:
         raise HTTPException(
             status_code=400, detail="You already followed this user"
         )
@@ -67,10 +70,14 @@ def unfollow_user(
     if db_user is None:
         raise HTTPException(status_code=404, detail="User not found")
 
+    if not db_user.is_active:
+        raise HTTPException(status_code=403, detail="User is not active")
+
     if following_id == current_user.id:
         raise HTTPException(
             status_code=400, detail="You can't unfollow yourself"
         )
+
     db_follow = crud.follow.get_follow(
         db, follower_id=current_user.id, following_id=following_id
     )
@@ -84,7 +91,7 @@ def unfollow_user(
 
 
 @router.get("/follower/count/{user_id}", response_model=int)
-def get_follower_count(
+def get_follower_count_by_user_id(
     user_id: int,
     db: Session = Depends(deps.get_db)
 ):
@@ -93,11 +100,11 @@ def get_follower_count(
     if db_user is None:
         raise HTTPException(status_code=404, detail="User not found")
 
-    return crud.follow.get_followers_count(db, user_id=user_id)
+    return crud.follow.get_followers_count_by_user_id(db, user_id=user_id)
 
 
 @router.get("/follower/ids/{user_id}", response_model=list[schemas.Id])
-def get_follower_ids(
+def get_follower_ids_by_user_id(
     user_id: int,
     skip: int = 0,
     limit: int = 100,
@@ -108,11 +115,11 @@ def get_follower_ids(
     if db_user is None:
         raise HTTPException(status_code=404, detail="User not found")
 
-    return crud.follow.get_followers(db, user_id=user_id, skip=skip, limit=limit)
+    return crud.follow.get_followers_by_user_id(db, user_id=user_id, skip=skip, limit=limit)
 
 
 @router.get("/following/count/{user_id}", response_model=int)
-def get_following_count(
+def get_following_count_by_user_id(
     user_id: int,
     db: Session = Depends(deps.get_db)
 ):
@@ -121,11 +128,11 @@ def get_following_count(
     if db_user is None:
         raise HTTPException(status_code=404, detail="User not found")
 
-    return crud.follow.get_followings_count(db, user_id=user_id)
+    return crud.follow.get_followings_count_by_user_id(db, user_id=user_id)
 
 
 @router.get("/following/ids/{user_id}", response_model=list[schemas.Id])
-def get_following_ids(
+def get_following_ids_by_user_id(
     user_id: int,
     skip: int = 0,
     limit: int = 100,
@@ -136,4 +143,4 @@ def get_following_ids(
     if db_user is None:
         raise HTTPException(status_code=404, detail="User not found")
 
-    return crud.follow.get_followings(db, user_id=user_id, skip=skip, limit=limit)
+    return crud.follow.get_followings_by_user_id(db, user_id=user_id, skip=skip, limit=limit)

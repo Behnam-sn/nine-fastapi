@@ -51,14 +51,14 @@ class Follow():
             .first()
         )
 
-    def get_followers_count(self, db: Session, user_id: int) -> int:
+    def get_followers_count_by_user_id(self, db: Session, user_id: int) -> int:
         return (
             db.query(models.Follow)
             .filter(models.Follow.following_id == user_id)
             .count()
         )
 
-    def get_followers(self, db: Session, user_id: int, skip: int = 0, limit: int = 100) -> list[models.Follow]:
+    def get_followers_by_user_id(self, db: Session, user_id: int, skip: int = 0, limit: int = 100) -> list[models.Follow]:
         return (
             db.query(models.Follow)
             .filter(models.Follow.following_id == user_id)
@@ -68,14 +68,14 @@ class Follow():
             .all()
         )
 
-    def get_followings_count(self, db: Session, user_id: int) -> int:
+    def get_followings_count_by_user_id(self, db: Session, user_id: int) -> int:
         return (
             db.query(models.Follow)
             .filter(models.Follow.follower_id == user_id)
             .count()
         )
 
-    def get_followings(self, db: Session, user_id: int, skip: int = 0, limit: int = 100) -> list[models.Follow]:
+    def get_followings_by_user_id(self, db: Session, user_id: int, skip: int = 0, limit: int = 100) -> list[models.Follow]:
         return (
             db.query(models.Follow)
             .filter(models.Follow.follower_id == user_id)
@@ -91,7 +91,7 @@ class Follow():
             .filter(models.User.id == user_id)
             .first()
         )
-        count = self.get_followings_count(db, user_id=user_id)
+        count = self.get_followings_count_by_user_id(db, user_id=user_id)
 
         setattr(db_user, "followings", count)
 
@@ -104,7 +104,7 @@ class Follow():
             .filter(models.User.id == user_id)
             .first()
         )
-        count = self.get_followers_count(db, user_id=user_id)
+        count = self.get_followers_count_by_user_id(db, user_id=user_id)
 
         setattr(db_user, "followers", count)
 
