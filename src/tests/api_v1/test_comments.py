@@ -94,7 +94,7 @@ def test_get_active_comment_by_id():
 
     token = create_random_user(username=username, password=password)
     post = create_random_post(token=token)
-    random_comment = create_random_comment(token=token, post_id=post["id"])
+    random_comment = create_random_comment(post_id=post["id"], token=token)
 
     response = client.get(
         f"{settings.API_V1_STR}/comments/{random_comment['id']}",
@@ -111,7 +111,7 @@ def test_get_not_existing_comment_by_id():
 
     token = create_random_user(username=username, password=password)
     post = create_random_post(token=token)
-    comment = create_random_comment(token=token, post_id=post["id"])
+    comment = create_random_comment(post_id=post["id"], token=token)
 
     response = client.get(
         f"{settings.API_V1_STR}/comments/{comment['id'] + 1}",
@@ -126,7 +126,7 @@ def test_get_deactivated_comment_by_id():
 
     token = create_random_user(username=username, password=password)
     post = create_random_post(token=token)
-    comment = create_random_comment(token=token, post_id=post["id"])
+    comment = create_random_comment(post_id=post["id"], token=token)
 
     deactive_comment(id=comment["id"], token=token)
 
@@ -143,7 +143,7 @@ def test_update_comment():
 
     token = create_random_user(username=username, password=password)
     post = create_random_post(token=token)
-    comment = create_random_comment(token=token, post_id=post["id"])
+    comment = create_random_comment(post_id=post["id"], token=token)
 
     data = {
         "text": random_lower_string()
@@ -168,7 +168,7 @@ def test_update_not_existing_comment():
 
     token = create_random_user(username=username, password=password)
     post = create_random_post(token=token)
-    comment = create_random_comment(token=token, post_id=post["id"])
+    comment = create_random_comment(post_id=post["id"], token=token)
 
     data = {
         "text": random_lower_string()
@@ -189,7 +189,7 @@ def test_update_deactivated_comment():
 
     token = create_random_user(username=username, password=password)
     post = create_random_post(token=token)
-    comment = create_random_comment(token=token, post_id=post["id"])
+    comment = create_random_comment(post_id=post["id"], token=token)
 
     deactive_comment(id=comment["id"], token=token)
 
@@ -212,7 +212,7 @@ def test_unauthorized_update_comment():
 
     token = create_random_user(username=username, password=password)
     post = create_random_post(token=token)
-    comment = create_random_comment(token=token, post_id=post["id"])
+    comment = create_random_comment(post_id=post["id"], token=token)
 
     new_username = random_lower_string()
     new_password = random_lower_string()
@@ -240,7 +240,7 @@ def test_delete_comment_as_superuser():
 
     token = create_random_user(username=username, password=password)
     post = create_random_post(token=token)
-    comment = create_random_comment(token=token, post_id=post["id"])
+    comment = create_random_comment(post_id=post["id"], token=token)
 
     superuser_token = authentication_headers(
         username=settings.SUPERUSER_USERNAME,
@@ -261,7 +261,7 @@ def test_delete_comment_as_normal_user():
 
     token = create_random_user(username=username, password=password)
     post = create_random_post(token=token)
-    comment = create_random_comment(token=token, post_id=post["id"])
+    comment = create_random_comment(post_id=post["id"], token=token)
 
     response = client.delete(
         f"{settings.API_V1_STR}/comments/{comment['id']}",
@@ -277,7 +277,7 @@ def test_delete_not_existing_comment():
 
     token = create_random_user(username=username, password=password)
     post = create_random_post(token=token)
-    comment = create_random_comment(token=token, post_id=post["id"])
+    comment = create_random_comment(post_id=post["id"], token=token)
 
     response = client.delete(
         f"{settings.API_V1_STR}/comments/{comment['id'] + 1}",
@@ -293,7 +293,7 @@ def test_activate_comment_as_superuser():
 
     token = create_random_user(username=username, password=password)
     post = create_random_post(token=token)
-    random_comment = create_random_comment(token=token, post_id=post["id"])
+    random_comment = create_random_comment(post_id=post["id"], token=token)
 
     superuser_token = authentication_headers(
         username=settings.SUPERUSER_USERNAME,
@@ -316,7 +316,7 @@ def test_activate_comment_as_normal_user():
 
     token = create_random_user(username=username, password=password)
     post = create_random_post(token=token)
-    comment = create_random_comment(token=token, post_id=post["id"])
+    comment = create_random_comment(post_id=post["id"], token=token)
 
     response = client.put(
         f"{settings.API_V1_STR}/comments/activate/{comment['id']}",
@@ -332,7 +332,7 @@ def test_activate_not_existing_comment():
 
     token = create_random_user(username=username, password=password)
     post = create_random_post(token=token)
-    comment = create_random_comment(token=token, post_id=post["id"])
+    comment = create_random_comment(post_id=post["id"], token=token)
 
     response = client.put(
         f"{settings.API_V1_STR}/comments/activate/{comment['id'] + 1}",
@@ -348,7 +348,7 @@ def test_deactivate_comment_as_superuser():
 
     token = create_random_user(username=username, password=password)
     post = create_random_post(token=token)
-    random_comment = create_random_comment(token=token, post_id=post["id"])
+    random_comment = create_random_comment(post_id=post["id"], token=token)
 
     superuser_token = authentication_headers(
         username=settings.SUPERUSER_USERNAME,
@@ -371,7 +371,7 @@ def test_deactivate_comment_as_normal_user():
 
     token = create_random_user(username=username, password=password)
     post = create_random_post(token=token)
-    random_comment = create_random_comment(token=token, post_id=post["id"])
+    random_comment = create_random_comment(post_id=post["id"], token=token)
 
     response = client.put(
         f"{settings.API_V1_STR}/comments/deactivate/{random_comment['id']}",
@@ -389,7 +389,7 @@ def test_deactivate_not_existing_post():
 
     token = create_random_user(username=username, password=password)
     post = create_random_post(token=token)
-    comment = create_random_comment(token=token, post_id=post["id"])
+    comment = create_random_comment(post_id=post["id"], token=token)
 
     response = client.put(
         f"{settings.API_V1_STR}/comments/deactivate/{comment['id'] + 1}",
@@ -405,7 +405,7 @@ def test_unauthorized_deactivate_comment():
 
     token = create_random_user(username=username, password=password)
     post = create_random_post(token=token)
-    comment = create_random_comment(token=token, post_id=post["id"])
+    comment = create_random_comment(post_id=post["id"], token=token)
 
     new_username = random_lower_string()
     new_password = random_lower_string()
@@ -428,7 +428,7 @@ def test_get_all_active_comments_count():
 
     token = create_random_user(username=username, password=password)
     post = create_random_post(token=token)
-    create_random_comment(token=token, post_id=post["id"])
+    create_random_comment(post_id=post["id"], token=token)
 
     response = client.get(
         f"{settings.API_V1_STR}/comments/count/",
@@ -445,7 +445,7 @@ def test_get_all_active_comments_count_is_all_active():
 
     token = create_random_user(username=username, password=password)
     post = create_random_post(token=token)
-    comment = create_random_comment(token=token, post_id=post["id"])
+    comment = create_random_comment(post_id=post["id"], token=token)
 
     count = all_active_comments_count()
     deactive_comment(id=comment["id"], token=token)
@@ -460,7 +460,7 @@ def test_get_all_active_comments_ids():
 
     token = create_random_user(username=username, password=password)
     post = create_random_post(token=token)
-    create_random_comment(token=token, post_id=post["id"])
+    create_random_comment(post_id=post["id"], token=token)
 
     count = client.get(
         f"{settings.API_V1_STR}/comments/count/"
@@ -481,7 +481,7 @@ def test_get_all_active_comments_ids_is_all_active():
 
     token = create_random_user(username=username, password=password)
     post = create_random_post(token=token)
-    comment = create_random_comment(token=token, post_id=post["id"])
+    comment = create_random_comment(post_id=post["id"], token=token)
 
     count = all_active_comments_count()
     ids = all_active_comments_ids(count=count)
@@ -499,7 +499,7 @@ def test_get_active_comments_count_by_owner_id():
     token = create_random_user(username=username, password=password)
     user = get_user(username=username)
     post = create_random_post(token=token)
-    create_random_comment(token=token, post_id=post["id"])
+    create_random_comment(post_id=post["id"], token=token)
 
     response = client.get(
         f"{settings.API_V1_STR}/comments/owner/count/{user['id']}",
@@ -517,7 +517,7 @@ def test_get_active_comments_count_by_owner_id_is_all_active():
     token = create_random_user(username=username, password=password)
     user = get_user(username=username)
     post = create_random_post(token=token)
-    comment = create_random_comment(token=token, post_id=post["id"])
+    comment = create_random_comment(post_id=post["id"], token=token)
 
     count = active_comments_count_by_owner_id(owner_id=user["id"])
     deactive_comment(id=comment["id"], token=token)
@@ -547,7 +547,7 @@ def test_get_active_comments_ids_by_owner_id():
     token = create_random_user(username=username, password=password)
     user = get_user(username=username)
     post = create_random_post(token=token)
-    create_random_comment(token=token, post_id=post["id"])
+    create_random_comment(post_id=post["id"], token=token)
 
     response = client.get(
         f"{settings.API_V1_STR}/comments/owner/ids/{user['id']}",
@@ -565,7 +565,7 @@ def test_get_active_comments_ids_by_owner_id_is_all_active():
     token = create_random_user(username=username, password=password)
     user = get_user(username=username)
     post = create_random_post(token=token)
-    comment = create_random_comment(token=token, post_id=post["id"])
+    comment = create_random_comment(post_id=post["id"], token=token)
 
     ids = active_comments_ids_by_owner_id(owner_id=user["id"])
     deactive_comment(id=comment["id"], token=token)
@@ -594,7 +594,7 @@ def test_get_active_comments_count_by_post_id():
 
     token = create_random_user(username=username, password=password)
     post = create_random_post(token=token)
-    create_random_comment(token=token, post_id=post["id"])
+    create_random_comment(post_id=post["id"], token=token)
 
     response = client.get(
         f"{settings.API_V1_STR}/comments/post/count/{post['id']}",
@@ -611,7 +611,7 @@ def test_get_active_comments_count_by_post_id_is_all_active():
 
     token = create_random_user(username=username, password=password)
     post = create_random_post(token=token)
-    comment = create_random_comment(token=token, post_id=post["id"])
+    comment = create_random_comment(post_id=post["id"], token=token)
 
     count = active_comments_count_by_post_id(post_id=post["id"])
     deactive_comment(id=comment["id"], token=token)
@@ -640,7 +640,7 @@ def test_get_active_comments_ids_by_post_id():
 
     token = create_random_user(username=username, password=password)
     post = create_random_post(token=token)
-    create_random_comment(token=token, post_id=post["id"])
+    create_random_comment(post_id=post["id"], token=token)
 
     response = client.get(
         f"{settings.API_V1_STR}/comments/post/ids/{post['id']}",
@@ -657,7 +657,7 @@ def test_get_active_comments_ids_by_post_id_is_all_active():
 
     token = create_random_user(username=username, password=password)
     post = create_random_post(token=token)
-    comment = create_random_comment(token=token, post_id=post["id"])
+    comment = create_random_comment(post_id=post["id"], token=token)
 
     ids = active_comments_ids_by_post_id(post_id=post["id"])
     deactive_comment(id=comment["id"], token=token)

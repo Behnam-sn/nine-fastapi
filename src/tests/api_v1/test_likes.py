@@ -214,7 +214,7 @@ def test_like_comment_already_liked():
 
     token = create_random_user(username=username, password=password)
     post = create_random_post(token=token)
-    comment = create_random_comment(token=token, post_id=post["id"])
+    comment = create_random_comment(post_id=post["id"], token=token)
 
     like_comment(comment_id=comment["id"], token=token)
 
