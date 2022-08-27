@@ -18,8 +18,9 @@ class Like():
         return db_like
 
     def unlike_post(self, db: Session, post_id: int, owner_id: int) -> models.Like:
-        db_like = self.get_post_by_owner_id(
-            db, post_id=post_id, owner_id=owner_id)
+        db_like = self.get_like_by_post_id_and_owner_id(
+            db, post_id=post_id, owner_id=owner_id
+        )
         db.delete(db_like)
         db.commit()
 
@@ -45,7 +46,7 @@ class Like():
         return db_like
 
     def unlike_comment(self, db: Session, comment_id: int, owner_id: int) -> models.Like:
-        db_like = self.get_comment_by_owner_id(
+        db_like = self.get_like_by_comment_id_and_owner_id(
             db, comment_id=comment_id, owner_id=owner_id
         )
         db.delete(db_like)
@@ -57,6 +58,20 @@ class Like():
         )
 
         return db_like
+
+    def get_like_by_post_id_and_owner_id(self, db: Session, post_id: int, owner_id: int) -> models.Like | None:
+        return (
+            db.query(models.Like)
+            .filter(models.Like.post_id == post_id, models.Like.owner_id == owner_id)
+            .first()
+        )
+
+    def get_like_by_comment_id_and_owner_id(self, db: Session, comment_id: int, owner_id: int) -> models.Like | None:
+        return (
+            db.query(models.Like)
+            .filter(models.Like.comment_id == comment_id, models.Like.owner_id == owner_id)
+            .first()
+        )
 
     def get_all(self, db: Session, skip: int = 0, limit: int = 100) -> list[models.Like]:
         return (
@@ -74,14 +89,14 @@ class Like():
             .first()
         )
 
-    def get_count_by_owner_id(self, db: Session, owner_id: int) -> int:
+    def get_likes_count_by_owner_id(self, db: Session, owner_id: int) -> int:
         return (
             db.query(models.Like)
             .filter(models.Like.owner_id == owner_id)
             .count()
         )
 
-    def get_by_owner_id(self, db: Session, owner_id: int, skip: int = 0, limit: int = 100) -> list[models.Like]:
+    def get_likes_by_owner_id(self, db: Session, owner_id: int, skip: int = 0, limit: int = 100) -> list[models.Like]:
         return (
             db.query(models.Like)
             .filter(models.Like.owner_id == owner_id)
@@ -91,21 +106,14 @@ class Like():
             .all()
         )
 
-    def get_post_by_owner_id(self, db: Session, post_id: int, owner_id: int) -> models.Like | None:
-        return (
-            db.query(models.Like)
-            .filter(models.Like.post_id == post_id, models.Like.owner_id == owner_id)
-            .first()
-        )
-
-    def get_count_by_post_id(self, db: Session, post_id: int) -> int:
+    def get_likes_count_by_post_id(self, db: Session, post_id: int) -> int:
         return (
             db.query(models.Like)
             .filter(models.Like.post_id == post_id)
             .count()
         )
 
-    def get_by_post_id(self, db: Session, post_id: int, skip: int = 0, limit: int = 100) -> list[models.Like]:
+    def get_likes_by_post_id(self, db: Session, post_id: int, skip: int = 0, limit: int = 100) -> list[models.Like]:
         return (
             db.query(models.Like)
             .filter(models.Like.post_id == post_id)
@@ -115,21 +123,14 @@ class Like():
             .all()
         )
 
-    def get_comment_by_owner_id(self, db: Session, comment_id: int, owner_id: int) -> models.Like | None:
-        return (
-            db.query(models.Like)
-            .filter(models.Like.comment_id == comment_id, models.Like.owner_id == owner_id)
-            .first()
-        )
-
-    def get_count_by_comment_id(self, db: Session, comment_id: int) -> int:
+    def get_likes_count_by_comment_id(self, db: Session, comment_id: int) -> int:
         return (
             db.query(models.Like)
             .filter(models.Like.comment_id == comment_id)
             .count()
         )
 
-    def get_by_comment_id(self, db: Session, comment_id: int, skip: int = 0, limit: int = 100) -> list[models.Like]:
+    def get_likes_by_comment_id(self, db: Session, comment_id: int, skip: int = 0, limit: int = 100) -> list[models.Like]:
         return (
             db.query(models.Like)
             .filter(models.Like.comment_id == comment_id)
@@ -145,7 +146,7 @@ class Like():
             .filter(models.User.id == owner_id)
             .first()
         )
-        count = self.get_count_by_owner_id(db, owner_id=owner_id)
+        count = self.get_likes_count_by_owner_id(db, owner_id=owner_id)
 
         setattr(db_user, "likes", count)
 
@@ -158,7 +159,7 @@ class Like():
             .filter(models.Post.id == post_id)
             .first()
         )
-        count = self.get_count_by_post_id(db, post_id=post_id)
+        count = self.get_likes_count_by_post_id(db, post_id=post_id)
 
         setattr(db_post, "likes", count)
 
@@ -171,7 +172,7 @@ class Like():
             .filter(models.Comment.id == comment_id)
             .first()
         )
-        count = self.get_count_by_comment_id(db, comment_id=comment_id)
+        count = self.get_likes_count_by_comment_id(db, comment_id=comment_id)
 
         setattr(db_commnet, "likes", count)
 

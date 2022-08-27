@@ -39,11 +39,14 @@ def like_post(
     if db_post is None:
         raise HTTPException(status_code=404, detail="Post not found")
 
-    db_like = crud.like.get_post_by_owner_id(
+    if not db_post.is_active:
+        raise HTTPException(status_code=403, detail="Post is not available")
+
+    db_like = crud.like.get_like_by_post_id_and_owner_id(
         db, post_id=post_id, owner_id=current_user.id
     )
 
-    if db_like is not None:
+    if db_like:
         raise HTTPException(
             status_code=400, detail="You already liked this post"
         )
@@ -62,7 +65,10 @@ def unlike_post(
     if db_post is None:
         raise HTTPException(status_code=404, detail="Post not found")
 
-    db_like = crud.like.get_post_by_owner_id(
+    if not db_post.is_active:
+        raise HTTPException(status_code=403, detail="Post is not available")
+
+    db_like = crud.like.get_like_by_post_id_and_owner_id(
         db, post_id=post_id, owner_id=current_user.id
     )
 
@@ -85,11 +91,14 @@ def like_comment(
     if db_comment is None:
         raise HTTPException(status_code=404, detail="Comment not found")
 
-    db_like = crud.like.get_comment_by_owner_id(
+    if not db_comment.is_active:
+        raise HTTPException(status_code=403, detail="Comment is not available")
+
+    db_like = crud.like.get_like_by_comment_id_and_owner_id(
         db, comment_id=comment_id, owner_id=current_user.id
     )
 
-    if db_like is not None:
+    if db_like:
         raise HTTPException(
             status_code=400, detail="You already liked this comment"
         )
@@ -108,7 +117,10 @@ def unlike_comment(
     if db_comment is None:
         raise HTTPException(status_code=404, detail="Comment not found")
 
-    db_like = crud.like.get_comment_by_owner_id(
+    if not db_comment.is_active:
+        raise HTTPException(status_code=403, detail="Comment is not available")
+
+    db_like = crud.like.get_like_by_comment_id_and_owner_id(
         db, comment_id=comment_id, owner_id=current_user.id
     )
 
@@ -190,7 +202,7 @@ def get_likes_count_by_comment_id(
 
 
 @router.get("/comment/ids/{comment_id}", response_model=list[schemas.Id])
-def get_likes_ids_by_post_id(
+def get_likes_ids_by_comment_id(
     comment_id: int,
     skip: int = 0,
     limit: int = 100,
