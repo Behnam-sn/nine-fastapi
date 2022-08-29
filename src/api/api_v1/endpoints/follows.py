@@ -34,13 +34,10 @@ def follow_user(
     current_user: models.User = Depends(deps.get_current_user),
     db: Session = Depends(deps.get_db),
 ):
-    db_user = crud.user.get_by_id(db, id=following_id)
+    db_user = crud.user.get_active_user_by_id(db, id=following_id)
 
     if db_user is None:
         raise HTTPException(status_code=404, detail="User not found")
-
-    if not db_user.is_active:
-        raise HTTPException(status_code=403, detail="User is not active")
 
     if following_id == current_user.id:
         raise HTTPException(
@@ -65,13 +62,10 @@ def unfollow_user(
     current_user: models.User = Depends(deps.get_current_user),
     db: Session = Depends(deps.get_db),
 ):
-    db_user = crud.user.get_by_id(db, id=following_id)
+    db_user = crud.user.get_active_user_by_id(db, id=following_id)
 
     if db_user is None:
         raise HTTPException(status_code=404, detail="User not found")
-
-    if not db_user.is_active:
-        raise HTTPException(status_code=403, detail="User is not active")
 
     if following_id == current_user.id:
         raise HTTPException(
@@ -95,7 +89,7 @@ def get_follower_count_by_user_id(
     user_id: int,
     db: Session = Depends(deps.get_db)
 ):
-    db_user = crud.user.get_by_id(db, id=user_id)
+    db_user = crud.user.get_active_user_by_id(db, id=user_id)
 
     if db_user is None:
         raise HTTPException(status_code=404, detail="User not found")
@@ -110,7 +104,7 @@ def get_follower_ids_by_user_id(
     limit: int = 100,
     db: Session = Depends(deps.get_db),
 ):
-    db_user = crud.user.get_by_id(db, id=user_id)
+    db_user = crud.user.get_active_user_by_id(db, id=user_id)
 
     if db_user is None:
         raise HTTPException(status_code=404, detail="User not found")
@@ -123,7 +117,7 @@ def get_following_count_by_user_id(
     user_id: int,
     db: Session = Depends(deps.get_db)
 ):
-    db_user = crud.user.get_by_id(db, id=user_id)
+    db_user = crud.user.get_active_user_by_id(db, id=user_id)
 
     if db_user is None:
         raise HTTPException(status_code=404, detail="User not found")
@@ -138,7 +132,7 @@ def get_following_ids_by_user_id(
     limit: int = 100,
     db: Session = Depends(deps.get_db),
 ):
-    db_user = crud.user.get_by_id(db, id=user_id)
+    db_user = crud.user.get_active_user_by_id(db, id=user_id)
 
     if db_user is None:
         raise HTTPException(status_code=404, detail="User not found")

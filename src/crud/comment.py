@@ -71,6 +71,14 @@ class Comment():
             .first()
         )
 
+    def get_active_comment_by_id(self, db: Session, id: int) -> models.Comment | None:
+        return (
+            db.query(models.Comment)
+            .filter(models.Comment.is_active == True, models.Comment.is_owner_active == True)
+            .filter(models.Comment.id == id)
+            .first()
+        )
+
     def get_all_active_comments_count(self, db: Session) -> int:
         return (
             db.query(models.Comment)

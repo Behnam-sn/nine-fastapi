@@ -62,7 +62,7 @@ def test_like_deactivated_post():
         headers=token,
     )
 
-    assert response.status_code == 403
+    assert response.status_code == 404
 
 
 def test_like_post_already_liked():
@@ -135,7 +135,7 @@ def test_unlike_deactivated_post():
         headers=token,
     )
 
-    assert response.status_code == 403
+    assert response.status_code == 404
 
 
 def test_unlike_not_liked_post():
@@ -204,7 +204,7 @@ def test_like_deactivated_comment():
         headers=token,
     )
 
-    assert response.status_code == 403
+    assert response.status_code == 404
 
 
 def test_like_comment_already_liked():
@@ -281,7 +281,7 @@ def test_unlike_deactivated_comment():
         headers=token,
     )
 
-    assert response.status_code == 403
+    assert response.status_code == 404
 
 
 def test_unlike_not_liked_comment():

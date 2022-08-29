@@ -65,7 +65,7 @@ def test_get_deactivated_user_by_username():
     )
     response.json()
 
-    assert response.status_code == 403
+    assert response.status_code == 404
 
 
 def test_update_user():
@@ -138,7 +138,7 @@ def test_update_deactivated_user():
         json=data,
     )
 
-    assert response.status_code == 403
+    assert response.status_code == 404
 
 
 # def test_activate_user_as_superuser():

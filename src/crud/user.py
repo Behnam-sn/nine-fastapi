@@ -22,30 +22,6 @@ class User():
         db.refresh(db_user)
         return db_user
 
-    def get_all_active(self, db: Session, skip: int = 0, limit: int = 100) -> list[models.User]:
-        return (
-            db.query(models.User)
-            .filter(models.User.is_active == True)
-            .order_by(models.User.id)
-            .offset(skip)
-            .limit(limit)
-            .all()
-        )
-
-    def get_by_id(self, db: Session, id: id) -> models.User | None:
-        return (
-            db.query(models.User)
-            .filter(models.User.id == id)
-            .first()
-        )
-
-    def get_by_username(self, db: Session, username: str) -> models.User | None:
-        return (
-            db.query(models.User)
-            .filter(models.User.username == username)
-            .first()
-        )
-
     def update(self, db: Session, username: str, user_update: schemas.UserUpdate) -> models.User:
         db_user = self.get_by_username(db, username=username)
 
@@ -108,6 +84,46 @@ class User():
             return None
 
         return db_user
+
+    def get_by_id(self, db: Session, id: id) -> models.User | None:
+        return (
+            db.query(models.User)
+            .filter(models.User.id == id)
+            .first()
+        )
+
+    def get_by_username(self, db: Session, username: str) -> models.User | None:
+        return (
+            db.query(models.User)
+            .filter(models.User.username == username)
+            .first()
+        )
+
+    def get_all_active_users(self, db: Session, skip: int = 0, limit: int = 100) -> list[models.User]:
+        return (
+            db.query(models.User)
+            .filter(models.User.is_active == True)
+            .order_by(models.User.id)
+            .offset(skip)
+            .limit(limit)
+            .all()
+        )
+
+    def get_active_user_by_id(self, db: Session, id: id) -> models.User | None:
+        return (
+            db.query(models.User)
+            .filter(models.User.is_active)
+            .filter(models.User.id == id)
+            .first()
+        )
+
+    def get_active_user_by_username(self, db: Session, username: str) -> models.User | None:
+        return (
+            db.query(models.User)
+            .filter(models.User.is_active)
+            .filter(models.User.username == username)
+            .first()
+        )
 
 
 user = User()

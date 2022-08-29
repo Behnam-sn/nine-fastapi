@@ -82,7 +82,7 @@ def test_get_deactivated_post_by_id():
         f"{settings.API_V1_STR}/posts/{post['id']}",
     )
 
-    assert response.status_code == 403
+    assert response.status_code == 404
 
 
 def test_update_post():
@@ -148,7 +148,7 @@ def test_update_deactivated_post():
         json=data
     )
 
-    assert response.status_code == 403
+    assert response.status_code == 404
 
 
 def test_unauthorized_update_post():

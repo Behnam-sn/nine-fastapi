@@ -67,7 +67,7 @@ def test_follow_deactivated_user():
         headers=token,
     )
 
-    assert response.status_code == 403
+    assert response.status_code == 404
 
 
 def test_user_follow_themself():
@@ -161,7 +161,7 @@ def test_unfollow_deactivated_user():
         headers=token,
     )
 
-    assert response.status_code == 403
+    assert response.status_code == 404
 
 
 def test_user_unfollow_themself():

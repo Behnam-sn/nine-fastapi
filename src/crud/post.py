@@ -71,6 +71,14 @@ class Post():
             .first()
         )
 
+    def get_active_post_by_id(self, db: Session, id: int) -> models.Post | None:
+        return (
+            db.query(models.Post)
+            .filter(models.Post.is_active == True, models.Post.is_owner_active == True)
+            .filter(models.Post.id == id)
+            .first()
+        )
+
     def get_all_active_posts_count(self, db: Session) -> int:
         return (
             db.query(models.Post)

@@ -34,13 +34,10 @@ def like_post(
     current_user: models.User = Depends(deps.get_current_user),
     db: Session = Depends(deps.get_db),
 ):
-    db_post = crud.post.get_by_id(db, id=post_id)
+    db_post = crud.post.get_active_post_by_id(db, id=post_id)
 
     if db_post is None:
         raise HTTPException(status_code=404, detail="Post not found")
-
-    if not db_post.is_active:
-        raise HTTPException(status_code=403, detail="Post is not available")
 
     db_like = crud.like.get_like_by_post_id_and_owner_id(
         db, post_id=post_id, owner_id=current_user.id
@@ -60,13 +57,10 @@ def unlike_post(
     current_user: models.User = Depends(deps.get_current_user),
     db: Session = Depends(deps.get_db),
 ):
-    db_post = crud.post.get_by_id(db, id=post_id)
+    db_post = crud.post.get_active_post_by_id(db, id=post_id)
 
     if db_post is None:
         raise HTTPException(status_code=404, detail="Post not found")
-
-    if not db_post.is_active:
-        raise HTTPException(status_code=403, detail="Post is not available")
 
     db_like = crud.like.get_like_by_post_id_and_owner_id(
         db, post_id=post_id, owner_id=current_user.id
@@ -86,13 +80,10 @@ def like_comment(
     current_user: models.User = Depends(deps.get_current_user),
     db: Session = Depends(deps.get_db),
 ):
-    db_comment = crud.comment.get_by_id(db, id=comment_id)
+    db_comment = crud.comment.get_active_comment_by_id(db, id=comment_id)
 
     if db_comment is None:
         raise HTTPException(status_code=404, detail="Comment not found")
-
-    if not db_comment.is_active:
-        raise HTTPException(status_code=403, detail="Comment is not available")
 
     db_like = crud.like.get_like_by_comment_id_and_owner_id(
         db, comment_id=comment_id, owner_id=current_user.id
@@ -112,13 +103,10 @@ def unlike_comment(
     current_user: models.User = Depends(deps.get_current_user),
     db: Session = Depends(deps.get_db),
 ):
-    db_comment = crud.comment.get_by_id(db, id=comment_id)
+    db_comment = crud.comment.get_active_comment_by_id(db, id=comment_id)
 
     if db_comment is None:
         raise HTTPException(status_code=404, detail="Comment not found")
-
-    if not db_comment.is_active:
-        raise HTTPException(status_code=403, detail="Comment is not available")
 
     db_like = crud.like.get_like_by_comment_id_and_owner_id(
         db, comment_id=comment_id, owner_id=current_user.id
@@ -137,7 +125,7 @@ def get_active_likes_count_by_owner_id(
     owner_id: int,
     db: Session = Depends(deps.get_db)
 ):
-    db_user = crud.user.get_by_id(db, id=owner_id)
+    db_user = crud.user.get_active_user_by_id(db, id=owner_id)
 
     if db_user is None:
         raise HTTPException(status_code=404, detail="User not found")
@@ -152,7 +140,7 @@ def get_active_likes_ids_by_owner_id(
     limit: int = 100,
     db: Session = Depends(deps.get_db),
 ):
-    db_user = crud.user.get_by_id(db, id=owner_id)
+    db_user = crud.user.get_active_user_by_id(db, id=owner_id)
 
     if db_user is None:
         raise HTTPException(status_code=404, detail="User not found")
@@ -165,7 +153,7 @@ def get_active_likes_count_by_post_id(
     post_id: int,
     db: Session = Depends(deps.get_db)
 ):
-    db_post = crud.post.get_by_id(db, id=post_id)
+    db_post = crud.post.get_active_post_by_id(db, id=post_id)
 
     if db_post is None:
         raise HTTPException(status_code=404, detail="Post not found")
@@ -180,7 +168,7 @@ def get_active_likes_ids_by_post_id(
     limit: int = 100,
     db: Session = Depends(deps.get_db),
 ):
-    db_post = crud.post.get_by_id(db, id=post_id)
+    db_post = crud.post.get_active_post_by_id(db, id=post_id)
 
     if db_post is None:
         raise HTTPException(status_code=404, detail="Post not found")
@@ -193,7 +181,7 @@ def get_active_likes_count_by_comment_id(
     comment_id: int,
     db: Session = Depends(deps.get_db)
 ):
-    db_comment = crud.comment.get_by_id(db, id=comment_id)
+    db_comment = crud.comment.get_active_comment_by_id(db, id=comment_id)
 
     if db_comment is None:
         raise HTTPException(status_code=404, detail="Comment not found")
@@ -208,7 +196,7 @@ def get_active_likes_ids_by_comment_id(
     limit: int = 100,
     db: Session = Depends(deps.get_db),
 ):
-    db_comment = crud.comment.get_by_id(db, id=comment_id)
+    db_comment = crud.comment.get_active_comment_by_id(db, id=comment_id)
 
     if db_comment is None:
         raise HTTPException(status_code=404, detail="Comment not found")

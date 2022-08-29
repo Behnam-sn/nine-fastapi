@@ -12,12 +12,12 @@ def get_all_active_users(
     limit: int = 100,
     db: Session = Depends(deps.get_db),
 ):
-    return crud.user.get_all_active(db, skip=skip, limit=limit)
+    return crud.user.get_all_active_users(db, skip=skip, limit=limit)
 
 
 @router.get("/current-user/", response_model=schemas.User)
 def get_current_user(
-    current_user: models.User = Depends(deps.get_current_active_user),
+    current_user: models.User = Depends(deps.get_current_user),
 ):
     return current_user
 
@@ -43,13 +43,10 @@ def get_active_user_by_username(
     username: str,
     db: Session = Depends(deps.get_db),
 ):
-    db_user = crud.user.get_by_username(db, username=username)
+    db_user = crud.user.get_active_user_by_username(db, username=username)
 
     if db_user is None:
         raise HTTPException(status_code=404, detail="User not found")
-
-    if not db_user.is_active:
-        raise HTTPException(status_code=403, detail="User is not active")
 
     return db_user
 
@@ -60,10 +57,11 @@ def update_user(
     current_user: models.User = Depends(deps.get_current_user),
     db: Session = Depends(deps.get_db)
 ):
-    db_user = crud.user.get_by_username(db, username=current_user.username)
+    db_user = crud.user.get_active_user_by_username(
+        db, username=current_user.username)
 
-    if not db_user.is_active:
-        raise HTTPException(status_code=403, detail="User is not available")
+    if db_user is None:
+        raise HTTPException(status_code=404, detail="User not found")
 
     if current_user.username != user_update.username and crud.user.get_by_username(db, username=user_update.username):
         raise HTTPException(
@@ -97,7 +95,7 @@ def deactivate_user(
     current_user: models.User = Depends(deps.get_current_user),
     db: Session = Depends(deps.get_db)
 ):
-    db_user = crud.user.get_by_username(db, username=username)
+    db_user = crud.user.get_active_user_by_username(db, username=username)
 
     if db_user is None:
         raise HTTPException(status_code=404, detail="User not found")
