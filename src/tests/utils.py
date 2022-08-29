@@ -71,6 +71,13 @@ def create_random_post(token: str, text: str = random_lower_string()):
     return response.json()
 
 
+def get_post(post_id: int):
+    response = client.get(
+        f"{settings.API_V1_STR}/posts/{post_id}",
+    )
+    return response.json()
+
+
 def deactive_post(id: int, token: str):
     client.put(
         f"{settings.API_V1_STR}/posts/deactivate/{id}",
@@ -184,7 +191,6 @@ def unlike_post(post_id: int, token: str):
         f"{settings.API_V1_STR}/likes/post/{post_id}",
         headers=token,
     )
-
     return response.json()
 
 
@@ -193,7 +199,6 @@ def like_comment(comment_id: int, token: str):
         f"{settings.API_V1_STR}/likes/comment/{comment_id}",
         headers=token,
     )
-
     return response.json()
 
 
@@ -202,7 +207,13 @@ def unlike_comment(comment_id: int, token: str):
         f"{settings.API_V1_STR}/likes/comment/{comment_id}",
         headers=token,
     )
+    return response.json()
 
+
+def active_likes_by_comment_id(comment_id: int):
+    response = client.get(
+        f"{settings.API_V1_STR}/likes/comment/count/{comment_id}",
+    )
     return response.json()
 
 
@@ -211,5 +222,4 @@ def follow_user(following_id: int, token: str):
         f"{settings.API_V1_STR}/follows/{following_id}",
         headers=token,
     )
-
     return response.json()
