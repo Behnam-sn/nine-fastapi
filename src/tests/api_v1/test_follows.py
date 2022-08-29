@@ -1,6 +1,6 @@
 from src.core.config import settings
 from src.tests.conftest import client
-from src.tests.utils import (create_random_user, deactive_user, follow_user,
+from src.tests.utils import (create_random_user, deactivate_user, follow_user,
                              get_user, random_lower_string)
 
 
@@ -60,7 +60,7 @@ def test_follow_deactivated_user():
     )
     second_user = get_user(username=second_username)
 
-    deactive_user(username=second_username, token=second_token)
+    deactivate_user(username=second_username, token=second_token)
 
     response = client.post(
         f"{settings.API_V1_STR}/follows/{second_user['id']}",
@@ -154,7 +154,7 @@ def test_unfollow_deactivated_user():
     )
     second_user = get_user(username=second_username)
 
-    deactive_user(username=second_username, token=second_token)
+    deactivate_user(username=second_username, token=second_token)
 
     response = client.delete(
         f"{settings.API_V1_STR}/follows/{second_user['id']}",

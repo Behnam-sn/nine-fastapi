@@ -50,7 +50,7 @@ def authentication_headers(username: str, password: str):
     return {"Authorization": f"Bearer {auth_token}"}
 
 
-def deactive_user(username: str, token: str):
+def deactivate_user(username: str, token: str):
     client.put(
         f"{settings.API_V1_STR}/users/deactivate/{username}",
         headers=token,
@@ -78,7 +78,7 @@ def get_post(post_id: int):
     return response.json()
 
 
-def deactive_post(id: int, token: str):
+def deactivate_post(id: int, token: str):
     client.put(
         f"{settings.API_V1_STR}/posts/deactivate/{id}",
         headers=token,
@@ -128,7 +128,7 @@ def create_random_comment(post_id: int, token: str, text: str = random_lower_str
     return response.json()
 
 
-def deactive_comment(id: int, token: str):
+def deactivate_comment(id: int, token: str):
     client.put(
         f"{settings.API_V1_STR}/comments/deactivate/{id}",
         headers=token,

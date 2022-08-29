@@ -1,9 +1,9 @@
 from src.core.config import settings
 from src.tests.conftest import client
 from src.tests.utils import (create_random_comment, create_random_post,
-                             create_random_user, deactive_comment,
-                             deactive_post, get_user, like_comment, like_post,
-                             random_lower_string)
+                             create_random_user, deactivate_comment,
+                             deactivate_post, get_user, like_comment,
+                             like_post, random_lower_string)
 
 
 def test_get_all_active_likes():
@@ -55,7 +55,7 @@ def test_like_deactivated_post():
     token = create_random_user(username=username, password=password)
     post = create_random_post(token=token)
 
-    deactive_post(id=post["id"], token=token)
+    deactivate_post(id=post["id"], token=token)
 
     response = client.post(
         f"{settings.API_V1_STR}/likes/post/{post['id']}",
@@ -128,7 +128,7 @@ def test_unlike_deactivated_post():
     post = create_random_post(token=token)
 
     like_post(post_id=post["id"], token=token)
-    deactive_post(id=post["id"], token=token)
+    deactivate_post(id=post["id"], token=token)
 
     response = client.delete(
         f"{settings.API_V1_STR}/likes/post/{post['id']}",
@@ -197,7 +197,7 @@ def test_like_deactivated_comment():
     post = create_random_post(token=token)
     comment = create_random_comment(post_id=post["id"], token=token)
 
-    deactive_comment(id=comment["id"], token=token)
+    deactivate_comment(id=comment["id"], token=token)
 
     response = client.post(
         f"{settings.API_V1_STR}/likes/comment/{comment['id']}",
@@ -274,7 +274,7 @@ def test_unlike_deactivated_comment():
     comment = create_random_comment(post_id=post["id"], token=token)
 
     like_comment(comment_id=comment["id"], token=token)
-    deactive_comment(id=comment["id"], token=token)
+    deactivate_comment(id=comment["id"], token=token)
 
     response = client.delete(
         f"{settings.API_V1_STR}/likes/comment/{comment['id']}",
