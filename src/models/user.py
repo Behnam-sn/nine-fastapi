@@ -13,12 +13,13 @@ class User(Base):
     name = Column(String, index=True, nullable=True)
     bio = Column(String, index=True, nullable=True)
     posts = Column(Integer, default=0)
-    comments = Column(Integer, default=0)
-    likes = Column(Integer, default=0)
+    # comments = Column(Integer, default=0)
+    # likes = Column(Integer, default=0)
     followers = Column(Integer, default=0)
     followings = Column(Integer, default=0)
-    is_active = Column(Boolean, default=True)
     is_superuser = Column(Boolean, default=False)
+    is_active = Column(Boolean, default=True)
+
     created_at = Column(
         DateTime(timezone=True), server_default=func.now()
     )
