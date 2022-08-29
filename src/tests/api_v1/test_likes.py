@@ -1,13 +1,12 @@
 from src.core.config import settings
 from src.tests.conftest import client
-from src.tests.utils import (authentication_headers, create_random_comment,
-                             create_random_post, create_random_user,
-                             deactive_comment, deactive_post, get_user,
-                             like_comment, like_post, random_lower_string,
-                             unlike_comment, unlike_post)
+from src.tests.utils import (create_random_comment, create_random_post,
+                             create_random_user, deactive_comment,
+                             deactive_post, get_user, like_comment, like_post,
+                             random_lower_string)
 
 
-def test_get_all_likes():
+def test_get_all_active_likes():
     response = client.get(
         f"{settings.API_V1_STR}/likes/all/",
     )
@@ -301,7 +300,7 @@ def test_unlike_not_liked_comment():
     assert response.status_code == 400
 
 
-def test_get_likes_count_by_owner_id():
+def test_get_active_likes_count_by_owner_id():
     username = random_lower_string()
     password = random_lower_string()
 
@@ -336,7 +335,7 @@ def test_get_not_existing_user_likes_count_by_owner_id():
     assert response.status_code == 404
 
 
-def test_get_likes_ids_by_owner_id():
+def test_get_active_likes_ids_by_owner_id():
     username = random_lower_string()
     password = random_lower_string()
 
@@ -371,7 +370,7 @@ def test_get_not_existing_user_likes_ids_by_owner_id():
     assert response.status_code == 404
 
 
-def test_get_likes_count_by_post_id():
+def test_get_active_likes_count_by_post_id():
     username = random_lower_string()
     password = random_lower_string()
 
@@ -403,7 +402,7 @@ def test_get_not_existing_post_likes_count_by_post_id():
     assert response.status_code == 404
 
 
-def test_get_likes_ids_by_post_id():
+def test_get_active_likes_ids_by_post_id():
     username = random_lower_string()
     password = random_lower_string()
 
@@ -435,7 +434,7 @@ def test_get_not_existing_post_likes_ids_by_post_id():
     assert response.status_code == 404
 
 
-def test_get_likes_count_by_comment_id():
+def test_get_active_likes_count_by_comment_id():
     username = random_lower_string()
     password = random_lower_string()
 
@@ -469,7 +468,7 @@ def test_get_not_existing_comment_likes_count_by_comment_id():
     assert response.status_code == 404
 
 
-def test_get_likes_ids_by_comment_id():
+def test_get_active_likes_ids_by_comment_id():
     username = random_lower_string()
     password = random_lower_string()
 

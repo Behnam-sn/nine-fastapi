@@ -1,7 +1,9 @@
 from src.core.config import settings
 from src.tests.conftest import client
-from src.tests.utils import (authentication_headers, create_random_user,
-                             deactive_user, random_lower_string)
+from src.tests.utils import (active_posts_count_by_owner_id,
+                             authentication_headers, create_random_comment,
+                             create_random_post, create_random_user,
+                             deactive_user, get_user, random_lower_string)
 
 
 def test_get_all_active_users():
@@ -210,6 +212,24 @@ def test_unauthorized_activate_user():
     )
 
     assert response.status_code == 401
+
+
+def test_deactivate_user():
+    username = random_lower_string()
+    password = random_lower_string()
+
+    token = create_random_user(username=username, password=password)
+    user = get_user(username=username)
+    post = create_random_post(token=token)
+    comment = create_random_comment(post_id=post["id"], token=token)
+
+    user_post_count = active_posts_count_by_owner_id(owner_id=user["id"])
+
+    deactive_user(username=username, token=token)
+
+    new_user_post_count = active_posts_count_by_owner_id(owner_id=user["id"])
+
+    assert new_user_post_count == user_post_count - 1
 
 
 def test_deactivate_user_as_superuser():

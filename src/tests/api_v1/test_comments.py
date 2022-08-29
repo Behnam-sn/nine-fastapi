@@ -4,11 +4,13 @@ from src.tests.utils import (active_comments_count_by_owner_id,
                              active_comments_count_by_post_id,
                              active_comments_ids_by_owner_id,
                              active_comments_ids_by_post_id,
+                             active_likes_by_comment_id,
                              all_active_comments_count,
                              all_active_comments_ids, authentication_headers,
                              create_random_comment, create_random_post,
                              create_random_user, deactive_comment,
-                             deactive_post, get_user, random_lower_string)
+                             deactive_post, get_post, get_user, like_comment,
+                             random_lower_string)
 
 
 def test_create_comment():
@@ -420,6 +422,44 @@ def test_unauthorized_deactivate_comment():
     )
 
     assert response.status_code == 401
+
+
+def test_deactivated_comment_post():
+    username = random_lower_string()
+    password = random_lower_string()
+
+    token = create_random_user(username=username, password=password)
+    post = create_random_post(token=token)
+    comment = create_random_comment(post_id=post["id"], token=token)
+
+    post_comments_count = get_post(post_id=post["id"])["comments"]
+
+    deactive_comment(id=comment["id"], token=token)
+
+    new_post_comments_count = get_post(post_id=post["id"])["comments"]
+
+    assert new_post_comments_count == post_comments_count - 1
+
+
+def test_deactivated_comment_likes():
+    username = random_lower_string()
+    password = random_lower_string()
+
+    token = create_random_user(username=username, password=password)
+    post = create_random_post(token=token)
+    comment = create_random_comment(post_id=post["id"], token=token)
+
+    like_comment(comment_id=comment["id"], token=token)
+
+    comment_likes_count = active_likes_by_comment_id(comment_id=comment["id"])
+
+    deactive_comment(id=comment["id"], token=token)
+
+    new_comment_likes_count = active_likes_by_comment_id(
+        comment_id=comment["id"]
+    )
+
+    assert new_comment_likes_count == comment_likes_count - 1
 
 
 def test_get_all_active_comments_count():
