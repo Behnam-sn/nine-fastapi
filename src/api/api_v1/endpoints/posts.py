@@ -92,7 +92,7 @@ def activate_post(
     if not current_user.is_superuser:
         raise HTTPException(status_code=401, detail="Not Authenticated")
 
-    return crud.post.active(db, id=id)
+    return crud.post.activate(db, id=id)
 
 
 @router.put("/deactivate/{id}", response_model=schemas.Post)
@@ -109,7 +109,7 @@ def deactivate_post(
     if current_user.is_superuser is False and current_user.id != db_post.owner_id:
         raise HTTPException(status_code=401, detail="Not Authenticated")
 
-    return crud.post.deactive(db, id=id)
+    return crud.post.deactivate(db, id=id)
 
 
 @router.get("/count/", response_model=int)
@@ -138,6 +138,9 @@ def get_active_posts_count_by_owner_id(
     if db_user is None:
         raise HTTPException(status_code=404, detail="User not found")
 
+    if not db_user.is_active:
+        raise HTTPException(status_code=404, detail="User not found")
+
     return crud.post.get_active_posts_count_by_owner_id(db, owner_id=owner_id)
 
 
@@ -151,6 +154,9 @@ def get_active_posts_ids_by_owner_id(
     db_user = crud.user.get_by_id(db, id=owner_id)
 
     if db_user is None:
+        raise HTTPException(status_code=404, detail="User not found")
+
+    if not db_user.is_active:
         raise HTTPException(status_code=404, detail="User not found")
 
     return crud.post.get_active_posts_by_owner_id(db, owner_id=owner_id, skip=skip, limit=limit)
