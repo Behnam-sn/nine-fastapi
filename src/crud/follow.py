@@ -1,5 +1,7 @@
 from sqlalchemy.orm import Session
 from src import models
+from src.crud.utils import (update_user_followers_count,
+                            update_user_followings_count)
 
 
 class Follow():
@@ -11,8 +13,8 @@ class Follow():
         db.add(db_follow)
         db.commit()
 
-        self.update_followers_count(db, user_id=following_id)
-        self.update_followings_count(db, user_id=follower_id)
+        update_user_followers_count(db, user_id=following_id)
+        update_user_followings_count(db, user_id=follower_id)
 
         db.refresh(db_follow)
         return db_follow
@@ -24,8 +26,8 @@ class Follow():
         db.delete(db_follow)
         db.commit()
 
-        self.update_followers_count(db, user_id=following_id)
-        self.update_followings_count(db, user_id=follower_id)
+        update_user_followers_count(db, user_id=following_id)
+        update_user_followings_count(db, user_id=follower_id)
 
         return db_follow
 
@@ -84,32 +86,6 @@ class Follow():
             .limit(limit)
             .all()
         )
-
-    def update_followings_count(self, db: Session, user_id: int):
-        db_user = (
-            db.query(models.User)
-            .filter(models.User.id == user_id)
-            .first()
-        )
-        count = self.get_followings_count_by_user_id(db, user_id=user_id)
-
-        setattr(db_user, "followings", count)
-
-        db.commit()
-        db.refresh(db_user)
-
-    def update_followers_count(self, db: Session, user_id: int):
-        db_user = (
-            db.query(models.User)
-            .filter(models.User.id == user_id)
-            .first()
-        )
-        count = self.get_followers_count_by_user_id(db, user_id=user_id)
-
-        setattr(db_user, "followers", count)
-
-        db.commit()
-        db.refresh(db_user)
 
 
 follow = Follow()

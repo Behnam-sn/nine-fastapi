@@ -2,6 +2,12 @@ from sqlalchemy.orm import Session
 from sqlalchemy.sql import func
 from src import models, schemas
 from src.core.security import get_password_hash, verify_password
+from src.crud.utils import (activate_user_comments, activate_user_followers,
+                            activate_user_followings, activate_user_likes,
+                            activate_user_posts, deactivate_user_comments,
+                            deactivate_user_followers,
+                            deactivate_user_followings, deactivate_user_likes,
+                            deactivate_user_posts)
 
 
 class User():
@@ -68,6 +74,13 @@ class User():
         db_user = self.get_by_username(db, username=username)
         setattr(db_user, "is_active", True)
         db.commit()
+
+        activate_user_posts(db, owner_id=getattr(db_user, "id"))
+        activate_user_comments(db, owner_id=getattr(db_user, "id"))
+        activate_user_likes(db, owner_id=getattr(db_user, "id"))
+        activate_user_followers(db, user_id=getattr(db_user, "id"))
+        activate_user_followings(db, user_id=getattr(db_user, "id"))
+
         db.refresh(db_user)
         return db_user
 
@@ -75,6 +88,13 @@ class User():
         db_user = self.get_by_username(db, username=username)
         setattr(db_user, "is_active", False)
         db.commit()
+
+        deactivate_user_posts(db, owner_id=getattr(db_user, "id"))
+        deactivate_user_comments(db, owner_id=getattr(db_user, "id"))
+        deactivate_user_likes(db, owner_id=getattr(db_user, "id"))
+        # deactivate_user_followers(db, user_id=getattr(db_user, "id"))
+        # deactivate_user_followings(db, user_id=getattr(db_user, "id"))
+
         db.refresh(db_user)
         return db_user
 

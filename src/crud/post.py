@@ -1,6 +1,9 @@
 from sqlalchemy.orm import Session
 from sqlalchemy.sql import func
 from src import models, schemas
+from src.crud.utils import (activate_post_likes, deactivate_post_likes,
+                            update_post_comments_count,
+                            update_user_posts_count)
 
 
 class Post():
@@ -12,7 +15,7 @@ class Post():
         db.add(db_post)
         db.commit()
 
-        self.update_owner_count(db, owner_id=owner_id)
+        update_user_posts_count(db, owner_id=owner_id)
 
         db.refresh(db_post)
         return db_post
@@ -36,24 +39,27 @@ class Post():
         db.delete(db_post)
         db.commit()
 
-        self.update_owner_count(db, owner_id=getattr(db_post, "owner_id"))
+        update_user_posts_count(db, owner_id=getattr(db_post, "owner_id"))
 
-    def active(self, db: Session, id: int) -> models.Post:
+    def activate(self, db: Session, id: int) -> models.Post:
         db_post = self.get_by_id(db, id=id)
         setattr(db_post, "is_active", True)
         db.commit()
 
-        self.update_owner_count(db, owner_id=getattr(db_post, "owner_id"))
+        activate_post_likes(db, post_id=id)
+        update_post_comments_count(db, post_id=id)
+        update_user_posts_count(db, owner_id=getattr(db_post, "owner_id"))
 
         db.refresh(db_post)
         return db_post
 
-    def deactive(self, db: Session, id: int) -> models.Post:
+    def deactivate(self, db: Session, id: int) -> models.Post:
         db_post = self.get_by_id(db, id=id)
         setattr(db_post, "is_active", False)
         db.commit()
 
-        self.update_owner_count(db, owner_id=getattr(db_post, "owner_id"))
+        deactivate_post_likes(db, post_id=id)
+        update_user_posts_count(db, owner_id=getattr(db_post, "owner_id"))
 
         db.refresh(db_post)
         return db_post
@@ -68,14 +74,14 @@ class Post():
     def get_all_active_posts_count(self, db: Session) -> int:
         return (
             db.query(models.Post)
-            .filter(models.Post.is_active == True)
+            .filter(models.Post.is_active == True, models.Post.is_owner_active == True)
             .count()
         )
 
     def get_all_active_posts(self, db: Session, skip: int = 0, limit: int = 100) -> list[models.Post]:
         return (
             db.query(models.Post)
-            .filter(models.Post.is_active == True)
+            .filter(models.Post.is_active == True, models.Post.is_owner_active == True)
             .order_by(models.Post.id)
             .offset(skip)
             .limit(limit)
@@ -85,32 +91,21 @@ class Post():
     def get_active_posts_count_by_owner_id(self, db: Session, owner_id: int) -> int:
         return (
             db.query(models.Post)
-            .filter(models.Post.owner_id == owner_id, models.Post.is_active == True)
+            .filter(models.Post.is_active == True, models.Post.is_owner_active == True)
+            .filter(models.Post.owner_id == owner_id)
             .count()
         )
 
     def get_active_posts_by_owner_id(self, db: Session, owner_id: int, skip: int = 0, limit: int = 100) -> list[models.Post]:
         return (
             db.query(models.Post)
-            .filter(models.Post.owner_id == owner_id, models.Post.is_active == True)
+            .filter(models.Post.is_active == True, models.Post.is_owner_active == True)
+            .filter(models.Post.owner_id == owner_id)
             .order_by(models.Post.id)
             .offset(skip)
             .limit(limit)
             .all()
         )
-
-    def update_owner_count(self, db: Session, owner_id: int):
-        db_user = (
-            db.query(models.User)
-            .filter(models.User.id == owner_id)
-            .first()
-        )
-        count = self.get_active_posts_count_by_owner_id(db, owner_id=owner_id)
-
-        setattr(db_user, "posts", count)
-
-        db.commit()
-        db.refresh(db_user)
 
 
 post = Post()
