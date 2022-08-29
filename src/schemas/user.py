@@ -46,12 +46,12 @@ class User(BaseModel):
     name: str
     bio: str | None = None
     posts: int
-    comments: int
-    likes: int
+    # comments: int
+    # likes: int
     followers: int
     followings: int
-    is_active: bool
     is_superuser: bool
+    is_active: bool
     created_at: datetime
     modified_at: datetime
 
