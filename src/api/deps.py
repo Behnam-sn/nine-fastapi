@@ -45,13 +45,14 @@ async def get_current_user(db: Session = Depends(get_db), token: str = Depends(o
         raise credentials_exception from e
 
     user = crud.user.get_by_username(db, username=token_data.username)
+
     if user is None:
         raise credentials_exception
 
     return user
 
 
-async def get_current_active_user(current_user: models.User = Depends(get_current_user)):
-    # if current_user.disabled:
-    #     raise HTTPException(status_code=400, detail="Inactive user")
-    return current_user
+# async def get_current_active_user(current_user: models.User = Depends(get_current_user)):
+#     # if current_user.disabled:
+#     #     raise HTTPException(status_code=400, detail="Inactive user")
+#     return current_user
