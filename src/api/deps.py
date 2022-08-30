@@ -56,3 +56,11 @@ async def get_current_user(db: Session = Depends(get_db), token: str = Depends(o
 #     # if current_user.disabled:
 #     #     raise HTTPException(status_code=400, detail="Inactive user")
 #     return current_user
+
+async def get_current_active_superuser(current_user: models.User = Depends(get_current_user)) -> models.User:
+    if not current_user.is_superuser:
+        raise HTTPException(
+            status_code=401, detail="The user doesn't have enough privileges"
+        )
+
+    return current_user
