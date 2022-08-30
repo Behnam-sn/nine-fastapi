@@ -1,10 +1,11 @@
 from src.core.config import settings
 from src.tests.conftest import client
-from src.tests.utils import (active_posts_count_by_owner_id,
-                             active_posts_ids_by_owner_id,
-                             all_active_posts_count, all_active_posts_ids,
-                             authentication_headers, create_random_post,
-                             create_random_user, deactivate_post, get_user,
+from src.tests.utils import (authentication_headers, create_random_post,
+                             create_random_user, deactivate_post,
+                             deactivate_user, get_active_user,
+                             get_all_posts_count, get_all_posts_ids,
+                             get_posts_count_by_owner_id,
+                             get_posts_ids_by_owner_id, get_user,
                              random_lower_string)
 
 
@@ -13,7 +14,7 @@ def test_create_post():
     password = random_lower_string()
 
     token = create_random_user(username=username, password=password)
-    user = get_user(username=username)
+    user = get_active_user(username=username)
 
     data = {
         "text": random_lower_string()
@@ -29,60 +30,6 @@ def test_create_post():
     assert response.status_code == 200
     assert post["text"] == data["text"]
     assert post["owner_id"] == user["id"]
-
-
-def test_get_all_active_posts():
-    response = client.get(
-        f"{settings.API_V1_STR}/posts/all/",
-    )
-
-    assert response.status_code == 200
-
-
-def test_get_active_post_by_id():
-    username = random_lower_string()
-    password = random_lower_string()
-
-    token = create_random_user(username=username, password=password)
-    random_post = create_random_post(token=token)
-
-    response = client.get(
-        f"{settings.API_V1_STR}/posts/{random_post['id']}",
-    )
-    post = response.json()
-
-    assert response.status_code == 200
-    assert random_post == post
-
-
-def test_get_not_existing_post_by_id():
-    username = random_lower_string()
-    password = random_lower_string()
-
-    token = create_random_user(username=username, password=password)
-    post = create_random_post(token=token)
-
-    response = client.get(
-        f"{settings.API_V1_STR}/posts/{post['id'] + 1}",
-    )
-
-    assert response.status_code == 404
-
-
-def test_get_deactivated_post_by_id():
-    username = random_lower_string()
-    password = random_lower_string()
-
-    token = create_random_user(username=username, password=password)
-    post = create_random_post(token=token)
-
-    deactivate_post(id=post["id"], token=token)
-
-    response = client.get(
-        f"{settings.API_V1_STR}/posts/{post['id']}",
-    )
-
-    assert response.status_code == 404
 
 
 def test_update_post():
@@ -129,26 +76,26 @@ def test_update_not_existing_post():
     assert response.status_code == 404
 
 
-def test_update_deactivated_post():
-    username = random_lower_string()
-    password = random_lower_string()
+# def test_update_deactivated_post():
+#     username = random_lower_string()
+#     password = random_lower_string()
 
-    token = create_random_user(username=username, password=password)
-    post = create_random_post(token=token)
+#     token = create_random_user(username=username, password=password)
+#     post = create_random_post(token=token)
 
-    deactivate_post(id=post["id"], token=token)
+#     deactivate_post(id=post["id"], token=token)
 
-    data = {
-        "text": random_lower_string()
-    }
+#     data = {
+#         "text": random_lower_string()
+#     }
 
-    response = client.get(
-        f"{settings.API_V1_STR}/posts/{post['id']}",
-        headers=token,
-        json=data
-    )
+#     response = client.get(
+#         f"{settings.API_V1_STR}/posts/{post['id']}",
+#         headers=token,
+#         json=data
+#     )
 
-    assert response.status_code == 404
+#     assert response.status_code == 404
 
 
 def test_unauthorized_update_post():
@@ -356,7 +303,153 @@ def test_unauthorized_deactivate_post():
     assert response.status_code == 401
 
 
-def test_get_all_active_posts_count():
+def test_get_all_posts_as_super_user():
+    superuser_token = authentication_headers(
+        username=settings.SUPERUSER_USERNAME,
+        password=settings.SUPERUSER_PASSWORD
+    )
+
+    response = client.get(
+        f"{settings.API_V1_STR}/posts/all/",
+        headers=superuser_token,
+    )
+
+    assert response.status_code == 200
+
+
+def test_get_all_posts_as_normal_user():
+    username = random_lower_string()
+    password = random_lower_string()
+
+    token = create_random_user(username=username, password=password)
+
+    response = client.get(
+        f"{settings.API_V1_STR}/posts/all/",
+        headers=token,
+    )
+
+    assert response.status_code == 401
+
+
+def test_get_all_posts_is_all():
+    username = random_lower_string()
+    password = random_lower_string()
+
+    token = create_random_user(username=username, password=password)
+    post = create_random_post(token=token)
+
+    all_posts_count = get_all_posts_count()
+    deactivate_post(id=post["id"], token=token)
+    new_all_posts_count = get_all_posts_count()
+
+    assert new_all_posts_count == all_posts_count
+
+
+def test_get_post_by_id_as_super_user():
+    username = random_lower_string()
+    password = random_lower_string()
+
+    token = create_random_user(username=username, password=password)
+    post = create_random_post(token=token)
+
+    superuser_token = authentication_headers(
+        username=settings.SUPERUSER_USERNAME,
+        password=settings.SUPERUSER_PASSWORD
+    )
+
+    response = client.get(
+        f"{settings.API_V1_STR}/posts/{post['id']}",
+        headers=superuser_token,
+    )
+    response_post = response.json()
+
+    assert response.status_code == 200
+    assert response_post == post
+
+
+def test_get_post_by_id_as_normal_user():
+    username = random_lower_string()
+    password = random_lower_string()
+
+    token = create_random_user(username=username, password=password)
+    post = create_random_post(token=token)
+
+    response = client.get(
+        f"{settings.API_V1_STR}/posts/{post['id']}",
+        headers=token,
+    )
+
+    assert response.status_code == 401
+
+
+def test_get_not_existing_post_by_id():
+    username = random_lower_string()
+    password = random_lower_string()
+
+    token = create_random_user(username=username, password=password)
+    post = create_random_post(token=token)
+
+    superuser_token = authentication_headers(
+        username=settings.SUPERUSER_USERNAME,
+        password=settings.SUPERUSER_PASSWORD
+    )
+
+    response = client.get(
+        f"{settings.API_V1_STR}/posts/{post['id'] + 1}",
+        headers=superuser_token,
+    )
+
+    assert response.status_code == 404
+
+
+def test_get_deactivated_post_by_id():
+    username = random_lower_string()
+    password = random_lower_string()
+
+    token = create_random_user(username=username, password=password)
+    post = create_random_post(token=token)
+
+    deactivate_post(id=post["id"], token=token)
+
+    superuser_token = authentication_headers(
+        username=settings.SUPERUSER_USERNAME,
+        password=settings.SUPERUSER_PASSWORD
+    )
+
+    response = client.get(
+        f"{settings.API_V1_STR}/posts/{post['id']}",
+        headers=superuser_token,
+    )
+    response_post = response.json()
+
+    assert response.status_code == 200
+    assert response_post["id"] == post["id"]
+    assert response_post["is_active"] == False
+
+
+def test_get_all_posts_count_as_super_user():
+    username = random_lower_string()
+    password = random_lower_string()
+
+    token = create_random_user(username=username, password=password)
+    create_random_post(token=token)
+
+    superuser_token = authentication_headers(
+        username=settings.SUPERUSER_USERNAME,
+        password=settings.SUPERUSER_PASSWORD
+    )
+
+    response = client.get(
+        f"{settings.API_V1_STR}/posts/count/",
+        headers=superuser_token,
+    )
+    count = response.json()
+
+    assert response.status_code == 200
+    assert count > 0
+
+
+def test_get_all_posts_count_as_normal_user():
     username = random_lower_string()
     password = random_lower_string()
 
@@ -365,40 +458,43 @@ def test_get_all_active_posts_count():
 
     response = client.get(
         f"{settings.API_V1_STR}/posts/count/",
+        headers=token,
     )
-    count = response.json()
 
-    assert response.status_code == 200
-    assert count > 0
+    assert response.status_code == 401
 
 
-def test_get_all_active_posts_count_is_all_active():
+def test_get_all_posts_count_is_all():
     username = random_lower_string()
     password = random_lower_string()
 
     token = create_random_user(username=username, password=password)
     post = create_random_post(token=token)
 
-    count = all_active_posts_count()
+    all_posts_count = get_all_posts_count()
     deactivate_post(id=post["id"], token=token)
-    new_count = all_active_posts_count()
+    new_all_posts_count = get_all_posts_count()
 
-    assert new_count == count - 1
+    assert new_all_posts_count == all_posts_count
 
 
-def test_get_all_active_posts_ids():
+def test_get_all_posts_ids_as_super_user():
     username = random_lower_string()
     password = random_lower_string()
 
     token = create_random_user(username=username, password=password)
     create_random_post(token=token)
 
-    count = client.get(
-        f"{settings.API_V1_STR}/posts/count/"
-    ).json()
+    count = get_all_posts_count()
+
+    superuser_token = authentication_headers(
+        username=settings.SUPERUSER_USERNAME,
+        password=settings.SUPERUSER_PASSWORD
+    )
 
     response = client.get(
         f"{settings.API_V1_STR}/posts/ids/?limit={count + 10}",
+        headers=superuser_token,
     )
     ids = response.json()
 
@@ -406,23 +502,38 @@ def test_get_all_active_posts_ids():
     assert len(ids) == count
 
 
-def test_get_all_active_posts_ids_is_all_active():
+def test_get_all_posts_ids_as_normal_user():
+    username = random_lower_string()
+    password = random_lower_string()
+
+    token = create_random_user(username=username, password=password)
+    create_random_post(token=token)
+
+    response = client.get(
+        f"{settings.API_V1_STR}/posts/ids/",
+        headers=token,
+    )
+
+    assert response.status_code == 401
+
+
+def test_get_all_posts_ids_is_all():
     username = random_lower_string()
     password = random_lower_string()
 
     token = create_random_user(username=username, password=password)
     post = create_random_post(token=token)
 
-    count = all_active_posts_count()
-    ids = all_active_posts_ids(count=count)
+    count = get_all_posts_count()
+    ids = get_all_posts_ids(count=count)
     deactivate_post(id=post["id"], token=token)
-    new_count = all_active_posts_count()
-    new_ids = all_active_posts_ids(count=new_count)
+    new_count = get_all_posts_count()
+    new_ids = get_all_posts_ids(count=new_count)
 
-    assert len(new_ids) == len(ids) - 1
+    assert len(new_ids) == len(ids)
 
 
-def test_get_active_posts_count_by_owner_id():
+def test_get_posts_count_by_owner_id_as_super_user():
     username = random_lower_string()
     password = random_lower_string()
 
@@ -430,8 +541,14 @@ def test_get_active_posts_count_by_owner_id():
     user = get_user(username=username)
     create_random_post(token=token)
 
+    superuser_token = authentication_headers(
+        username=settings.SUPERUSER_USERNAME,
+        password=settings.SUPERUSER_PASSWORD
+    )
+
     response = client.get(
         f"{settings.API_V1_STR}/posts/owner/count/{user['id']}",
+        headers=superuser_token,
     )
     count = response.json()
 
@@ -439,7 +556,22 @@ def test_get_active_posts_count_by_owner_id():
     assert count == 1
 
 
-def test_get_active_posts_count_by_owner_id_is_all_active():
+def test_get_posts_count_by_owner_id_as_normal_user():
+    username = random_lower_string()
+    password = random_lower_string()
+
+    token = create_random_user(username=username, password=password)
+    user = get_user(username=username)
+
+    response = client.get(
+        f"{settings.API_V1_STR}/posts/owner/count/{user['id']}",
+        headers=token,
+    )
+
+    assert response.status_code == 401
+
+
+def test_get_posts_count_by_owner_id_is_all():
     username = random_lower_string()
     password = random_lower_string()
 
@@ -447,28 +579,83 @@ def test_get_active_posts_count_by_owner_id_is_all_active():
     user = get_user(username=username)
     post = create_random_post(token=token)
 
-    count = active_posts_count_by_owner_id(owner_id=user["id"])
+    count = get_posts_count_by_owner_id(owner_id=user["id"])
     deactivate_post(id=post["id"], token=token)
-    new_count = active_posts_count_by_owner_id(owner_id=user["id"])
+    new_count = get_posts_count_by_owner_id(owner_id=user["id"])
 
-    assert new_count == count - 1
+    assert new_count == count
 
 
-def test_get_active_posts_count_by_not_existing_owner_id():
+def test_get_posts_count_by_not_existing_owner_id():
     username = random_lower_string()
     password = random_lower_string()
 
     create_random_user(username=username, password=password)
     user = get_user(username=username)
 
+    superuser_token = authentication_headers(
+        username=settings.SUPERUSER_USERNAME,
+        password=settings.SUPERUSER_PASSWORD
+    )
+
     response = client.get(
         f"{settings.API_V1_STR}/posts/owner/count/{user['id'] + 1}",
+        headers=superuser_token,
     )
 
     assert response.status_code == 404
 
 
-def test_get_active_posts_ids_by_owner_id():
+def test_get_posts_count_by_deactivated_owner_id():
+    username = random_lower_string()
+    password = random_lower_string()
+
+    token = create_random_user(username=username, password=password)
+    user = get_user(username=username)
+    create_random_post(token=token)
+
+    count = get_posts_count_by_owner_id(owner_id=user["id"])
+    deactivate_user(username=username, token=token)
+
+    superuser_token = authentication_headers(
+        username=settings.SUPERUSER_USERNAME,
+        password=settings.SUPERUSER_PASSWORD
+    )
+
+    response = client.get(
+        f"{settings.API_V1_STR}/posts/owner/count/{user['id']}",
+        headers=superuser_token,
+    )
+    response_count = response.json()
+
+    assert response.status_code == 200
+    assert response_count == count
+
+
+def test_get_posts_ids_by_owner_id_as_super_user():
+    username = random_lower_string()
+    password = random_lower_string()
+
+    token = create_random_user(username=username, password=password)
+    user = get_user(username=username)
+    create_random_post(token=token)
+
+    superuser_token = authentication_headers(
+        username=settings.SUPERUSER_USERNAME,
+        password=settings.SUPERUSER_PASSWORD
+    )
+
+    response = client.get(
+        f"{settings.API_V1_STR}/posts/owner/ids/{user['id']}",
+        headers=superuser_token,
+    )
+    ids = response.json()
+
+    assert response.status_code == 200
+    assert len(ids) == 1
+
+
+def test_get_posts_ids_by_owner_id_as_normal_user():
     username = random_lower_string()
     password = random_lower_string()
 
@@ -478,14 +665,13 @@ def test_get_active_posts_ids_by_owner_id():
 
     response = client.get(
         f"{settings.API_V1_STR}/posts/owner/ids/{user['id']}",
+        headers=token,
     )
-    ids = response.json()
 
-    assert response.status_code == 200
-    assert len(ids) == 1
+    assert response.status_code == 401
 
 
-def test_get_active_posts_ids_by_owner_id_is_all_active():
+def test_get_posts_ids_by_owner_id_is_all():
     username = random_lower_string()
     password = random_lower_string()
 
@@ -493,22 +679,53 @@ def test_get_active_posts_ids_by_owner_id_is_all_active():
     user = get_user(username=username)
     post = create_random_post(token=token)
 
-    ids = active_posts_ids_by_owner_id(owner_id=user["id"])
+    ids = get_posts_ids_by_owner_id(owner_id=user["id"])
     deactivate_post(id=post["id"], token=token)
-    new_ids = active_posts_ids_by_owner_id(owner_id=user["id"])
+    new_ids = get_posts_ids_by_owner_id(owner_id=user["id"])
 
-    assert len(new_ids) == len(ids) - 1
+    assert new_ids == ids
 
 
-def test_get_active_posts_ids_by_not_existing_owner_id():
+def test_get_posts_ids_by_not_existing_owner_id():
     username = random_lower_string()
     password = random_lower_string()
 
     create_random_user(username=username, password=password)
     user = get_user(username=username)
 
+    superuser_token = authentication_headers(
+        username=settings.SUPERUSER_USERNAME,
+        password=settings.SUPERUSER_PASSWORD
+    )
+
     response = client.get(
         f"{settings.API_V1_STR}/posts/owner/ids/{user['id'] + 1}",
+        headers=superuser_token,
     )
 
     assert response.status_code == 404
+
+
+def test_get_posts_ids_by_deactivated_owner_id():
+    username = random_lower_string()
+    password = random_lower_string()
+
+    token = create_random_user(username=username, password=password)
+    user = get_user(username=username)
+
+    ids = get_posts_ids_by_owner_id(owner_id=user["id"])
+    deactivate_user(username=username, token=token)
+
+    superuser_token = authentication_headers(
+        username=settings.SUPERUSER_USERNAME,
+        password=settings.SUPERUSER_PASSWORD
+    )
+
+    response = client.get(
+        f"{settings.API_V1_STR}/posts/owner/ids/{user['id']}",
+        headers=superuser_token,
+    )
+    response_ids = response.json()
+
+    assert response.status_code == 200
+    assert response_ids == ids

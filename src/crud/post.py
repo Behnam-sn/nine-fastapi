@@ -21,7 +21,7 @@ class Post():
         return db_post
 
     def update(self, db: Session, id: int, post_update: schemas.PostUpdate) -> models.Post:
-        db_post = self.get_by_id(db, id=id)
+        db_post = self.get_post_by_id(db, id=id)
 
         update_data = post_update.dict(exclude_unset=True)
         update_data["is_modified"] = True
@@ -35,14 +35,14 @@ class Post():
         return db_post
 
     def delete(self, db: Session, id: int):
-        db_post = self.get_by_id(db, id=id)
+        db_post = self.get_post_by_id(db, id=id)
         db.delete(db_post)
         db.commit()
 
         update_user_posts_count(db, owner_id=getattr(db_post, "owner_id"))
 
     def activate(self, db: Session, id: int) -> models.Post:
-        db_post = self.get_by_id(db, id=id)
+        db_post = self.get_post_by_id(db, id=id)
         setattr(db_post, "is_active", True)
         db.commit()
 
@@ -54,7 +54,7 @@ class Post():
         return db_post
 
     def deactivate(self, db: Session, id: int) -> models.Post:
-        db_post = self.get_by_id(db, id=id)
+        db_post = self.get_post_by_id(db, id=id)
         setattr(db_post, "is_active", False)
         db.commit()
 
@@ -64,11 +64,43 @@ class Post():
         db.refresh(db_post)
         return db_post
 
-    def get_by_id(self, db: Session, id: int) -> models.Post | None:
+    def get_post_by_id(self, db: Session, id: int) -> models.Post | None:
         return (
             db.query(models.Post)
             .filter(models.Post.id == id)
             .first()
+        )
+
+    def get_all_posts_count(self, db: Session) -> int:
+        return (
+            db.query(models.Post)
+            .count()
+        )
+
+    def get_all_posts(self, db: Session, skip: int = 0, limit: int = 100) -> list[models.Post]:
+        return (
+            db.query(models.Post)
+            .order_by(models.Post.id)
+            .offset(skip)
+            .limit(limit)
+            .all()
+        )
+
+    def get_posts_count_by_owner_id(self, db: Session, owner_id: int) -> int:
+        return (
+            db.query(models.Post)
+            .filter(models.Post.owner_id == owner_id)
+            .count()
+        )
+
+    def get_posts_by_owner_id(self, db: Session, owner_id: int, skip: int = 0, limit: int = 100) -> list[models.Post]:
+        return (
+            db.query(models.Post)
+            .filter(models.Post.owner_id == owner_id)
+            .order_by(models.Post.id)
+            .offset(skip)
+            .limit(limit)
+            .all()
         )
 
     def get_active_post_by_id(self, db: Session, id: int) -> models.Post | None:

@@ -9,6 +9,22 @@ def random_lower_string() -> str:
     return "".join(random.choices(string.ascii_lowercase, k=32))
 
 
+def authentication_headers(username: str, password: str):
+    data = {
+        "username": username,
+        "password": password
+    }
+
+    response = client.post(
+        f"{settings.API_V1_STR}/auth/signin",
+        data=data
+    )
+    tokens = response.json()
+
+    auth_token = tokens["access_token"]
+    return {"Authorization": f"Bearer {auth_token}"}
+
+
 def create_random_user(username: str, password: str):
     data = {
         "username": username,
@@ -24,6 +40,35 @@ def create_random_user(username: str, password: str):
 
     auth_token = tokens["access_token"]
     return {"Authorization": f"Bearer {auth_token}"}
+
+
+def get_user(username: str):
+    superuser_token = authentication_headers(
+        username=settings.SUPERUSER_USERNAME,
+        password=settings.SUPERUSER_PASSWORD
+    )
+
+    response = client.get(
+        f"{settings.API_V1_STR}/users/{username}",
+        headers=superuser_token,
+    )
+
+    return response.json()
+
+
+def get_active_user(username: str):
+    response = client.get(
+        f"{settings.API_V1_STR}/active-users/{username}",
+    )
+
+    return response.json()
+
+
+def deactivate_user(username: str, token: str):
+    client.put(
+        f"{settings.API_V1_STR}/users/deactivate/{username}",
+        headers=token,
+    )
 
 
 def get_all_users_count():
@@ -48,37 +93,6 @@ def get_all_active_users_count():
     return response.json()
 
 
-def get_user(username: str):
-    response = client.get(
-        f"{settings.API_V1_STR}/active-users/{username}",
-    )
-
-    return response.json()
-
-
-def authentication_headers(username: str, password: str):
-    data = {
-        "username": username,
-        "password": password
-    }
-
-    response = client.post(
-        f"{settings.API_V1_STR}/auth/signin",
-        data=data
-    )
-    tokens = response.json()
-
-    auth_token = tokens["access_token"]
-    return {"Authorization": f"Bearer {auth_token}"}
-
-
-def deactivate_user(username: str, token: str):
-    client.put(
-        f"{settings.API_V1_STR}/users/deactivate/{username}",
-        headers=token,
-    )
-
-
 def create_random_post(token: str, text: str = random_lower_string()):
     data = {
         "text": text
@@ -94,8 +108,16 @@ def create_random_post(token: str, text: str = random_lower_string()):
 
 
 def get_post(post_id: int):
+    # response = client.get(
+    #     f"{settings.API_V1_STR}/posts/{post_id}",
+    # )
+    # return response.json()
+    pass
+
+
+def get_active_post(post_id: int):
     response = client.get(
-        f"{settings.API_V1_STR}/posts/{post_id}",
+        f"{settings.API_V1_STR}/active-posts/{post_id}",
     )
     return response.json()
 
@@ -107,30 +129,86 @@ def deactivate_post(id: int, token: str):
     )
 
 
-def all_active_posts_count():
+def get_all_posts_count():
+    superuser_token = authentication_headers(
+        username=settings.SUPERUSER_USERNAME,
+        password=settings.SUPERUSER_PASSWORD
+    )
+
     response = client.get(
         f"{settings.API_V1_STR}/posts/count/",
+        headers=superuser_token,
     )
+
     return response.json()
 
 
-def all_active_posts_ids(count: int):
+def get_all_posts_ids(count: int):
+    superuser_token = authentication_headers(
+        username=settings.SUPERUSER_USERNAME,
+        password=settings.SUPERUSER_PASSWORD
+    )
+
     response = client.get(
         f"{settings.API_V1_STR}/posts/ids/?limit={count + 10}",
+        headers=superuser_token,
     )
+
     return response.json()
 
 
-def active_posts_count_by_owner_id(owner_id: int):
+def get_posts_count_by_owner_id(owner_id: int):
+    superuser_token = authentication_headers(
+        username=settings.SUPERUSER_USERNAME,
+        password=settings.SUPERUSER_PASSWORD
+    )
+
     response = client.get(
         f"{settings.API_V1_STR}/posts/owner/count/{owner_id}",
+        headers=superuser_token,
+    )
+
+    return response.json()
+
+
+def get_posts_ids_by_owner_id(owner_id: int):
+    superuser_token = authentication_headers(
+        username=settings.SUPERUSER_USERNAME,
+        password=settings.SUPERUSER_PASSWORD
+    )
+
+    response = client.get(
+        f"{settings.API_V1_STR}/posts/owner/ids/{owner_id}",
+        headers=superuser_token,
+    )
+
+    return response.json()
+
+
+def get_all_active_posts_count():
+    response = client.get(
+        f"{settings.API_V1_STR}/active-posts/count/",
     )
     return response.json()
 
 
-def active_posts_ids_by_owner_id(owner_id: int):
+def get_all_active_posts_ids(count: int):
     response = client.get(
-        f"{settings.API_V1_STR}/posts/owner/ids/{owner_id}",
+        f"{settings.API_V1_STR}/active-posts/ids/?limit={count + 10}",
+    )
+    return response.json()
+
+
+def get_active_posts_count_by_owner_id(owner_id: int):
+    response = client.get(
+        f"{settings.API_V1_STR}/active-posts/owner/count/{owner_id}",
+    )
+    return response.json()
+
+
+def get_active_posts_ids_by_owner_id(owner_id: int):
+    response = client.get(
+        f"{settings.API_V1_STR}/active-posts/owner/ids/{owner_id}",
     )
     return response.json()
 
