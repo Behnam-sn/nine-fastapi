@@ -17,7 +17,7 @@ def create_user(
     db: Session = Depends(deps.get_db)
 ):
 
-    if crud.user.get_by_username(db, username=user.username):
+    if crud.user.get_user_by_username(db, username=user.username):
         raise HTTPException(
             status_code=400,
             detail="Username already registered"

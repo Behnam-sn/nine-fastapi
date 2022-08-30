@@ -7,8 +7,10 @@ from src.database import base  # keep
 
 def init_db(db: Session):
 
-    user = crud.user.get_by_username(db, username=settings.SUPERUSER_USERNAME)
-    if not user:
+    super_user = crud.user.get_user_by_username(
+        db, username=settings.SUPERUSER_USERNAME
+    )
+    if not super_user:
         db_user = models.User(
             username=settings.SUPERUSER_USERNAME,
             hashed_password=get_password_hash(settings.SUPERUSER_PASSWORD),
@@ -19,8 +21,10 @@ def init_db(db: Session):
         db.commit()
         db.refresh(db_user)
 
-    user = crud.user.get_by_username(db, username=settings.NORMAL_USERNAME)
-    if not user:
+    normal_user = crud.user.get_user_by_username(
+        db, username=settings.NORMAL_USERNAME
+    )
+    if not normal_user:
         db_user = models.User(
             username=settings.NORMAL_USERNAME,
             hashed_password=get_password_hash(settings.NORMAL_PASSWORD),

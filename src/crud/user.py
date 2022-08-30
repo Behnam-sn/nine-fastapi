@@ -23,7 +23,7 @@ class User():
         return db_user
 
     def update(self, db: Session, username: str, user_update: schemas.UserUpdate) -> models.User:
-        db_user = self.get_by_username(db, username=username)
+        db_user = self.get_user_by_username(db, username=username)
 
         update_data = user_update.dict(exclude_unset=True)
         update_data["modified_at"] = func.now()
@@ -36,7 +36,7 @@ class User():
         return db_user
 
     def update_password(self, db: Session, username: str, new_password: str) -> models.User:
-        db_user = self.get_by_username(db, username=username)
+        db_user = self.get_user_by_username(db, username=username)
 
         hashed_password = get_password_hash(new_password)
         setattr(db_user, "hashed_password", hashed_password)
@@ -47,7 +47,7 @@ class User():
         return db_user
 
     def activate(self, db: Session, username: str) -> models.User:
-        db_user = self.get_by_username(db, username=username)
+        db_user = self.get_user_by_username(db, username=username)
         setattr(db_user, "is_active", True)
         db.commit()
 
@@ -61,7 +61,7 @@ class User():
         return db_user
 
     def deactivate(self, db: Session, username: str) -> models.User:
-        db_user = self.get_by_username(db, username=username)
+        db_user = self.get_user_by_username(db, username=username)
         setattr(db_user, "is_active", False)
         db.commit()
 
@@ -75,7 +75,7 @@ class User():
         return db_user
 
     def authenticate(self, db: Session, username: str, password: str) -> models.User | None:
-        db_user = self.get_by_username(db, username=username)
+        db_user = self.get_user_by_username(db, username=username)
 
         if not db_user:
             return None
@@ -100,14 +100,14 @@ class User():
             .all()
         )
 
-    def get_by_id(self, db: Session, id: id) -> models.User | None:
+    def get_user_by_id(self, db: Session, id: id) -> models.User | None:
         return (
             db.query(models.User)
             .filter(models.User.id == id)
             .first()
         )
 
-    def get_by_username(self, db: Session, username: str) -> models.User | None:
+    def get_user_by_username(self, db: Session, username: str) -> models.User | None:
         return (
             db.query(models.User)
             .filter(models.User.username == username)

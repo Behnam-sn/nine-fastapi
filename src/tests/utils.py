@@ -42,7 +42,7 @@ def get_all_users_count():
 
 def get_all_active_users_count():
     response = client.get(
-        f"{settings.API_V1_STR}/users/active/count/",
+        f"{settings.API_V1_STR}/active-users/count/",
     )
 
     return response.json()
@@ -50,7 +50,7 @@ def get_all_active_users_count():
 
 def get_user(username: str):
     response = client.get(
-        f"{settings.API_V1_STR}/users/active/{username}",
+        f"{settings.API_V1_STR}/active-users/{username}",
     )
 
     return response.json()
