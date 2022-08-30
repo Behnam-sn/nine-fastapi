@@ -530,7 +530,7 @@ def test_get_all_posts_ids_is_all():
     new_count = get_all_posts_count()
     new_ids = get_all_posts_ids(count=new_count)
 
-    assert len(new_ids) == len(ids)
+    assert new_ids == ids
 
 
 def test_get_posts_count_by_owner_id_as_super_user():
@@ -613,8 +613,6 @@ def test_get_posts_count_by_deactivated_owner_id():
     token = create_random_user(username=username, password=password)
     user = get_user(username=username)
     create_random_post(token=token)
-
-    count = get_posts_count_by_owner_id(owner_id=user["id"])
     deactivate_user(username=username, token=token)
 
     superuser_token = authentication_headers(
@@ -626,10 +624,10 @@ def test_get_posts_count_by_deactivated_owner_id():
         f"{settings.API_V1_STR}/posts/owner/count/{user['id']}",
         headers=superuser_token,
     )
-    response_count = response.json()
+    count = response.json()
 
     assert response.status_code == 200
-    assert response_count == count
+    assert count == 1
 
 
 def test_get_posts_ids_by_owner_id_as_super_user():
@@ -661,7 +659,6 @@ def test_get_posts_ids_by_owner_id_as_normal_user():
 
     token = create_random_user(username=username, password=password)
     user = get_user(username=username)
-    create_random_post(token=token)
 
     response = client.get(
         f"{settings.API_V1_STR}/posts/owner/ids/{user['id']}",
@@ -712,6 +709,7 @@ def test_get_posts_ids_by_deactivated_owner_id():
 
     token = create_random_user(username=username, password=password)
     user = get_user(username=username)
+    create_random_post(token=token)
 
     ids = get_posts_ids_by_owner_id(owner_id=user["id"])
     deactivate_user(username=username, token=token)

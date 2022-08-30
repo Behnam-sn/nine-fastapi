@@ -92,15 +92,15 @@ def test_signin_with_wrong_password():
     assert response.status_code == 401
 
 
-def test_test_token():
-    username = random_lower_string()
-    password = random_lower_string()
+# def test_test_token():
+#     username = random_lower_string()
+#     password = random_lower_string()
 
-    token = create_random_user(username=username, password=password)
+#     token = create_random_user(username=username, password=password)
 
-    response = client.post(
-        f"{settings.API_V1_STR}/auth/test-token",
-        headers=token,
-    )
+#     response = client.post(
+#         f"{settings.API_V1_STR}/auth/test-token",
+#         headers=token,
+#     )
 
-    assert response.status_code == 200
+#     assert response.status_code == 200
