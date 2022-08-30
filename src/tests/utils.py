@@ -26,9 +26,31 @@ def create_random_user(username: str, password: str):
     return {"Authorization": f"Bearer {auth_token}"}
 
 
+def get_all_users_count():
+    superuser_token = authentication_headers(
+        username=settings.SUPERUSER_USERNAME,
+        password=settings.SUPERUSER_PASSWORD
+    )
+
+    response = client.get(
+        f"{settings.API_V1_STR}/users/count/",
+        headers=superuser_token,
+    )
+
+    return response.json()
+
+
+def get_all_active_users_count():
+    response = client.get(
+        f"{settings.API_V1_STR}/users/active/count/",
+    )
+
+    return response.json()
+
+
 def get_user(username: str):
     response = client.get(
-        f"{settings.API_V1_STR}/users/{username}",
+        f"{settings.API_V1_STR}/users/active/{username}",
     )
 
     return response.json()

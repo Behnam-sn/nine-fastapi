@@ -85,6 +85,21 @@ class User():
 
         return db_user
 
+    def get_all_users_count(self, db: Session) -> int:
+        return (
+            db.query(models.User)
+            .count()
+        )
+
+    def get_all_users(self, db: Session, skip: int = 0, limit: int = 100) -> list[models.User]:
+        return (
+            db.query(models.User)
+            .order_by(models.User.id)
+            .offset(skip)
+            .limit(limit)
+            .all()
+        )
+
     def get_by_id(self, db: Session, id: id) -> models.User | None:
         return (
             db.query(models.User)
@@ -97,6 +112,13 @@ class User():
             db.query(models.User)
             .filter(models.User.username == username)
             .first()
+        )
+
+    def get_all_active_users_count(self, db: Session) -> int:
+        return (
+            db.query(models.User)
+            .filter(models.User.is_active == True)
+            .count()
         )
 
     def get_all_active_users(self, db: Session, skip: int = 0, limit: int = 100) -> list[models.User]:

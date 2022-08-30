@@ -6,7 +6,46 @@ from src.api import deps
 router = APIRouter()
 
 
+@router.get("/current-user/", response_model=schemas.User)
+def get_current_user(
+    current_user: models.User = Depends(deps.get_current_user),
+):
+    return current_user
+
+
 @router.get("/all/", response_model=list[schemas.User])
+def get_all_users(
+    skip: int = 0,
+    limit: int = 100,
+    current_user: models.User = Depends(deps.get_current_active_superuser),
+    db: Session = Depends(deps.get_db),
+):
+    return crud.user.get_all_users(db, skip=skip, limit=limit)
+
+
+@router.get("/{username}", response_model=schemas.User)
+def get_user_by_username(
+    username: str,
+    current_user: models.User = Depends(deps.get_current_active_superuser),
+    db: Session = Depends(deps.get_db),
+):
+    db_user = crud.user.get_by_username(db, username=username)
+
+    if db_user is None:
+        raise HTTPException(status_code=404, detail="User not found")
+
+    return db_user
+
+
+@router.get("/count/", response_model=int)
+def get_all_users_count(
+    current_user: models.User = Depends(deps.get_current_active_superuser),
+    db: Session = Depends(deps.get_db),
+):
+    return crud.user.get_all_users_count(db)
+
+
+@router.get("/active/all/", response_model=list[schemas.User])
 def get_all_active_users(
     skip: int = 0,
     limit: int = 100,
@@ -15,30 +54,7 @@ def get_all_active_users(
     return crud.user.get_all_active_users(db, skip=skip, limit=limit)
 
 
-@router.get("/current-user/", response_model=schemas.User)
-def get_current_user(
-    current_user: models.User = Depends(deps.get_current_user),
-):
-    return current_user
-
-
-# @router.get("/id/{id}", response_model=schemas.User)
-# def get_user_by_id(
-#     id: int,
-#     db: Session = Depends(deps.get_db),
-# ):
-#     db_user = crud.user.get_by_id(db, id=id)
-
-#     if db_user is None:
-#         raise HTTPException(status_code=404, detail="User not found")
-
-#     if not db_user.is_active:
-#         raise HTTPException(status_code=400, detail="User is not active")
-
-#     return db_user
-
-
-@router.get("/{username}", response_model=schemas.User)
+@router.get("/active/{username}", response_model=schemas.User)
 def get_active_user_by_username(
     username: str,
     db: Session = Depends(deps.get_db),
@@ -49,6 +65,13 @@ def get_active_user_by_username(
         raise HTTPException(status_code=404, detail="User not found")
 
     return db_user
+
+
+@router.get("/active/count/", response_model=int)
+def get_all_active_users_count(
+    db: Session = Depends(deps.get_db),
+):
+    return crud.user.get_all_active_users_count(db)
 
 
 @router.put("/", response_model=schemas.User)

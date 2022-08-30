@@ -3,15 +3,9 @@ from src.tests.conftest import client
 from src.tests.utils import (active_posts_count_by_owner_id,
                              authentication_headers, create_random_comment,
                              create_random_post, create_random_user,
-                             deactivate_user, get_user, random_lower_string)
-
-
-def test_get_all_active_users():
-    response = client.get(
-        f"{settings.API_V1_STR}/users/all/",
-    )
-
-    assert response.status_code == 200
+                             deactivate_user, get_all_active_users_count,
+                             get_all_users_count, get_user,
+                             random_lower_string)
 
 
 def test_get_current_user():
@@ -24,18 +18,69 @@ def test_get_current_user():
         f"{settings.API_V1_STR}/users/current-user/",
         headers=token,
     )
+    user = response.json()
+
+    assert response.status_code == 200
+    assert user["username"] == username
+
+
+def test_get_all_users_as_superuser():
+    superuser_token = authentication_headers(
+        username=settings.SUPERUSER_USERNAME,
+        password=settings.SUPERUSER_PASSWORD
+    )
+
+    response = client.get(
+        f"{settings.API_V1_STR}/users/all/",
+        headers=superuser_token,
+    )
 
     assert response.status_code == 200
 
 
-def test_get_active_user_by_username():
+def test_get_all_users_as_normal_user():
+    username = random_lower_string()
+    password = random_lower_string()
+
+    token = create_random_user(username=username, password=password)
+
+    response = client.get(
+        f"{settings.API_V1_STR}/users/all/",
+        headers=token,
+    )
+
+    assert response.status_code == 401
+
+
+def test_get_all_users_is_all():
+    username = random_lower_string()
+    password = random_lower_string()
+
+    token = create_random_user(username=username, password=password)
+
+    all_users_count = get_all_users_count()
+
+    deactivate_user(username=username, token=token)
+
+    new_all_users_count = get_all_users_count()
+
+    assert new_all_users_count == all_users_count
+
+
+def test_get_user_by_username_as_superuser():
     username = random_lower_string()
     password = random_lower_string()
 
     create_random_user(username=username, password=password)
 
+    superuser_token = authentication_headers(
+        username=settings.SUPERUSER_USERNAME,
+        password=settings.SUPERUSER_PASSWORD
+    )
+
     response = client.get(
         f"{settings.API_V1_STR}/users/{username}",
+        headers=superuser_token,
     )
     user = response.json()
 
@@ -43,11 +88,31 @@ def test_get_active_user_by_username():
     assert user["username"] == username
 
 
-def test_get_not_existing_user_by_username():
+def test_get_user_by_username_as_normal_user():
     username = random_lower_string()
+    password = random_lower_string()
+
+    token = create_random_user(username=username, password=password)
 
     response = client.get(
         f"{settings.API_V1_STR}/users/{username}",
+        headers=token,
+    )
+
+    assert response.status_code == 401
+
+
+def test_get_not_existing_user_by_username():
+    username = random_lower_string()
+
+    superuser_token = authentication_headers(
+        username=settings.SUPERUSER_USERNAME,
+        password=settings.SUPERUSER_PASSWORD
+    )
+
+    response = client.get(
+        f"{settings.API_V1_STR}/users/{username}",
+        headers=superuser_token,
     )
 
     assert response.status_code == 404
@@ -58,14 +123,116 @@ def test_get_deactivated_user_by_username():
     password = random_lower_string()
 
     token = create_random_user(username=username, password=password)
+
     deactivate_user(username=username, token=token)
+
+    superuser_token = authentication_headers(
+        username=settings.SUPERUSER_USERNAME,
+        password=settings.SUPERUSER_PASSWORD
+    )
 
     response = client.get(
         f"{settings.API_V1_STR}/users/{username}",
+        headers=superuser_token,
     )
-    response.json()
+    user = response.json()
+
+    assert response.status_code == 200
+    assert user["username"] == username
+    assert user["is_active"] == False
+
+
+def test_get_all_users_count():
+    superuser_token = authentication_headers(
+        username=settings.SUPERUSER_USERNAME,
+        password=settings.SUPERUSER_PASSWORD
+    )
+
+    response = client.get(
+        f"{settings.API_V1_STR}/users/count/",
+        headers=superuser_token,
+    )
+    count = response.json()
+
+    assert response.status_code == 200
+    assert count > 0
+
+
+def test_get_all_active_users():
+    response = client.get(
+        f"{settings.API_V1_STR}/users/active/all/",
+    )
+
+    assert response.status_code == 200
+
+
+def test_get_all_active_users_is_all_active():
+    username = random_lower_string()
+    password = random_lower_string()
+
+    token = create_random_user(username=username, password=password)
+
+    all_users_count = get_all_active_users_count()
+    deactivate_user(username=username, token=token)
+    new_all_users_count = get_all_active_users_count()
+
+    assert new_all_users_count == all_users_count - 1
+
+
+def test_get_active_user_by_username():
+    username = random_lower_string()
+    password = random_lower_string()
+
+    create_random_user(username=username, password=password)
+
+    response = client.get(
+        f"{settings.API_V1_STR}/users/active/{username}",
+    )
+    user = response.json()
+
+    assert response.status_code == 200
+    assert user["username"] == username
+    assert user["is_active"] == True
+
+
+def test_get_not_existing_active_user_by_username():
+    username = random_lower_string()
+
+    response = client.get(
+        f"{settings.API_V1_STR}/users/active/{username}",
+    )
 
     assert response.status_code == 404
+
+
+def test_get_deactivated_active_user_by_username():
+    username = random_lower_string()
+    password = random_lower_string()
+
+    token = create_random_user(username=username, password=password)
+
+    deactivate_user(username=username, token=token)
+
+    response = client.get(
+        f"{settings.API_V1_STR}/users/active/{username}",
+    )
+
+    assert response.status_code == 404
+
+
+def test_get_all_active_users_count():
+    username = random_lower_string()
+    password = random_lower_string()
+
+    create_random_user(username=username, password=password)
+
+    response = client.get(
+        f"{settings.API_V1_STR}/users/active/count/",
+    )
+    count = response.json()
+
+    assert response.status_code == 200
+    assert count > 0
 
 
 def test_update_user():
@@ -124,6 +291,7 @@ def test_update_deactivated_user():
     password = random_lower_string()
 
     token = create_random_user(username=username, password=password)
+
     deactivate_user(username=username, token=token)
 
     data = {
