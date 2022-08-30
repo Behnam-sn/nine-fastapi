@@ -69,8 +69,8 @@ def sign_in(
     return {"access_token": access_token, "token_type": "bearer"}
 
 
-@router.post("/test-token", response_model=schemas.User)
-def test_token(
-    current_user: models.User = Depends(deps.get_current_user)
-):
-    return current_user
+# @router.post("/test-token", response_model=schemas.User)
+# def test_token(
+#     current_user: models.User = Depends(deps.get_current_user)
+# ):
+#     return current_user
