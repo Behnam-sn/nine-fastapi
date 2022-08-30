@@ -56,7 +56,6 @@ def test_get_deactivated_user_by_username():
     password = random_lower_string()
 
     token = create_random_user(username=username, password=password)
-
     deactivate_user(username=username, token=token)
 
     response = client.get(
@@ -79,3 +78,16 @@ def test_get_all_active_users_count():
 
     assert response.status_code == 200
     assert count > 0
+
+
+def test_get_all_active_users_count_is_all_active():
+    username = random_lower_string()
+    password = random_lower_string()
+
+    token = create_random_user(username=username, password=password)
+
+    count = get_all_active_users_count()
+    deactivate_user(username=username, token=token)
+    new_count = get_all_active_users_count()
+
+    assert new_count == count - 1
