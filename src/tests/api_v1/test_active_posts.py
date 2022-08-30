@@ -1,7 +1,7 @@
 from src.core.config import settings
 from src.tests.conftest import client
 from src.tests.utils import (create_random_post, create_random_user,
-                             deactivate_post,
+                             deactivate_post, deactivate_user,
                              get_active_posts_count_by_owner_id,
                              get_active_posts_ids_by_owner_id, get_active_user,
                              get_all_active_posts_count,
@@ -186,6 +186,21 @@ def test_get_active_posts_count_by_not_existing_owner_id():
     assert response.status_code == 404
 
 
+def test_get_active_posts_count_by_deactivated_owner_id():
+    username = random_lower_string()
+    password = random_lower_string()
+
+    token = create_random_user(username=username, password=password)
+    user = get_active_user(username=username)
+    deactivate_user(username=username, token=token)
+
+    response = client.get(
+        f"{settings.API_V1_STR}/active-posts/owner/count/{user['id']}",
+    )
+
+    assert response.status_code == 404
+
+
 def test_get_active_posts_ids_by_owner_id():
     username = random_lower_string()
     password = random_lower_string()
@@ -227,6 +242,21 @@ def test_get_active_posts_ids_by_not_existing_owner_id():
 
     response = client.get(
         f"{settings.API_V1_STR}/active-posts/owner/ids/{user['id'] + 1}",
+    )
+
+    assert response.status_code == 404
+
+
+def test_get_active_posts_ids_by_deactivated_owner_id():
+    username = random_lower_string()
+    password = random_lower_string()
+
+    token = create_random_user(username=username, password=password)
+    user = get_active_user(username=username)
+    deactivate_user(username=username, token=token)
+
+    response = client.get(
+        f"{settings.API_V1_STR}/active-posts/owner/ids/{user['id']}",
     )
 
     assert response.status_code == 404
