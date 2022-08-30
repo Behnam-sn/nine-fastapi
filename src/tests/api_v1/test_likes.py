@@ -2,7 +2,7 @@ from src.core.config import settings
 from src.tests.conftest import client
 from src.tests.utils import (create_random_comment, create_random_post,
                              create_random_user, deactivate_comment,
-                             deactivate_post, get_user, like_comment,
+                             deactivate_post, get_active_user, like_comment,
                              like_post, random_lower_string)
 
 
@@ -19,7 +19,7 @@ def test_like_post():
     password = random_lower_string()
 
     token = create_random_user(username=username, password=password)
-    user = get_user(username=username)
+    user = get_active_user(username=username)
     post = create_random_post(token=token)
 
     response = client.post(
@@ -87,7 +87,7 @@ def test_unlike_post():
     password = random_lower_string()
 
     token = create_random_user(username=username, password=password)
-    user = get_user(username=username)
+    user = get_active_user(username=username)
     post = create_random_post(token=token)
 
     like_post(post_id=post["id"], token=token)
@@ -158,7 +158,7 @@ def test_like_comment():
     password = random_lower_string()
 
     token = create_random_user(username=username, password=password)
-    user = get_user(username=username)
+    user = get_active_user(username=username)
     post = create_random_post(token=token)
     comment = create_random_comment(post_id=post["id"], token=token)
 
@@ -230,7 +230,7 @@ def test_unlike_comment():
     password = random_lower_string()
 
     token = create_random_user(username=username, password=password)
-    user = get_user(username=username)
+    user = get_active_user(username=username)
     post = create_random_post(token=token)
     comment = create_random_comment(post_id=post["id"], token=token)
 
@@ -305,7 +305,7 @@ def test_get_active_likes_count_by_owner_id():
     password = random_lower_string()
 
     token = create_random_user(username=username, password=password)
-    user = get_user(username=username)
+    user = get_active_user(username=username)
     post = create_random_post(token=token)
     comment = create_random_comment(post_id=post["id"], token=token)
 
@@ -326,7 +326,7 @@ def test_get_not_existing_user_likes_count_by_owner_id():
     password = random_lower_string()
 
     create_random_user(username=username, password=password)
-    user = get_user(username=username)
+    user = get_active_user(username=username)
 
     response = client.get(
         f"{settings.API_V1_STR}/likes/owner/count/{user['id'] + 1}",
@@ -340,7 +340,7 @@ def test_get_active_likes_ids_by_owner_id():
     password = random_lower_string()
 
     token = create_random_user(username=username, password=password)
-    user = get_user(username=username)
+    user = get_active_user(username=username)
     post = create_random_post(token=token)
     comment = create_random_comment(post_id=post["id"], token=token)
 
@@ -361,7 +361,7 @@ def test_get_not_existing_user_likes_ids_by_owner_id():
     password = random_lower_string()
 
     create_random_user(username=username, password=password)
-    user = get_user(username=username)
+    user = get_active_user(username=username)
 
     response = client.get(
         f"{settings.API_V1_STR}/likes/owner/ids/{user['id'] + 1}",
