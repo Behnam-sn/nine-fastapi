@@ -21,7 +21,7 @@ class Comment():
         return db_comment
 
     def update(self, db: Session, id: int, comment_update: schemas.CommentUpdate) -> models.Comment:
-        db_comment = self.get_by_id(db, id=id)
+        db_comment = self.get_comment_by_id(db, id=id)
 
         update_data = comment_update.dict(exclude_unset=True)
         update_data["is_modified"] = True
@@ -35,14 +35,14 @@ class Comment():
         return db_comment
 
     def delete(self, db: Session, id: int):
-        db_comment = self.get_by_id(db, id=id)
+        db_comment = self.get_comment_by_id(db, id=id)
         db.delete(db_comment)
         db.commit()
 
         update_post_comments_count(db, post_id=getattr(db_comment, "post_id"))
 
     def activate(self, db: Session, id: int) -> models.Comment:
-        db_comment = self.get_by_id(db, id=id)
+        db_comment = self.get_comment_by_id(db, id=id)
         setattr(db_comment, "is_active", True)
         db.commit()
 
@@ -54,7 +54,7 @@ class Comment():
         return db_comment
 
     def deactivate(self, db: Session, id: int) -> models.Comment:
-        db_comment = self.get_by_id(db, id=id)
+        db_comment = self.get_comment_by_id(db, id=id)
         setattr(db_comment, "is_active", False)
         db.commit()
 
@@ -64,11 +64,60 @@ class Comment():
         db.refresh(db_comment)
         return db_comment
 
-    def get_by_id(self, db: Session, id: int) -> models.Comment | None:
+    def get_comment_by_id(self, db: Session, id: int) -> models.Comment | None:
         return (
             db.query(models.Comment)
             .filter(models.Comment.id == id)
             .first()
+        )
+
+    def get_all_comments_count(self, db: Session) -> int:
+        return (
+            db.query(models.Comment)
+            .count()
+        )
+
+    def get_all_comments(self, db: Session, skip: int = 0, limit: int = 100) -> list[models.Comment]:
+        return (
+            db.query(models.Comment)
+            .order_by(models.Comment.id)
+            .offset(skip)
+            .limit(limit)
+            .all()
+        )
+
+    def get_comments_count_by_owner_id(self, db: Session, owner_id: int) -> int:
+        return (
+            db.query(models.Comment)
+            .filter(models.Comment.owner_id == owner_id)
+            .count()
+        )
+
+    def get_comments_by_owner_id(self, db: Session, owner_id: int, skip: int = 0, limit: int = 100) -> list[models.Comment]:
+        return (
+            db.query(models.Comment)
+            .filter(models.Comment.owner_id == owner_id)
+            .order_by(models.Comment.id)
+            .offset(skip)
+            .limit(limit)
+            .all()
+        )
+
+    def get_comments_count_by_post_id(self, db: Session, post_id: int) -> int:
+        return (
+            db.query(models.Comment)
+            .filter(models.Comment.post_id == post_id)
+            .count()
+        )
+
+    def get_comments_by_post_id(self, db: Session, post_id: int, skip: int = 0, limit: int = 100) -> list[models.Comment]:
+        return (
+            db.query(models.Comment)
+            .filter(models.Comment.post_id == post_id)
+            .order_by(models.Comment.id)
+            .offset(skip)
+            .limit(limit)
+            .all()
         )
 
     def get_active_comment_by_id(self, db: Session, id: int) -> models.Comment | None:

@@ -1,16 +1,15 @@
 from src.core.config import settings
 from src.tests.conftest import client
-from src.tests.utils import (active_comments_count_by_owner_id,
-                             active_comments_count_by_post_id,
-                             active_comments_ids_by_owner_id,
-                             active_comments_ids_by_post_id,
-                             active_likes_by_comment_id,
-                             all_active_comments_count,
-                             all_active_comments_ids, authentication_headers,
-                             create_random_comment, create_random_post,
-                             create_random_user, deactivate_comment,
-                             deactivate_post, get_active_user, get_post,
-                             like_comment, random_lower_string)
+from src.tests.utils import (authentication_headers, create_random_comment,
+                             create_random_post, create_random_user,
+                             deactivate_comment, deactivate_post,
+                             deactivate_user, get_active_post, get_active_user,
+                             get_all_comments_count, get_all_comments_ids,
+                             get_comments_count_by_owner_id,
+                             get_comments_count_by_post_id,
+                             get_comments_ids_by_owner_id,
+                             get_comments_ids_by_post_id, get_user,
+                             random_lower_string)
 
 
 def test_create_comment():
@@ -77,63 +76,6 @@ def test_comment_on_deactivated_post():
         f"{settings.API_V1_STR}/comments/",
         headers=token,
         json=data
-    )
-
-    assert response.status_code == 404
-
-
-def test_get_all_active_comments():
-    response = client.get(
-        f"{settings.API_V1_STR}/comments/all/",
-    )
-
-    assert response.status_code == 200
-
-
-def test_get_active_comment_by_id():
-    username = random_lower_string()
-    password = random_lower_string()
-
-    token = create_random_user(username=username, password=password)
-    post = create_random_post(token=token)
-    random_comment = create_random_comment(post_id=post["id"], token=token)
-
-    response = client.get(
-        f"{settings.API_V1_STR}/comments/{random_comment['id']}",
-    )
-    comment = response.json()
-
-    assert response.status_code == 200
-    assert random_comment == comment
-
-
-def test_get_not_existing_comment_by_id():
-    username = random_lower_string()
-    password = random_lower_string()
-
-    token = create_random_user(username=username, password=password)
-    post = create_random_post(token=token)
-    comment = create_random_comment(post_id=post["id"], token=token)
-
-    response = client.get(
-        f"{settings.API_V1_STR}/comments/{comment['id'] + 1}",
-    )
-
-    assert response.status_code == 404
-
-
-def test_get_deactivated_comment_by_id():
-    username = random_lower_string()
-    password = random_lower_string()
-
-    token = create_random_user(username=username, password=password)
-    post = create_random_post(token=token)
-    comment = create_random_comment(post_id=post["id"], token=token)
-
-    deactivate_comment(id=comment["id"], token=token)
-
-    response = client.get(
-        f"{settings.API_V1_STR}/comments/{comment['id']}",
     )
 
     assert response.status_code == 404
@@ -432,11 +374,9 @@ def test_deactivated_comment_post():
     post = create_random_post(token=token)
     comment = create_random_comment(post_id=post["id"], token=token)
 
-    post_comments_count = get_post(post_id=post["id"])["comments"]
-
+    post_comments_count = get_active_post(post_id=post["id"])["comments"]
     deactivate_comment(id=comment["id"], token=token)
-
-    new_post_comments_count = get_post(post_id=post["id"])["comments"]
+    new_post_comments_count = get_active_post(post_id=post["id"])["comments"]
 
     assert new_post_comments_count == post_comments_count - 1
 
@@ -462,7 +402,159 @@ def test_deactivated_comment_post():
 #     assert new_comment_likes_count == comment_likes_count - 1
 
 
-def test_get_all_active_comments_count():
+def test_get_all_comments_as_super_user():
+    superuser_token = authentication_headers(
+        username=settings.SUPERUSER_USERNAME,
+        password=settings.SUPERUSER_PASSWORD
+    )
+
+    response = client.get(
+        f"{settings.API_V1_STR}/comments/all/",
+        headers=superuser_token,
+    )
+
+    assert response.status_code == 200
+
+
+def test_get_all_comments_as_normal_user():
+    username = random_lower_string()
+    password = random_lower_string()
+
+    token = create_random_user(username=username, password=password)
+
+    response = client.get(
+        f"{settings.API_V1_STR}/comments/all/",
+        headers=token,
+    )
+
+    assert response.status_code == 401
+
+
+def test_get_all_comments_is_all():
+    username = random_lower_string()
+    password = random_lower_string()
+
+    token = create_random_user(username=username, password=password)
+    post = create_random_post(token=token)
+    comment = create_random_comment(post_id=post["id"], token=token)
+
+    count = get_all_comments_count()
+    deactivate_comment(id=comment["id"], token=token)
+    new_count = get_all_comments_count()
+
+    assert new_count == count
+
+
+def test_get_comment_by_id_as_super_user():
+    username = random_lower_string()
+    password = random_lower_string()
+
+    token = create_random_user(username=username, password=password)
+    post = create_random_post(token=token)
+    comment = create_random_comment(post_id=post["id"], token=token)
+
+    superuser_token = authentication_headers(
+        username=settings.SUPERUSER_USERNAME,
+        password=settings.SUPERUSER_PASSWORD
+    )
+
+    response = client.get(
+        f"{settings.API_V1_STR}/comments/{comment['id']}",
+        headers=superuser_token,
+    )
+    response_comment = response.json()
+
+    assert response.status_code == 200
+    assert response_comment == comment
+
+
+def test_get_comment_by_id_as_normal_user():
+    username = random_lower_string()
+    password = random_lower_string()
+
+    token = create_random_user(username=username, password=password)
+    post = create_random_post(token=token)
+    comment = create_random_comment(post_id=post["id"], token=token)
+
+    response = client.get(
+        f"{settings.API_V1_STR}/comments/{comment['id']}",
+        headers=token,
+    )
+
+    assert response.status_code == 401
+
+
+def test_get_not_existing_comment_by_id():
+    username = random_lower_string()
+    password = random_lower_string()
+
+    token = create_random_user(username=username, password=password)
+    post = create_random_post(token=token)
+    comment = create_random_comment(post_id=post["id"], token=token)
+
+    superuser_token = authentication_headers(
+        username=settings.SUPERUSER_USERNAME,
+        password=settings.SUPERUSER_PASSWORD
+    )
+
+    response = client.get(
+        f"{settings.API_V1_STR}/comments/{comment['id'] + 1}",
+        headers=superuser_token,
+    )
+
+    assert response.status_code == 404
+
+
+def test_get_deactivated_comment_by_id():
+    username = random_lower_string()
+    password = random_lower_string()
+
+    token = create_random_user(username=username, password=password)
+    post = create_random_post(token=token)
+    comment = create_random_comment(post_id=post["id"], token=token)
+
+    deactivate_comment(id=comment["id"], token=token)
+
+    superuser_token = authentication_headers(
+        username=settings.SUPERUSER_USERNAME,
+        password=settings.SUPERUSER_PASSWORD
+    )
+
+    response = client.get(
+        f"{settings.API_V1_STR}/comments/{comment['id']}",
+        headers=superuser_token,
+    )
+    response_comment = response.json()
+
+    assert response.status_code == 200
+    assert response_comment["id"] == comment["id"]
+    assert response_comment["is_active"] == False
+
+
+def test_get_all_comments_count_as_super_user():
+    username = random_lower_string()
+    password = random_lower_string()
+
+    token = create_random_user(username=username, password=password)
+    post = create_random_post(token=token)
+    create_random_comment(post_id=post["id"], token=token)
+
+    superuser_token = authentication_headers(
+        username=settings.SUPERUSER_USERNAME,
+        password=settings.SUPERUSER_PASSWORD
+    )
+
+    response = client.get(
+        f"{settings.API_V1_STR}/comments/count/",
+        headers=superuser_token,
+    )
+    count = response.json()
+
+    assert response.status_code == 200
+    assert count > 0
+
+
+def test_get_all_comments_count_as_normal_user():
     username = random_lower_string()
     password = random_lower_string()
 
@@ -472,14 +564,13 @@ def test_get_all_active_comments_count():
 
     response = client.get(
         f"{settings.API_V1_STR}/comments/count/",
+        headers=token,
     )
-    count = response.json()
 
-    assert response.status_code == 200
-    assert count > 0
+    assert response.status_code == 401
 
 
-def test_get_all_active_comments_count_is_all_active():
+def test_get_all_comments_count_is_all():
     username = random_lower_string()
     password = random_lower_string()
 
@@ -487,14 +578,14 @@ def test_get_all_active_comments_count_is_all_active():
     post = create_random_post(token=token)
     comment = create_random_comment(post_id=post["id"], token=token)
 
-    count = all_active_comments_count()
+    count = get_all_comments_count()
     deactivate_comment(id=comment["id"], token=token)
-    new_count = all_active_comments_count()
+    new_count = get_all_comments_count()
 
-    assert new_count == count - 1
+    assert new_count == count
 
 
-def test_get_all_active_comments_ids():
+def test_get_all_comments_ids_as_super_user():
     username = random_lower_string()
     password = random_lower_string()
 
@@ -502,12 +593,16 @@ def test_get_all_active_comments_ids():
     post = create_random_post(token=token)
     create_random_comment(post_id=post["id"], token=token)
 
-    count = client.get(
-        f"{settings.API_V1_STR}/comments/count/"
-    ).json()
+    count = get_all_comments_count()
+
+    superuser_token = authentication_headers(
+        username=settings.SUPERUSER_USERNAME,
+        password=settings.SUPERUSER_PASSWORD
+    )
 
     response = client.get(
         f"{settings.API_V1_STR}/comments/ids/?limit={count + 10}",
+        headers=superuser_token,
     )
     ids = response.json()
 
@@ -515,7 +610,23 @@ def test_get_all_active_comments_ids():
     assert len(ids) == count
 
 
-def test_get_all_active_comments_ids_is_all_active():
+def test_get_all_comments_ids_as_normal_user():
+    username = random_lower_string()
+    password = random_lower_string()
+
+    token = create_random_user(username=username, password=password)
+    post = create_random_post(token=token)
+    create_random_comment(post_id=post["id"], token=token)
+
+    response = client.get(
+        f"{settings.API_V1_STR}/comments/ids/",
+        headers=token,
+    )
+
+    assert response.status_code == 401
+
+
+def test_get_all_comments_ids_is_all():
     username = random_lower_string()
     password = random_lower_string()
 
@@ -523,26 +634,32 @@ def test_get_all_active_comments_ids_is_all_active():
     post = create_random_post(token=token)
     comment = create_random_comment(post_id=post["id"], token=token)
 
-    count = all_active_comments_count()
-    ids = all_active_comments_ids(count=count)
+    count = get_all_comments_count()
+    ids = get_all_comments_ids(count=count)
     deactivate_comment(id=comment["id"], token=token)
-    new_count = all_active_comments_count()
-    new_ids = all_active_comments_ids(count=new_count)
+    new_count = get_all_comments_count()
+    new_ids = get_all_comments_ids(count=new_count)
 
-    assert len(new_ids) == len(ids) - 1
+    assert new_ids == ids
 
 
-def test_get_active_comments_count_by_owner_id():
+def test_get_comments_count_by_owner_id_as_super_user():
     username = random_lower_string()
     password = random_lower_string()
 
     token = create_random_user(username=username, password=password)
-    user = get_active_user(username=username)
+    user = get_user(username=username)
     post = create_random_post(token=token)
     create_random_comment(post_id=post["id"], token=token)
 
+    superuser_token = authentication_headers(
+        username=settings.SUPERUSER_USERNAME,
+        password=settings.SUPERUSER_PASSWORD
+    )
+
     response = client.get(
         f"{settings.API_V1_STR}/comments/owner/count/{user['id']}",
+        headers=superuser_token,
     )
     count = response.json()
 
@@ -550,47 +667,101 @@ def test_get_active_comments_count_by_owner_id():
     assert count == 1
 
 
-def test_get_active_comments_count_by_owner_id_is_all_active():
+def test_get_comments_count_by_owner_id_as_normal_user():
     username = random_lower_string()
     password = random_lower_string()
 
     token = create_random_user(username=username, password=password)
-    user = get_active_user(username=username)
+    user = get_user(username=username)
+    post = create_random_post(token=token)
+    create_random_comment(post_id=post["id"], token=token)
+
+    response = client.get(
+        f"{settings.API_V1_STR}/comments/owner/count/{user['id']}",
+        headers=token,
+    )
+
+    assert response.status_code == 401
+
+
+def test_get_comments_count_by_owner_id_is_all():
+    username = random_lower_string()
+    password = random_lower_string()
+
+    token = create_random_user(username=username, password=password)
+    user = get_user(username=username)
     post = create_random_post(token=token)
     comment = create_random_comment(post_id=post["id"], token=token)
 
-    count = active_comments_count_by_owner_id(owner_id=user["id"])
+    count = get_comments_count_by_owner_id(owner_id=user["id"])
     deactivate_comment(id=comment["id"], token=token)
-    new_count = active_comments_count_by_owner_id(owner_id=user["id"])
+    new_count = get_comments_count_by_owner_id(owner_id=user["id"])
 
-    assert new_count == count - 1
+    assert new_count == count
 
 
-def test_get_active_comments_count_by_not_existing_owner_id():
+def test_get_comments_count_by_not_existing_owner_id():
     username = random_lower_string()
     password = random_lower_string()
 
     create_random_user(username=username, password=password)
-    user = get_active_user(username=username)
+    user = get_user(username=username)
+
+    superuser_token = authentication_headers(
+        username=settings.SUPERUSER_USERNAME,
+        password=settings.SUPERUSER_PASSWORD
+    )
 
     response = client.get(
         f"{settings.API_V1_STR}/comments/owner/count/{user['id'] + 1}",
+        headers=superuser_token,
     )
 
     assert response.status_code == 404
 
 
-def test_get_active_comments_ids_by_owner_id():
+def test_get_comment_count_by_deactivated_owner_id():
     username = random_lower_string()
     password = random_lower_string()
 
     token = create_random_user(username=username, password=password)
-    user = get_active_user(username=username)
+    user = get_user(username=username)
+    post = create_random_post(token=token)
+    create_random_comment(post_id=post["id"], token=token)
+    deactivate_user(username=username, token=token)
+
+    superuser_token = authentication_headers(
+        username=settings.SUPERUSER_USERNAME,
+        password=settings.SUPERUSER_PASSWORD
+    )
+
+    response = client.get(
+        f"{settings.API_V1_STR}/comments/owner/count/{user['id']}",
+        headers=superuser_token,
+    )
+    count = response.json()
+
+    assert response.status_code == 200
+    assert count == 1
+
+
+def test_get_comments_ids_by_owner_id_as_super_user():
+    username = random_lower_string()
+    password = random_lower_string()
+
+    token = create_random_user(username=username, password=password)
+    user = get_user(username=username)
     post = create_random_post(token=token)
     create_random_comment(post_id=post["id"], token=token)
 
+    superuser_token = authentication_headers(
+        username=settings.SUPERUSER_USERNAME,
+        password=settings.SUPERUSER_PASSWORD
+    )
+
     response = client.get(
         f"{settings.API_V1_STR}/comments/owner/ids/{user['id']}",
+        headers=superuser_token,
     )
     ids = response.json()
 
@@ -598,37 +769,108 @@ def test_get_active_comments_ids_by_owner_id():
     assert len(ids) == 1
 
 
-def test_get_active_comments_ids_by_owner_id_is_all_active():
+def test_get_comments_ids_by_owner_id_as_normal_user():
     username = random_lower_string()
     password = random_lower_string()
 
     token = create_random_user(username=username, password=password)
-    user = get_active_user(username=username)
+    user = get_user(username=username)
+
+    response = client.get(
+        f"{settings.API_V1_STR}/comments/owner/ids/{user['id']}",
+        headers=token,
+    )
+
+    assert response.status_code == 401
+
+
+def test_get_comments_ids_by_owner_id_is_all():
+    username = random_lower_string()
+    password = random_lower_string()
+
+    token = create_random_user(username=username, password=password)
+    user = get_user(username=username)
     post = create_random_post(token=token)
     comment = create_random_comment(post_id=post["id"], token=token)
 
-    ids = active_comments_ids_by_owner_id(owner_id=user["id"])
+    ids = get_comments_ids_by_owner_id(owner_id=user["id"])
     deactivate_comment(id=comment["id"], token=token)
-    new_ids = active_comments_ids_by_owner_id(owner_id=user["id"])
+    new_ids = get_comments_ids_by_owner_id(owner_id=user["id"])
 
-    assert len(new_ids) == len(ids) - 1
+    assert new_ids == ids
 
 
-def test_get_active_comments_ids_by_not_existing_owner_id():
+def test_get_comments_ids_by_not_existing_owner_id():
     username = random_lower_string()
     password = random_lower_string()
 
     create_random_user(username=username, password=password)
-    user = get_active_user(username=username)
+    user = get_user(username=username)
+
+    superuser_token = authentication_headers(
+        username=settings.SUPERUSER_USERNAME,
+        password=settings.SUPERUSER_PASSWORD
+    )
 
     response = client.get(
         f"{settings.API_V1_STR}/comments/owner/ids/{user['id'] + 1}",
+        headers=superuser_token,
     )
 
     assert response.status_code == 404
 
 
-def test_get_active_comments_count_by_post_id():
+def test_get_comments_ids_by_deactivated_owner_id():
+    username = random_lower_string()
+    password = random_lower_string()
+
+    token = create_random_user(username=username, password=password)
+    user = get_user(username=username)
+    post = create_random_post(token=token)
+    create_random_comment(post_id=post["id"], token=token)
+
+    ids = get_comments_ids_by_owner_id(owner_id=user["id"])
+    deactivate_user(username=username, token=token)
+
+    superuser_token = authentication_headers(
+        username=settings.SUPERUSER_USERNAME,
+        password=settings.SUPERUSER_PASSWORD
+    )
+
+    response = client.get(
+        f"{settings.API_V1_STR}/comments/owner/ids/{user['id']}",
+        headers=superuser_token,
+    )
+    response_ids = response.json()
+
+    assert response.status_code == 200
+    assert response_ids == ids
+
+
+def test_get_comments_count_by_post_id_as_super_user():
+    username = random_lower_string()
+    password = random_lower_string()
+
+    token = create_random_user(username=username, password=password)
+    post = create_random_post(token=token)
+    create_random_comment(post_id=post["id"], token=token)
+
+    superuser_token = authentication_headers(
+        username=settings.SUPERUSER_USERNAME,
+        password=settings.SUPERUSER_PASSWORD
+    )
+
+    response = client.get(
+        f"{settings.API_V1_STR}/comments/post/count/{post['id']}",
+        headers=superuser_token,
+    )
+    count = response.json()
+
+    assert response.status_code == 200
+    assert count == 1
+
+
+def test_get_comments_count_by_post_id_as_normal_user():
     username = random_lower_string()
     password = random_lower_string()
 
@@ -638,6 +880,64 @@ def test_get_active_comments_count_by_post_id():
 
     response = client.get(
         f"{settings.API_V1_STR}/comments/post/count/{post['id']}",
+        headers=token,
+    )
+
+    assert response.status_code == 401
+
+
+def test_get_comments_count_by_post_id_is_all():
+    username = random_lower_string()
+    password = random_lower_string()
+
+    token = create_random_user(username=username, password=password)
+    post = create_random_post(token=token)
+    comment = create_random_comment(post_id=post["id"], token=token)
+
+    count = get_comments_count_by_post_id(post_id=post["id"])
+    deactivate_comment(id=comment["id"], token=token)
+    new_count = get_comments_count_by_post_id(post_id=post["id"])
+
+    assert new_count == count
+
+
+def test_get_comments_count_by_not_existing_post_id():
+    username = random_lower_string()
+    password = random_lower_string()
+
+    token = create_random_user(username=username, password=password)
+    post = create_random_post(token=token)
+
+    superuser_token = authentication_headers(
+        username=settings.SUPERUSER_USERNAME,
+        password=settings.SUPERUSER_PASSWORD
+    )
+
+    response = client.get(
+        f"{settings.API_V1_STR}/comments/post/count/{post['id'] + 1}",
+        headers=superuser_token,
+    )
+
+    assert response.status_code == 404
+
+
+def test_get_comments_count_by_deactivated_post_id():
+    username = random_lower_string()
+    password = random_lower_string()
+
+    token = create_random_user(username=username, password=password)
+    post = create_random_post(token=token)
+    create_random_comment(post_id=post["id"], token=token)
+    deactivate_post(id=post["id"], token=token)
+
+    superuser_token = authentication_headers(
+        username=settings.SUPERUSER_USERNAME,
+        password=settings.SUPERUSER_PASSWORD
+    )
+
+    response = client.get(
+        f"{settings.API_V1_STR}/comments/post/count/{post['id']}",
+        headers=superuser_token,
     )
     count = response.json()
 
@@ -645,36 +945,7 @@ def test_get_active_comments_count_by_post_id():
     assert count == 1
 
 
-def test_get_active_comments_count_by_post_id_is_all_active():
-    username = random_lower_string()
-    password = random_lower_string()
-
-    token = create_random_user(username=username, password=password)
-    post = create_random_post(token=token)
-    comment = create_random_comment(post_id=post["id"], token=token)
-
-    count = active_comments_count_by_post_id(post_id=post["id"])
-    deactivate_comment(id=comment["id"], token=token)
-    new_count = active_comments_count_by_post_id(post_id=post["id"])
-
-    assert new_count == count - 1
-
-
-def test_get_active_comments_count_by_not_existing_post_id():
-    username = random_lower_string()
-    password = random_lower_string()
-
-    token = create_random_user(username=username, password=password)
-    post = create_random_post(token=token)
-
-    response = client.get(
-        f"{settings.API_V1_STR}/comments/post/count/{post['id'] + 1}",
-    )
-
-    assert response.status_code == 404
-
-
-def test_get_active_comments_ids_by_post_id():
+def test_get_comments_ids_by_post_id_as_super_user():
     username = random_lower_string()
     password = random_lower_string()
 
@@ -682,8 +953,14 @@ def test_get_active_comments_ids_by_post_id():
     post = create_random_post(token=token)
     create_random_comment(post_id=post["id"], token=token)
 
+    superuser_token = authentication_headers(
+        username=settings.SUPERUSER_USERNAME,
+        password=settings.SUPERUSER_PASSWORD
+    )
+
     response = client.get(
         f"{settings.API_V1_STR}/comments/post/ids/{post['id']}",
+        headers=superuser_token,
     )
     ids = response.json()
 
@@ -691,22 +968,7 @@ def test_get_active_comments_ids_by_post_id():
     assert len(ids) == 1
 
 
-def test_get_active_comments_ids_by_post_id_is_all_active():
-    username = random_lower_string()
-    password = random_lower_string()
-
-    token = create_random_user(username=username, password=password)
-    post = create_random_post(token=token)
-    comment = create_random_comment(post_id=post["id"], token=token)
-
-    ids = active_comments_ids_by_post_id(post_id=post["id"])
-    deactivate_comment(id=comment["id"], token=token)
-    new_ids = active_comments_ids_by_post_id(post_id=post["id"])
-
-    assert len(new_ids) == len(ids) - 1
-
-
-def test_get_active_comments_ids_by_not_existing_post_id():
+def test_get_comments_ids_by_post_id_as_normal_user():
     username = random_lower_string()
     password = random_lower_string()
 
@@ -714,7 +976,69 @@ def test_get_active_comments_ids_by_not_existing_post_id():
     post = create_random_post(token=token)
 
     response = client.get(
+        f"{settings.API_V1_STR}/comments/post/ids/{post['id']}",
+        headers=token,
+    )
+
+    assert response.status_code == 401
+
+
+def test_get_comments_ids_by_post_id_is_all():
+    username = random_lower_string()
+    password = random_lower_string()
+
+    token = create_random_user(username=username, password=password)
+    post = create_random_post(token=token)
+    comment = create_random_comment(post_id=post["id"], token=token)
+
+    ids = get_comments_ids_by_post_id(post_id=post["id"])
+    deactivate_comment(id=comment["id"], token=token)
+    new_ids = get_comments_ids_by_post_id(post_id=post["id"])
+
+    assert new_ids == ids
+
+
+def test_get_comments_ids_by_not_existing_post_id():
+    username = random_lower_string()
+    password = random_lower_string()
+
+    token = create_random_user(username=username, password=password)
+    post = create_random_post(token=token)
+
+    superuser_token = authentication_headers(
+        username=settings.SUPERUSER_USERNAME,
+        password=settings.SUPERUSER_PASSWORD
+    )
+
+    response = client.get(
         f"{settings.API_V1_STR}/comments/post/ids/{post['id'] + 1}",
+        headers=superuser_token,
     )
 
     assert response.status_code == 404
+
+
+def test_get_comments_ids_by_deactivated_post_id():
+    username = random_lower_string()
+    password = random_lower_string()
+
+    token = create_random_user(username=username, password=password)
+    post = create_random_post(token=token)
+    create_random_comment(post_id=post["id"], token=token)
+
+    ids = get_comments_ids_by_post_id(post_id=post["id"])
+    deactivate_post(id=post["id"], token=token)
+
+    superuser_token = authentication_headers(
+        username=settings.SUPERUSER_USERNAME,
+        password=settings.SUPERUSER_PASSWORD
+    )
+
+    response = client.get(
+        f"{settings.API_V1_STR}/comments/post/ids/{post['id']}",
+        headers=superuser_token,
+    )
+    response_ids = response.json()
+
+    assert response.status_code == 200
+    assert response_ids == ids

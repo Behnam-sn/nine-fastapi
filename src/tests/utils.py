@@ -107,12 +107,12 @@ def create_random_post(token: str, text: str = random_lower_string()):
     return response.json()
 
 
-def get_post(post_id: int):
+# def get_post(post_id: int):
     # response = client.get(
     #     f"{settings.API_V1_STR}/posts/{post_id}",
     # )
     # return response.json()
-    pass
+    # pass
 
 
 def get_active_post(post_id: int):
@@ -235,44 +235,128 @@ def deactivate_comment(id: int, token: str):
     )
 
 
-def all_active_comments_count():
+def get_all_comments_count():
+    superuser_token = authentication_headers(
+        username=settings.SUPERUSER_USERNAME,
+        password=settings.SUPERUSER_PASSWORD
+    )
+
     response = client.get(
         f"{settings.API_V1_STR}/comments/count/",
+        headers=superuser_token,
     )
+
     return response.json()
 
 
-def all_active_comments_ids(count: int):
+def get_all_comments_ids(count: int):
+    superuser_token = authentication_headers(
+        username=settings.SUPERUSER_USERNAME,
+        password=settings.SUPERUSER_PASSWORD
+    )
+
     response = client.get(
         f"{settings.API_V1_STR}/comments/ids/?limit={count + 10}",
+        headers=superuser_token,
     )
+
     return response.json()
 
 
-def active_comments_count_by_owner_id(owner_id: int):
+def get_comments_count_by_owner_id(owner_id: int):
+    superuser_token = authentication_headers(
+        username=settings.SUPERUSER_USERNAME,
+        password=settings.SUPERUSER_PASSWORD
+    )
+
     response = client.get(
         f"{settings.API_V1_STR}/comments/owner/count/{owner_id}",
+        headers=superuser_token,
     )
+
     return response.json()
 
 
-def active_comments_ids_by_owner_id(owner_id: int):
+def get_comments_ids_by_owner_id(owner_id: int):
+    superuser_token = authentication_headers(
+        username=settings.SUPERUSER_USERNAME,
+        password=settings.SUPERUSER_PASSWORD
+    )
+
     response = client.get(
         f"{settings.API_V1_STR}/comments/owner/ids/{owner_id}",
+        headers=superuser_token,
     )
+
     return response.json()
 
 
-def active_comments_count_by_post_id(post_id: int):
+def get_comments_count_by_post_id(post_id: int):
+    superuser_token = authentication_headers(
+        username=settings.SUPERUSER_USERNAME,
+        password=settings.SUPERUSER_PASSWORD
+    )
+
     response = client.get(
         f"{settings.API_V1_STR}/comments/post/count/{post_id}",
+        headers=superuser_token,
+    )
+
+    return response.json()
+
+
+def get_comments_ids_by_post_id(post_id: int):
+    superuser_token = authentication_headers(
+        username=settings.SUPERUSER_USERNAME,
+        password=settings.SUPERUSER_PASSWORD
+    )
+
+    response = client.get(
+        f"{settings.API_V1_STR}/comments/post/ids/{post_id}",
+        headers=superuser_token,
+    )
+
+    return response.json()
+
+
+def get_all_active_comments_count():
+    response = client.get(
+        f"{settings.API_V1_STR}/active-comments/count/",
     )
     return response.json()
 
 
-def active_comments_ids_by_post_id(post_id: int):
+def get_all_active_comments_ids(count: int):
     response = client.get(
-        f"{settings.API_V1_STR}/comments/post/ids/{post_id}",
+        f"{settings.API_V1_STR}/active-comments/ids/?limit={count + 10}",
+    )
+    return response.json()
+
+
+def get_active_comments_count_by_owner_id(owner_id: int):
+    response = client.get(
+        f"{settings.API_V1_STR}/active-comments/owner/count/{owner_id}",
+    )
+    return response.json()
+
+
+def get_active_comments_ids_by_owner_id(owner_id: int):
+    response = client.get(
+        f"{settings.API_V1_STR}/active-comments/owner/ids/{owner_id}",
+    )
+    return response.json()
+
+
+def get_active_comments_count_by_post_id(post_id: int):
+    response = client.get(
+        f"{settings.API_V1_STR}/active-comments/post/count/{post_id}",
+    )
+    return response.json()
+
+
+def get_active_comments_ids_by_post_id(post_id: int):
+    response = client.get(
+        f"{settings.API_V1_STR}/active-comments/post/ids/{post_id}",
     )
     return response.json()
 
