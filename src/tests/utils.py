@@ -407,3 +407,73 @@ def follow_user(following_id: int, token: str):
         headers=token,
     )
     return response.json()
+
+
+def get_all_active_follows_count():
+    response = client.get(
+        f"{settings.API_V1_STR}/active-follows/count/",
+    )
+    return response.json()
+
+
+def get_all_follows_count():
+    response = client.get(
+        f"{settings.API_V1_STR}/follows/count/",
+    )
+    return response.json()
+
+
+def get_follower_count_by_user_id(user_id: int):
+    superuser_token = authentication_headers(
+        username=settings.SUPERUSER_USERNAME,
+        password=settings.SUPERUSER_PASSWORD
+    )
+
+    response = client.get(
+        f"{settings.API_V1_STR}/follows/follower/count/{user_id}",
+        headers=superuser_token
+    )
+
+    return response.json()
+
+
+def get_follower_ids_by_user_id(user_id: int):
+    superuser_token = authentication_headers(
+        username=settings.SUPERUSER_USERNAME,
+        password=settings.SUPERUSER_PASSWORD
+    )
+
+    response = client.get(
+        f"{settings.API_V1_STR}/follows/follower/ids/{user_id}",
+        headers=superuser_token
+    )
+
+    return response.json()
+
+
+def get_following_count_by_user_id(user_id: int):
+    superuser_token = authentication_headers(
+        username=settings.SUPERUSER_USERNAME,
+        password=settings.SUPERUSER_PASSWORD
+    )
+
+    response = client.get(
+        f"{settings.API_V1_STR}/follows/following/count/{user_id}",
+        headers=superuser_token
+    )
+
+    return response.json()
+
+
+def get_following_ids_by_user_id(user_id: int):
+    superuser_token = authentication_headers(
+        username=settings.SUPERUSER_USERNAME,
+        password=settings.SUPERUSER_PASSWORD
+    )
+
+    response = client.get(
+        f"{settings.API_V1_STR}/follows/following/ids/{user_id}",
+        headers=superuser_token
+    )
+
+    return response.json()
