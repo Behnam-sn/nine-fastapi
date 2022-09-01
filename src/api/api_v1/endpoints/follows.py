@@ -9,8 +9,8 @@ router = APIRouter()
 @router.get("/all/", response_model=list[schemas.Follow])
 def get_all_follows(
     skip: int = 0,
-    super_user: models.User = Depends(deps.get_current_active_superuser),
     limit: int = 100,
+    super_user: models.User = Depends(deps.get_current_active_superuser),
     db: Session = Depends(deps.get_db)
 ):
     return crud.follow.get_all_follows(db, skip=skip, limit=limit)
