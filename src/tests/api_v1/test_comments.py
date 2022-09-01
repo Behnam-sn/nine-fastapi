@@ -559,8 +559,6 @@ def test_get_all_comments_count_as_normal_user():
     password = random_lower_string()
 
     token = create_random_user(username=username, password=password)
-    post = create_random_post(token=token)
-    create_random_comment(post_id=post["id"], token=token)
 
     response = client.get(
         f"{settings.API_V1_STR}/comments/count/",
@@ -673,8 +671,6 @@ def test_get_comments_count_by_owner_id_as_normal_user():
 
     token = create_random_user(username=username, password=password)
     user = get_user(username=username)
-    post = create_random_post(token=token)
-    create_random_comment(post_id=post["id"], token=token)
 
     response = client.get(
         f"{settings.API_V1_STR}/comments/owner/count/{user['id']}",
