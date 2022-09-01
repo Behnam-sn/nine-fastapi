@@ -394,6 +394,13 @@ def unlike_comment(comment_id: int, token: str):
     return response.json()
 
 
+def get_all_active_likes_count():
+    response = client.get(
+        f"{settings.API_V1_STR}/active-likes/count/",
+    )
+    return response.json()
+
+
 def active_likes_by_comment_id(comment_id: int):
     response = client.get(
         f"{settings.API_V1_STR}/likes/comment/count/{comment_id}",
