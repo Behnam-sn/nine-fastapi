@@ -401,10 +401,108 @@ def get_all_active_likes_count():
     return response.json()
 
 
-def active_likes_by_comment_id(comment_id: int):
+# def active_likes_by_comment_id(comment_id: int):
+#     response = client.get(
+#         f"{settings.API_V1_STR}/likes/comment/count/{comment_id}",
+#     )
+#     return response.json()
+
+
+def get_all_likes_count():
+    superuser_token = authentication_headers(
+        username=settings.SUPERUSER_USERNAME,
+        password=settings.SUPERUSER_PASSWORD
+    )
+
+    response = client.get(
+        f"{settings.API_V1_STR}/likes/count/",
+        headers=superuser_token,
+    )
+
+    return response.json()
+
+
+def get_likes_count_by_owner_id(owner_id: int):
+    superuser_token = authentication_headers(
+        username=settings.SUPERUSER_USERNAME,
+        password=settings.SUPERUSER_PASSWORD
+    )
+
+    response = client.get(
+        f"{settings.API_V1_STR}/likes/owner/count/{owner_id}",
+        headers=superuser_token,
+    )
+
+    return response.json()
+
+
+def get_likes_ids_by_owner_id(owner_id: int):
+    superuser_token = authentication_headers(
+        username=settings.SUPERUSER_USERNAME,
+        password=settings.SUPERUSER_PASSWORD
+    )
+
+    response = client.get(
+        f"{settings.API_V1_STR}/likes/owner/ids/{owner_id}",
+        headers=superuser_token,
+    )
+
+    return response.json()
+
+
+def get_likes_count_by_post_id(post_id: int):
+    superuser_token = authentication_headers(
+        username=settings.SUPERUSER_USERNAME,
+        password=settings.SUPERUSER_PASSWORD
+    )
+
+    response = client.get(
+        f"{settings.API_V1_STR}/likes/post/count/{post_id}",
+        headers=superuser_token,
+    )
+
+    return response.json()
+
+
+def get_likes_ids_by_post_id(post_id: int):
+    superuser_token = authentication_headers(
+        username=settings.SUPERUSER_USERNAME,
+        password=settings.SUPERUSER_PASSWORD
+    )
+
+    response = client.get(
+        f"{settings.API_V1_STR}/likes/post/ids/{post_id}",
+        headers=superuser_token,
+    )
+
+    return response.json()
+
+
+def get_likes_count_by_comment_id(comment_id: int):
+    superuser_token = authentication_headers(
+        username=settings.SUPERUSER_USERNAME,
+        password=settings.SUPERUSER_PASSWORD
+    )
+
     response = client.get(
         f"{settings.API_V1_STR}/likes/comment/count/{comment_id}",
+        headers=superuser_token,
     )
+
+    return response.json()
+
+
+def get_likes_ids_by_comment_id(comment_id: int):
+    superuser_token = authentication_headers(
+        username=settings.SUPERUSER_USERNAME,
+        password=settings.SUPERUSER_PASSWORD
+    )
+
+    response = client.get(
+        f"{settings.API_V1_STR}/likes/comment/ids/{comment_id}",
+        headers=superuser_token,
+    )
+
     return response.json()
 
 
