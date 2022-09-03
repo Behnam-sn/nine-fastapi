@@ -83,7 +83,7 @@ def test_get_deactivated_comment_by_id():
     assert response.status_code == 404
 
 
-def test_get_get_all_active_comments_count():
+def test_get_all_active_comments_count():
     username = random_lower_string()
     password = random_lower_string()
 

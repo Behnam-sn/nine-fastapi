@@ -10,9 +10,9 @@ class Like():
             owner_id=owner_id,
         )
         db.add(db_like)
-        db.commit()
 
         update_post_likes_count(db, post_id=getattr(db_like, "post_id"))
+        db.commit()
 
         db.refresh(db_like)
         return db_like
@@ -22,9 +22,9 @@ class Like():
             db, post_id=post_id, owner_id=owner_id
         )
         db.delete(db_like)
-        db.commit()
 
         update_post_likes_count(db, post_id=getattr(db_like, "post_id"))
+        db.commit()
 
         return db_like
 
@@ -34,11 +34,11 @@ class Like():
             owner_id=owner_id,
         )
         db.add(db_like)
-        db.commit()
 
         update_comment_likes_count(
             db, comment_id=getattr(db_like, "comment_id")
         )
+        db.commit()
 
         db.refresh(db_like)
         return db_like
@@ -48,11 +48,11 @@ class Like():
             db, comment_id=comment_id, owner_id=owner_id
         )
         db.delete(db_like)
-        db.commit()
 
         update_comment_likes_count(
             db, comment_id=getattr(db_like, "comment_id")
         )
+        db.commit()
 
         return db_like
 

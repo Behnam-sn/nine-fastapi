@@ -130,7 +130,7 @@ def deactivate_user_likes(db: Session, owner_id: int):
 def activate_user_followers(db: Session, user_id: int):
     (
         db.query(models.Follow)
-        .filter(models.Follow.following == user_id)
+        .filter(models.Follow.following_id == user_id)
         .update({models.Follow.is_following_active: True})
     )
 
@@ -140,7 +140,7 @@ def activate_user_followers(db: Session, user_id: int):
 def deactivate_user_followers(db: Session, user_id: int):
     (
         db.query(models.Follow)
-        .filter(models.Follow.following == user_id)
+        .filter(models.Follow.following_id == user_id)
         .update({models.Follow.is_following_active: False})
     )
 
@@ -150,7 +150,7 @@ def deactivate_user_followers(db: Session, user_id: int):
 def activate_user_followings(db: Session, user_id: int):
     (
         db.query(models.Follow)
-        .filter(models.Follow.follower == user_id)
+        .filter(models.Follow.follower_id == user_id)
         .update({models.Follow.is_follower_active: True})
     )
 
@@ -160,7 +160,7 @@ def activate_user_followings(db: Session, user_id: int):
 def deactivate_user_followings(db: Session, user_id: int):
     (
         db.query(models.Follow)
-        .filter(models.Follow.follower == user_id)
+        .filter(models.Follow.follower_id == user_id)
         .update({models.Follow.is_follower_active: False})
     )
 
@@ -295,7 +295,7 @@ def update_post_likes_count(db: Session, post_id: int):
         .update({models.Post.likes: count})
     )
 
-    db.commit()
+    # db.commit()
 
 
 def update_comment_likes_count(db: Session, comment_id: int):
@@ -312,7 +312,7 @@ def update_comment_likes_count(db: Session, comment_id: int):
         .update({models.Comment.likes: count})
     )
 
-    db.commit()
+    # db.commit()
 
 
 def update_user_followers_count(db: Session, user_id: int):
@@ -347,33 +347,3 @@ def update_user_followings_count(db: Session, user_id: int):
     )
 
     db.commit()
-
-
-# def update_post_likes_count(self, db: Session, post_id: int):
-#     db_post = (
-#         db.query(models.Post)
-#         .filter(models.Post.id == post_id)
-#         .first()
-#     )
-#     count = self.get_active_likes_count_by_post_id(db, post_id=post_id)
-
-#     setattr(db_post, "likes", count)
-
-#     db.commit()
-#     db.refresh(db_post)
-
-
-# def update_comment_likes_count(self, db: Session, comment_id: int):
-#     db_commnet = (
-#         db.query(models.Comment)
-#         .filter(models.Comment.id == comment_id)
-#         .first()
-#     )
-#     count = self.get_active_likes_count_by_comment_id(
-#         db, comment_id=comment_id
-#     )
-
-#     setattr(db_commnet, "likes", count)
-
-#     db.commit()
-#     db.refresh(db_commnet)
