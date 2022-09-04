@@ -65,7 +65,7 @@ def test_comment_on_deactivated_post():
 
     token = create_random_user(username=username, password=password)
     post = create_random_post(token=token)
-    deactivate_post(id=post["id"], token=token)
+    deactivate_post(post_id=post["id"], token=token)
 
     data = {
         "text": random_lower_string(),
@@ -135,7 +135,7 @@ def test_update_deactivated_comment():
     post = create_random_post(token=token)
     comment = create_random_comment(post_id=post["id"], token=token)
 
-    deactivate_comment(id=comment["id"], token=token)
+    deactivate_comment(comment_id=comment["id"], token=token)
 
     data = {
         "text": random_lower_string()
@@ -375,7 +375,7 @@ def test_deactivated_comment_post():
     comment = create_random_comment(post_id=post["id"], token=token)
 
     post_comments_count = get_active_post(post_id=post["id"])["comments"]
-    deactivate_comment(id=comment["id"], token=token)
+    deactivate_comment(comment_id=comment["id"], token=token)
     new_post_comments_count = get_active_post(post_id=post["id"])["comments"]
 
     assert new_post_comments_count == post_comments_count - 1
@@ -393,7 +393,7 @@ def test_deactivated_comment_post():
 
 #     comment_likes_count = active_likes_by_comment_id(comment_id=comment["id"])
 
-#     deactivate_comment(id=comment["id"], token=token)
+#     deactivate_comment(comment_id=comment["id"], token=token)
 
 #     new_comment_likes_count = active_likes_by_comment_id(
 #         comment_id=comment["id"]
@@ -439,7 +439,7 @@ def test_get_all_comments_is_all():
     comment = create_random_comment(post_id=post["id"], token=token)
 
     count = get_all_comments_count()
-    deactivate_comment(id=comment["id"], token=token)
+    deactivate_comment(comment_id=comment["id"], token=token)
     new_count = get_all_comments_count()
 
     assert new_count == count
@@ -513,7 +513,7 @@ def test_get_deactivated_comment_by_id():
     post = create_random_post(token=token)
     comment = create_random_comment(post_id=post["id"], token=token)
 
-    deactivate_comment(id=comment["id"], token=token)
+    deactivate_comment(comment_id=comment["id"], token=token)
 
     superuser_token = authentication_headers(
         username=settings.SUPERUSER_USERNAME,
@@ -577,7 +577,7 @@ def test_get_all_comments_count_is_all():
     comment = create_random_comment(post_id=post["id"], token=token)
 
     count = get_all_comments_count()
-    deactivate_comment(id=comment["id"], token=token)
+    deactivate_comment(comment_id=comment["id"], token=token)
     new_count = get_all_comments_count()
 
     assert new_count == count
@@ -634,7 +634,7 @@ def test_get_all_comments_ids_is_all():
 
     count = get_all_comments_count()
     ids = get_all_comments_ids(count=count)
-    deactivate_comment(id=comment["id"], token=token)
+    deactivate_comment(comment_id=comment["id"], token=token)
     new_count = get_all_comments_count()
     new_ids = get_all_comments_ids(count=new_count)
 
@@ -690,7 +690,7 @@ def test_get_comments_count_by_owner_id_is_all():
     comment = create_random_comment(post_id=post["id"], token=token)
 
     count = get_comments_count_by_owner_id(owner_id=user["id"])
-    deactivate_comment(id=comment["id"], token=token)
+    deactivate_comment(comment_id=comment["id"], token=token)
     new_count = get_comments_count_by_owner_id(owner_id=user["id"])
 
     assert new_count == count
@@ -790,7 +790,7 @@ def test_get_comments_ids_by_owner_id_is_all():
     comment = create_random_comment(post_id=post["id"], token=token)
 
     ids = get_comments_ids_by_owner_id(owner_id=user["id"])
-    deactivate_comment(id=comment["id"], token=token)
+    deactivate_comment(comment_id=comment["id"], token=token)
     new_ids = get_comments_ids_by_owner_id(owner_id=user["id"])
 
     assert new_ids == ids
@@ -891,7 +891,7 @@ def test_get_comments_count_by_post_id_is_all():
     comment = create_random_comment(post_id=post["id"], token=token)
 
     count = get_comments_count_by_post_id(post_id=post["id"])
-    deactivate_comment(id=comment["id"], token=token)
+    deactivate_comment(comment_id=comment["id"], token=token)
     new_count = get_comments_count_by_post_id(post_id=post["id"])
 
     assert new_count == count
@@ -924,7 +924,7 @@ def test_get_comments_count_by_deactivated_post_id():
     token = create_random_user(username=username, password=password)
     post = create_random_post(token=token)
     create_random_comment(post_id=post["id"], token=token)
-    deactivate_post(id=post["id"], token=token)
+    deactivate_post(post_id=post["id"], token=token)
 
     superuser_token = authentication_headers(
         username=settings.SUPERUSER_USERNAME,
@@ -988,7 +988,7 @@ def test_get_comments_ids_by_post_id_is_all():
     comment = create_random_comment(post_id=post["id"], token=token)
 
     ids = get_comments_ids_by_post_id(post_id=post["id"])
-    deactivate_comment(id=comment["id"], token=token)
+    deactivate_comment(comment_id=comment["id"], token=token)
     new_ids = get_comments_ids_by_post_id(post_id=post["id"])
 
     assert new_ids == ids
@@ -1023,7 +1023,7 @@ def test_get_comments_ids_by_deactivated_post_id():
     create_random_comment(post_id=post["id"], token=token)
 
     ids = get_comments_ids_by_post_id(post_id=post["id"])
-    deactivate_post(id=post["id"], token=token)
+    deactivate_post(post_id=post["id"], token=token)
 
     superuser_token = authentication_headers(
         username=settings.SUPERUSER_USERNAME,

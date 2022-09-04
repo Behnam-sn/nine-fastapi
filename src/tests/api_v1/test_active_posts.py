@@ -24,7 +24,7 @@ def test_get_all_active_posts_is_all_active():
     post = create_random_post(token=token)
 
     all_active_posts_count = get_all_active_posts_count()
-    deactivate_post(id=post["id"], token=token)
+    deactivate_post(post_id=post["id"], token=token)
     new_all_active_posts_count = get_all_active_posts_count()
 
     assert new_all_active_posts_count == all_active_posts_count - 1
@@ -67,7 +67,7 @@ def test_get_deactivated_post_by_id():
     token = create_random_user(username=username, password=password)
     post = create_random_post(token=token)
 
-    deactivate_post(id=post["id"], token=token)
+    deactivate_post(post_id=post["id"], token=token)
 
     response = client.get(
         f"{settings.API_V1_STR}/active-posts/{post['id']}",
@@ -100,7 +100,7 @@ def test_get_all_active_posts_count_is_all_active():
     post = create_random_post(token=token)
 
     count = get_all_active_posts_count()
-    deactivate_post(id=post["id"], token=token)
+    deactivate_post(post_id=post["id"], token=token)
     new_count = get_all_active_posts_count()
 
     assert new_count == count - 1
@@ -133,7 +133,7 @@ def test_get_all_active_posts_ids_is_all_active():
 
     count = get_all_active_posts_count()
     ids = get_all_active_posts_ids(count=count)
-    deactivate_post(id=post["id"], token=token)
+    deactivate_post(post_id=post["id"], token=token)
     new_count = get_all_active_posts_count()
     new_ids = get_all_active_posts_ids(count=new_count)
 
@@ -166,7 +166,7 @@ def test_get_active_posts_count_by_owner_id_is_all_active():
     post = create_random_post(token=token)
 
     count = get_active_posts_count_by_owner_id(owner_id=user["id"])
-    deactivate_post(id=post["id"], token=token)
+    deactivate_post(post_id=post["id"], token=token)
     new_count = get_active_posts_count_by_owner_id(owner_id=user["id"])
 
     assert new_count == count - 1
@@ -227,7 +227,7 @@ def test_get_active_posts_ids_by_owner_id_is_all_active():
     post = create_random_post(token=token)
 
     ids = get_active_posts_ids_by_owner_id(owner_id=user["id"])
-    deactivate_post(id=post["id"], token=token)
+    deactivate_post(post_id=post["id"], token=token)
     new_ids = get_active_posts_ids_by_owner_id(owner_id=user["id"])
 
     assert len(new_ids) == len(ids) - 1

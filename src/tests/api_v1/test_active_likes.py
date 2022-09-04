@@ -270,7 +270,7 @@ def test_get_active_likes_count_by_deactivated_post_id():
 
     token = create_random_user(username=username, password=password)
     post = create_random_post(token=token)
-    deactivate_post(id=post['id'], token=token)
+    deactivate_post(post_id=post['id'], token=token)
 
     response = client.get(
         f"{settings.API_V1_STR}/active-likes/post/count/{post['id']}",
@@ -321,7 +321,7 @@ def test_get_active_likes_ids_by_deactivated_post_id():
 
     token = create_random_user(username=username, password=password)
     post = create_random_post(token=token)
-    deactivate_post(id=post['id'], token=token)
+    deactivate_post(post_id=post['id'], token=token)
 
     response = client.get(
         f"{settings.API_V1_STR}/active-likes/post/ids/{post['id']}",
@@ -375,7 +375,7 @@ def test_get_active_likes_count_by_deactivated_comment_id():
     token = create_random_user(username=username, password=password)
     post = create_random_post(token=token)
     comment = create_random_comment(post_id=post["id"], token=token)
-    deactivate_comment(id=comment["id"], token=token)
+    deactivate_comment(comment_id=comment["id"], token=token)
 
     response = client.get(
         f"{settings.API_V1_STR}/active-likes/comment/count/{comment['id']}",
@@ -429,7 +429,7 @@ def test_get_active_likes_ids_by_deactivated_comment_id():
     token = create_random_user(username=username, password=password)
     post = create_random_post(token=token)
     comment = create_random_comment(post_id=post["id"], token=token)
-    deactivate_comment(id=comment["id"], token=token)
+    deactivate_comment(comment_id=comment["id"], token=token)
 
     response = client.get(
         f"{settings.API_V1_STR}/active-likes/comment/ids/{comment['id']}",

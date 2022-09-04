@@ -68,7 +68,7 @@ def test_like_deactivated_post():
     token = create_random_user(username=username, password=password)
     post = create_random_post(token=token)
 
-    deactivate_post(id=post["id"], token=token)
+    deactivate_post(post_id=post["id"], token=token)
 
     response = client.post(
         f"{settings.API_V1_STR}/likes/post/{post['id']}",
@@ -141,7 +141,7 @@ def test_unlike_deactivated_post():
     post = create_random_post(token=token)
 
     like_post(post_id=post["id"], token=token)
-    deactivate_post(id=post["id"], token=token)
+    deactivate_post(post_id=post["id"], token=token)
 
     response = client.delete(
         f"{settings.API_V1_STR}/likes/post/{post['id']}",
@@ -210,7 +210,7 @@ def test_like_deactivated_comment():
     post = create_random_post(token=token)
     comment = create_random_comment(post_id=post["id"], token=token)
 
-    deactivate_comment(id=comment["id"], token=token)
+    deactivate_comment(comment_id=comment["id"], token=token)
 
     response = client.post(
         f"{settings.API_V1_STR}/likes/comment/{comment['id']}",
@@ -287,7 +287,7 @@ def test_unlike_deactivated_comment():
     comment = create_random_comment(post_id=post["id"], token=token)
 
     like_comment(comment_id=comment["id"], token=token)
-    deactivate_comment(id=comment["id"], token=token)
+    deactivate_comment(comment_id=comment["id"], token=token)
 
     response = client.delete(
         f"{settings.API_V1_STR}/likes/comment/{comment['id']}",
@@ -693,7 +693,7 @@ def test_get_likes_count_by_post_id_is_all():
     like_post(post_id=post["id"], token=token)
 
     count = get_likes_count_by_post_id(post_id=post["id"])
-    deactivate_post(id=post["id"], token=token)
+    deactivate_post(post_id=post["id"], token=token)
     new_count = get_likes_count_by_post_id(post_id=post["id"])
 
     assert new_count == count
@@ -727,7 +727,7 @@ def test_get_likes_count_by_deactivated_post_id():
     post = create_random_post(token=token)
 
     like_post(post_id=post["id"], token=token)
-    deactivate_post(id=post["id"], token=token)
+    deactivate_post(post_id=post["id"], token=token)
 
     superuser_token = authentication_headers(
         username=settings.SUPERUSER_USERNAME,
@@ -791,7 +791,7 @@ def test_get_likes_ids_by_post_id_is_all():
     like_post(post_id=post["id"], token=token)
 
     ids = get_likes_ids_by_post_id(post_id=post["id"])
-    deactivate_post(id=post["id"], token=token)
+    deactivate_post(post_id=post["id"], token=token)
     new_ids = get_likes_ids_by_post_id(post_id=post["id"])
 
     assert new_ids == ids
@@ -826,7 +826,7 @@ def test_get_likes_ids_by_deactivated_post_id():
     like_post(post_id=post["id"], token=token)
 
     ids = get_likes_ids_by_post_id(post_id=post["id"])
-    deactivate_post(id=post["id"], token=token)
+    deactivate_post(post_id=post["id"], token=token)
 
     superuser_token = authentication_headers(
         username=settings.SUPERUSER_USERNAME,
@@ -894,7 +894,7 @@ def test_get_likes_count_by_comment_id_is_all():
     like_comment(comment_id=comment["id"], token=token)
 
     count = get_likes_count_by_comment_id(comment_id=comment["id"])
-    deactivate_comment(id=comment["id"], token=token)
+    deactivate_comment(comment_id=comment["id"], token=token)
     new_count = get_likes_count_by_comment_id(comment_id=comment["id"])
 
     assert new_count == count
@@ -930,7 +930,7 @@ def test_get_likes_count_by_deactivated_comment_id():
     comment = create_random_comment(post_id=post["id"], token=token)
 
     like_comment(comment_id=comment["id"], token=token)
-    deactivate_comment(id=comment["id"], token=token)
+    deactivate_comment(comment_id=comment["id"], token=token)
 
     superuser_token = authentication_headers(
         username=settings.SUPERUSER_USERNAME,
@@ -998,7 +998,7 @@ def test_get_likes_ids_by_comment_id_is_all():
     like_comment(comment_id=comment["id"], token=token)
 
     ids = get_likes_ids_by_comment_id(comment_id=comment["id"])
-    deactivate_comment(id=comment["id"], token=token)
+    deactivate_comment(comment_id=comment["id"], token=token)
     new_ids = get_likes_ids_by_comment_id(comment_id=comment["id"])
 
     assert new_ids == ids
@@ -1035,7 +1035,7 @@ def test_get_likes_ids_by_deactivated_comment_id():
     like_comment(comment_id=comment["id"], token=token)
 
     ids = get_likes_ids_by_comment_id(comment_id=comment["id"])
-    deactivate_comment(id=comment["id"], token=token)
+    deactivate_comment(comment_id=comment["id"], token=token)
 
     superuser_token = authentication_headers(
         username=settings.SUPERUSER_USERNAME,

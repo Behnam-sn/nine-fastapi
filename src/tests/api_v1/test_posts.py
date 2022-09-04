@@ -83,7 +83,7 @@ def test_update_not_existing_post():
 #     token = create_random_user(username=username, password=password)
 #     post = create_random_post(token=token)
 
-#     deactivate_post(id=post["id"], token=token)
+#     deactivate_post(post_id=post["id"], token=token)
 
 #     data = {
 #         "text": random_lower_string()
@@ -339,7 +339,7 @@ def test_get_all_posts_is_all():
     post = create_random_post(token=token)
 
     all_posts_count = get_all_posts_count()
-    deactivate_post(id=post["id"], token=token)
+    deactivate_post(post_id=post["id"], token=token)
     new_all_posts_count = get_all_posts_count()
 
     assert new_all_posts_count == all_posts_count
@@ -409,7 +409,7 @@ def test_get_deactivated_post_by_id():
     token = create_random_user(username=username, password=password)
     post = create_random_post(token=token)
 
-    deactivate_post(id=post["id"], token=token)
+    deactivate_post(post_id=post["id"], token=token)
 
     superuser_token = authentication_headers(
         username=settings.SUPERUSER_USERNAME,
@@ -472,7 +472,7 @@ def test_get_all_posts_count_is_all():
     post = create_random_post(token=token)
 
     all_posts_count = get_all_posts_count()
-    deactivate_post(id=post["id"], token=token)
+    deactivate_post(post_id=post["id"], token=token)
     new_all_posts_count = get_all_posts_count()
 
     assert new_all_posts_count == all_posts_count
@@ -526,7 +526,7 @@ def test_get_all_posts_ids_is_all():
 
     count = get_all_posts_count()
     ids = get_all_posts_ids(count=count)
-    deactivate_post(id=post["id"], token=token)
+    deactivate_post(post_id=post["id"], token=token)
     new_count = get_all_posts_count()
     new_ids = get_all_posts_ids(count=new_count)
 
@@ -580,7 +580,7 @@ def test_get_posts_count_by_owner_id_is_all():
     post = create_random_post(token=token)
 
     count = get_posts_count_by_owner_id(owner_id=user["id"])
-    deactivate_post(id=post["id"], token=token)
+    deactivate_post(post_id=post["id"], token=token)
     new_count = get_posts_count_by_owner_id(owner_id=user["id"])
 
     assert new_count == count
@@ -677,7 +677,7 @@ def test_get_posts_ids_by_owner_id_is_all():
     post = create_random_post(token=token)
 
     ids = get_posts_ids_by_owner_id(owner_id=user["id"])
-    deactivate_post(id=post["id"], token=token)
+    deactivate_post(post_id=post["id"], token=token)
     new_ids = get_posts_ids_by_owner_id(owner_id=user["id"])
 
     assert new_ids == ids

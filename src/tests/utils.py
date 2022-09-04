@@ -122,9 +122,9 @@ def get_active_post(post_id: int):
     return response.json()
 
 
-def deactivate_post(id: int, token: str):
+def deactivate_post(post_id: int, token: str):
     client.put(
-        f"{settings.API_V1_STR}/posts/deactivate/{id}",
+        f"{settings.API_V1_STR}/posts/deactivate/{post_id}",
         headers=token,
     )
 
@@ -228,9 +228,9 @@ def create_random_comment(post_id: int, token: str, text: str = random_lower_str
     return response.json()
 
 
-def deactivate_comment(id: int, token: str):
+def deactivate_comment(comment_id: int, token: str):
     client.put(
-        f"{settings.API_V1_STR}/comments/deactivate/{id}",
+        f"{settings.API_V1_STR}/comments/deactivate/{comment_id}",
         headers=token,
     )
 
