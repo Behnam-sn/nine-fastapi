@@ -312,8 +312,10 @@ def test_user_posts_count_after_post_activated():
 
     token = create_random_user(username=username, password=password)
     post = create_random_post(token=token)
+
     deactivate_post(post_id=post["id"], token=token)
     activate_post(post_id=post["id"])
+
     user = get_active_user(username=username)
 
     assert user["posts"] == 1
