@@ -102,7 +102,7 @@ def activate_likes_by_post_id(db: Session, post_id: int):
     )
 
 
-def activate_comment_likes(db: Session, comment_id: int):
+def activate_likes_by_comment_id(db: Session, comment_id: int):
     (
         db.query(models.Like)
         .filter(models.Like.comment_id == comment_id)
@@ -206,7 +206,7 @@ def deactivate_likes_by_post_id(db: Session, post_id: int):
     )
 
 
-def deactivate_comment_likes(db: Session, comment_id: int):
+def deactivate_likes_by_comment_id(db: Session, comment_id: int):
     (
         db.query(models.Like)
         .filter(models.Like.comment_id == comment_id)
