@@ -57,6 +57,7 @@ class User():
         activate_user_followers(db, user_id=getattr(db_user, "id"))
         activate_user_followings(db, user_id=getattr(db_user, "id"))
 
+        db.commit()
         db.refresh(db_user)
         return db_user
 
@@ -68,9 +69,10 @@ class User():
         deactivate_user_posts(db, owner_id=getattr(db_user, "id"))
         deactivate_user_comments(db, owner_id=getattr(db_user, "id"))
         deactivate_user_likes(db, owner_id=getattr(db_user, "id"))
-        # deactivate_user_followers(db, user_id=getattr(db_user, "id"))
-        # deactivate_user_followings(db, user_id=getattr(db_user, "id"))
+        deactivate_user_followers(db, user_id=getattr(db_user, "id"))
+        deactivate_user_followings(db, user_id=getattr(db_user, "id"))
 
+        db.commit()
         db.refresh(db_user)
         return db_user
 

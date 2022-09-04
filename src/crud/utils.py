@@ -19,8 +19,6 @@ def activate_user_posts(db: Session, owner_id: int):
         .update({models.Post.is_owner_active: True})
     )
 
-    db.commit()
-
 
 def deactivate_user_posts(db: Session, owner_id: int):
     query = (
@@ -37,8 +35,6 @@ def deactivate_user_posts(db: Session, owner_id: int):
         .filter(models.Post.owner_id == owner_id)
         .update({models.Post.is_owner_active: False})
     )
-
-    db.commit()
 
 
 def activate_user_comments(db: Session, owner_id: int):
@@ -57,8 +53,6 @@ def activate_user_comments(db: Session, owner_id: int):
         .update({models.Comment.is_owner_active: True})
     )
 
-    db.commit()
-
 
 def deactivate_user_comments(db: Session, owner_id: int):
     query = (
@@ -75,8 +69,6 @@ def deactivate_user_comments(db: Session, owner_id: int):
         .filter(models.Comment.owner_id == owner_id)
         .update({models.Comment.is_owner_active: False})
     )
-
-    db.commit()
 
 
 def activate_user_likes(db: Session, owner_id: int):
@@ -100,8 +92,6 @@ def activate_user_likes(db: Session, owner_id: int):
         else:
             update_comment_likes_count(db, comment_id=like_dict["comment_id"])
 
-    db.commit()
-
 
 def deactivate_user_likes(db: Session, owner_id: int):
     (
@@ -124,8 +114,6 @@ def deactivate_user_likes(db: Session, owner_id: int):
         else:
             update_comment_likes_count(db, comment_id=like_dict["comment_id"])
 
-    db.commit()
-
 
 def activate_user_followers(db: Session, user_id: int):
     (
@@ -133,8 +121,6 @@ def activate_user_followers(db: Session, user_id: int):
         .filter(models.Follow.following_id == user_id)
         .update({models.Follow.is_following_active: True})
     )
-
-    db.commit()
 
 
 def deactivate_user_followers(db: Session, user_id: int):
@@ -144,8 +130,6 @@ def deactivate_user_followers(db: Session, user_id: int):
         .update({models.Follow.is_following_active: False})
     )
 
-    db.commit()
-
 
 def activate_user_followings(db: Session, user_id: int):
     (
@@ -153,8 +137,6 @@ def activate_user_followings(db: Session, user_id: int):
         .filter(models.Follow.follower_id == user_id)
         .update({models.Follow.is_follower_active: True})
     )
-
-    db.commit()
 
 
 def deactivate_user_followings(db: Session, user_id: int):
@@ -164,8 +146,6 @@ def deactivate_user_followings(db: Session, user_id: int):
         .update({models.Follow.is_follower_active: False})
     )
 
-    db.commit()
-
 
 def activate_post_likes(db: Session, post_id: int):
     (
@@ -173,8 +153,6 @@ def activate_post_likes(db: Session, post_id: int):
         .filter(models.Like.post_id == post_id)
         .update({models.Like.is_post_active: True})
     )
-
-    db.commit()
 
 
 def deactivate_post_likes(db: Session, post_id: int):
@@ -184,8 +162,6 @@ def deactivate_post_likes(db: Session, post_id: int):
         .update({models.Like.is_post_active: False})
     )
 
-    db.commit()
-
 
 def activate_comment_likes(db: Session, comment_id: int):
     (
@@ -193,8 +169,6 @@ def activate_comment_likes(db: Session, comment_id: int):
         .filter(models.Like.comment_id == comment_id)
         .update({models.Like.is_comment_active: True})
     )
-
-    db.commit()
 
 
 def deactivate_comment_likes(db: Session, comment_id: int):
@@ -204,8 +178,6 @@ def deactivate_comment_likes(db: Session, comment_id: int):
         .update({models.Like.is_comment_active: False})
     )
 
-    db.commit()
-
 
 def activate_like_post_owner(db: Session, post_id: int):
     (
@@ -213,8 +185,6 @@ def activate_like_post_owner(db: Session, post_id: int):
         .filter(models.Like.post_id == post_id)
         .update({models.Like.is_post_owner_active: True})
     )
-
-    db.commit()
 
 
 def deactivate_like_post_owner(db: Session, post_id: int):
@@ -224,8 +194,6 @@ def deactivate_like_post_owner(db: Session, post_id: int):
         .update({models.Like.is_post_owner_active: False})
     )
 
-    db.commit()
-
 
 def activate_like_comment_owner(db: Session, comment_id: int):
     (
@@ -234,8 +202,6 @@ def activate_like_comment_owner(db: Session, comment_id: int):
         .update({models.Like.is_comment_owner_active: True})
     )
 
-    db.commit()
-
 
 def deactivate_like_comment_owner(db: Session, comment_id: int):
     (
@@ -243,8 +209,6 @@ def deactivate_like_comment_owner(db: Session, comment_id: int):
         .filter(models.Like.comment_id == comment_id)
         .update({models.Like.is_comment_owner_active: False})
     )
-
-    db.commit()
 
 
 def update_user_posts_count(db: Session, owner_id: int):
@@ -261,8 +225,6 @@ def update_user_posts_count(db: Session, owner_id: int):
         .update({models.User.posts: count})
     )
 
-    db.commit()
-
 
 def update_post_comments_count(db: Session, post_id: int):
     count = (
@@ -277,8 +239,6 @@ def update_post_comments_count(db: Session, post_id: int):
         .filter(models.Post.id == post_id)
         .update({models.Post.comments: count})
     )
-
-    db.commit()
 
 
 def update_post_likes_count(db: Session, post_id: int):
@@ -295,8 +255,6 @@ def update_post_likes_count(db: Session, post_id: int):
         .update({models.Post.likes: count})
     )
 
-    # db.commit()
-
 
 def update_comment_likes_count(db: Session, comment_id: int):
     count = (
@@ -311,8 +269,6 @@ def update_comment_likes_count(db: Session, comment_id: int):
         .filter(models.Comment.id == comment_id)
         .update({models.Comment.likes: count})
     )
-
-    # db.commit()
 
 
 def update_user_followers_count(db: Session, user_id: int):
@@ -329,8 +285,6 @@ def update_user_followers_count(db: Session, user_id: int):
         .update({models.User.followers: count})
     )
 
-    db.commit()
-
 
 def update_user_followings_count(db: Session, user_id: int):
     count = (
@@ -345,5 +299,3 @@ def update_user_followings_count(db: Session, user_id: int):
         .filter(models.User.id == user_id)
         .update({models.User.followings: count})
     )
-
-    db.commit()

@@ -15,8 +15,9 @@ class Comment():
         db.add(db_comment)
         db.commit()
 
-        update_post_comments_count(db, post_id=getattr(db_comment, "post_id"))
+        update_post_comments_count(db, post_id=comment.post_id)
 
+        db.commit()
         db.refresh(db_comment)
         return db_comment
 
@@ -41,9 +42,12 @@ class Comment():
 
         update_post_comments_count(db, post_id=getattr(db_comment, "post_id"))
 
+        db.commit()
+
     def activate(self, db: Session, id: int) -> models.Comment:
         db_comment = self.get_comment_by_id(db, id=id)
         setattr(db_comment, "is_active", True)
+        db.commit()
 
         activate_comment_likes(db, comment_id=id)
         update_comment_likes_count(db, comment_id=id)
@@ -61,6 +65,7 @@ class Comment():
         deactivate_comment_likes(db, comment_id=id)
         update_post_comments_count(db, post_id=getattr(db_comment, "post_id"))
 
+        db.commit()
         db.refresh(db_comment)
         return db_comment
 

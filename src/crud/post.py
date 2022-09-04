@@ -17,6 +17,7 @@ class Post():
 
         update_user_posts_count(db, owner_id=owner_id)
 
+        db.commit()
         db.refresh(db_post)
         return db_post
 
@@ -40,16 +41,17 @@ class Post():
         db.commit()
 
         update_user_posts_count(db, owner_id=getattr(db_post, "owner_id"))
+        db.commit()
 
     def activate(self, db: Session, id: int) -> models.Post:
         db_post = self.get_post_by_id(db, id=id)
         setattr(db_post, "is_active", True)
-        db.commit()
 
         activate_post_likes(db, post_id=id)
         update_post_comments_count(db, post_id=id)
         update_user_posts_count(db, owner_id=getattr(db_post, "owner_id"))
 
+        db.commit()
         db.refresh(db_post)
         return db_post
 
@@ -61,6 +63,7 @@ class Post():
         deactivate_post_likes(db, post_id=id)
         update_user_posts_count(db, owner_id=getattr(db_post, "owner_id"))
 
+        db.commit()
         db.refresh(db_post)
         return db_post
 

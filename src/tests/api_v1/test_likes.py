@@ -3,7 +3,7 @@ from src.tests.conftest import client
 from src.tests.utils import (authentication_headers, create_random_comment,
                              create_random_post, create_random_user,
                              deactivate_comment, deactivate_post,
-                             deactivate_user, get_active_user,
+                             deactivate_user, get_active_post, get_active_user,
                              get_all_likes_count,
                              get_likes_count_by_comment_id,
                              get_likes_count_by_owner_id,
@@ -31,6 +31,19 @@ def test_like_post():
     assert response.status_code == 200
     assert like["owner_id"] == user["id"]
     assert like["post_id"] == post["id"]
+
+
+def test_liked_post_likes_count_update():
+    username = random_lower_string()
+    password = random_lower_string()
+
+    token = create_random_user(username=username, password=password)
+    post = create_random_post(token=token)
+
+    like_post(post_id=post["id"], token=token)
+    updated_post = get_active_post(post_id=post["id"])
+
+    assert updated_post["likes"] == 1
 
 
 def test_like_not_existing_post():
