@@ -114,12 +114,30 @@ def create_random_post(token: str, text: str = random_lower_string()):
     # return response.json()
     # pass
 
-
-def get_active_post(post_id: int):
-    response = client.get(
-        f"{settings.API_V1_STR}/active-posts/{post_id}",
+def delete_post(post_id: int):
+    superuser_token = authentication_headers(
+        username=settings.SUPERUSER_USERNAME,
+        password=settings.SUPERUSER_PASSWORD
     )
+
+    response = client.delete(
+        f"{settings.API_V1_STR}/posts/{post_id}",
+        headers=superuser_token,
+    )
+
     return response.json()
+
+
+def activate_post(post_id: int):
+    superuser_token = authentication_headers(
+        username=settings.SUPERUSER_USERNAME,
+        password=settings.SUPERUSER_PASSWORD
+    )
+
+    client.put(
+        f"{settings.API_V1_STR}/posts/activate/{post_id}",
+        headers=superuser_token,
+    )
 
 
 def deactivate_post(post_id: int, token: str):
@@ -127,6 +145,13 @@ def deactivate_post(post_id: int, token: str):
         f"{settings.API_V1_STR}/posts/deactivate/{post_id}",
         headers=token,
     )
+
+
+def get_active_post(post_id: int):
+    response = client.get(
+        f"{settings.API_V1_STR}/active-posts/{post_id}",
+    )
+    return response.json()
 
 
 def get_all_posts_count():

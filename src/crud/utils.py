@@ -1,6 +1,17 @@
-from sqlalchemy import select
 from sqlalchemy.orm import Session
 from src import models
+
+
+def delete_likes_by_post_id(db: Session, post_id: int):
+    (
+        db.query(models.Like)
+        .filter(models.Like.post_id == post_id)
+        .delete()
+    )
+
+
+def delete_posts_by_owner_id():
+    pass
 
 
 def activate_user_posts(db: Session, owner_id: int):
@@ -20,23 +31,6 @@ def activate_user_posts(db: Session, owner_id: int):
     )
 
 
-def deactivate_user_posts(db: Session, owner_id: int):
-    query = (
-        db.query(models.Post)
-        .filter(models.Post.owner_id == owner_id)
-        .all()
-    )
-
-    for post in query:
-        deactivate_like_post_owner(db, post_id=post.__dict__["id"])
-
-    (
-        db.query(models.Post)
-        .filter(models.Post.owner_id == owner_id)
-        .update({models.Post.is_owner_active: False})
-    )
-
-
 def activate_user_comments(db: Session, owner_id: int):
     query = (
         db.query(models.Comment)
@@ -51,23 +45,6 @@ def activate_user_comments(db: Session, owner_id: int):
         db.query(models.Comment)
         .filter(models.Comment.owner_id == owner_id)
         .update({models.Comment.is_owner_active: True})
-    )
-
-
-def deactivate_user_comments(db: Session, owner_id: int):
-    query = (
-        db.query(models.Comment)
-        .filter(models.Comment.owner_id == owner_id)
-        .all()
-    )
-
-    for comment in query:
-        deactivate_like_comment_owner(db, comment_id=comment.__dict__["id"])
-
-    (
-        db.query(models.Comment)
-        .filter(models.Comment.owner_id == owner_id)
-        .update({models.Comment.is_owner_active: False})
     )
 
 
@@ -93,6 +70,88 @@ def activate_user_likes(db: Session, owner_id: int):
             update_comment_likes_count(db, comment_id=like_dict["comment_id"])
 
 
+def activate_user_followers(db: Session, user_id: int):
+    (
+        db.query(models.Follow)
+        .filter(models.Follow.following_id == user_id)
+        .update({models.Follow.is_following_active: True})
+    )
+
+
+def activate_user_followings(db: Session, user_id: int):
+    (
+        db.query(models.Follow)
+        .filter(models.Follow.follower_id == user_id)
+        .update({models.Follow.is_follower_active: True})
+    )
+
+
+def activate_likes_by_post_id(db: Session, post_id: int):
+    (
+        db.query(models.Like)
+        .filter(models.Like.post_id == post_id)
+        .update({models.Like.is_post_active: True})
+    )
+
+
+def activate_comment_likes(db: Session, comment_id: int):
+    (
+        db.query(models.Like)
+        .filter(models.Like.comment_id == comment_id)
+        .update({models.Like.is_comment_active: True})
+    )
+
+
+def activate_like_post_owner(db: Session, post_id: int):
+    (
+        db.query(models.Like)
+        .filter(models.Like.post_id == post_id)
+        .update({models.Like.is_post_owner_active: True})
+    )
+
+
+def activate_like_comment_owner(db: Session, comment_id: int):
+    (
+        db.query(models.Like)
+        .filter(models.Like.comment_id == comment_id)
+        .update({models.Like.is_comment_owner_active: True})
+    )
+
+
+def deactivate_user_posts(db: Session, owner_id: int):
+    posts = (
+        db.query(models.Post)
+        .filter(models.Post.owner_id == owner_id)
+        .all()
+    )
+
+    for post in posts:
+        deactivate_like_by_post_owner(db, post_id=post.__dict__["id"])
+
+    (
+        db.query(models.Post)
+        .filter(models.Post.owner_id == owner_id)
+        .update({models.Post.is_owner_active: False})
+    )
+
+
+def deactivate_user_comments(db: Session, owner_id: int):
+    query = (
+        db.query(models.Comment)
+        .filter(models.Comment.owner_id == owner_id)
+        .all()
+    )
+
+    for comment in query:
+        deactivate_like_comment_owner(db, comment_id=comment.__dict__["id"])
+
+    (
+        db.query(models.Comment)
+        .filter(models.Comment.owner_id == owner_id)
+        .update({models.Comment.is_owner_active: False})
+    )
+
+
 def deactivate_user_likes(db: Session, owner_id: int):
     (
         db.query(models.Like)
@@ -115,27 +174,11 @@ def deactivate_user_likes(db: Session, owner_id: int):
             update_comment_likes_count(db, comment_id=like_dict["comment_id"])
 
 
-def activate_user_followers(db: Session, user_id: int):
-    (
-        db.query(models.Follow)
-        .filter(models.Follow.following_id == user_id)
-        .update({models.Follow.is_following_active: True})
-    )
-
-
 def deactivate_user_followers(db: Session, user_id: int):
     (
         db.query(models.Follow)
         .filter(models.Follow.following_id == user_id)
         .update({models.Follow.is_following_active: False})
-    )
-
-
-def activate_user_followings(db: Session, user_id: int):
-    (
-        db.query(models.Follow)
-        .filter(models.Follow.follower_id == user_id)
-        .update({models.Follow.is_follower_active: True})
     )
 
 
@@ -147,27 +190,11 @@ def deactivate_user_followings(db: Session, user_id: int):
     )
 
 
-def activate_post_likes(db: Session, post_id: int):
-    (
-        db.query(models.Like)
-        .filter(models.Like.post_id == post_id)
-        .update({models.Like.is_post_active: True})
-    )
-
-
-def deactivate_post_likes(db: Session, post_id: int):
+def deactivate_likes_by_post_id(db: Session, post_id: int):
     (
         db.query(models.Like)
         .filter(models.Like.post_id == post_id)
         .update({models.Like.is_post_active: False})
-    )
-
-
-def activate_comment_likes(db: Session, comment_id: int):
-    (
-        db.query(models.Like)
-        .filter(models.Like.comment_id == comment_id)
-        .update({models.Like.is_comment_active: True})
     )
 
 
@@ -179,27 +206,11 @@ def deactivate_comment_likes(db: Session, comment_id: int):
     )
 
 
-def activate_like_post_owner(db: Session, post_id: int):
-    (
-        db.query(models.Like)
-        .filter(models.Like.post_id == post_id)
-        .update({models.Like.is_post_owner_active: True})
-    )
-
-
-def deactivate_like_post_owner(db: Session, post_id: int):
+def deactivate_like_by_post_owner(db: Session, post_id: int):
     (
         db.query(models.Like)
         .filter(models.Like.post_id == post_id)
         .update({models.Like.is_post_owner_active: False})
-    )
-
-
-def activate_like_comment_owner(db: Session, comment_id: int):
-    (
-        db.query(models.Like)
-        .filter(models.Like.comment_id == comment_id)
-        .update({models.Like.is_comment_owner_active: True})
     )
 
 

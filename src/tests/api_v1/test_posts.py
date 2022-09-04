@@ -1,11 +1,12 @@
 from src.core.config import settings
 from src.tests.conftest import client
-from src.tests.utils import (authentication_headers, create_random_post,
+from src.tests.utils import (activate_post, authentication_headers,
+                             create_random_comment, create_random_post,
                              create_random_user, deactivate_post,
-                             deactivate_user, get_active_user,
-                             get_all_posts_count, get_all_posts_ids,
-                             get_posts_count_by_owner_id,
-                             get_posts_ids_by_owner_id, get_user,
+                             deactivate_user, delete_post, get_active_post,
+                             get_active_user, get_all_posts_count,
+                             get_all_posts_ids, get_posts_count_by_owner_id,
+                             get_posts_ids_by_owner_id, get_user, like_post,
                              random_lower_string)
 
 
@@ -30,6 +31,17 @@ def test_create_post():
     assert response.status_code == 200
     assert post["text"] == data["text"]
     assert post["owner_id"] == user["id"]
+
+
+def test_user_posts_count_after_created_post():
+    username = random_lower_string()
+    password = random_lower_string()
+
+    token = create_random_user(username=username, password=password)
+    create_random_post(token=token)
+    user = get_active_user(username=username)
+
+    assert user["posts"] == 1
 
 
 def test_update_post():
@@ -76,26 +88,26 @@ def test_update_not_existing_post():
     assert response.status_code == 404
 
 
-# def test_update_deactivated_post():
-#     username = random_lower_string()
-#     password = random_lower_string()
+def test_update_deactivated_post():
+    username = random_lower_string()
+    password = random_lower_string()
 
-#     token = create_random_user(username=username, password=password)
-#     post = create_random_post(token=token)
+    token = create_random_user(username=username, password=password)
+    post = create_random_post(token=token)
 
-#     deactivate_post(post_id=post["id"], token=token)
+    deactivate_post(post_id=post["id"], token=token)
 
-#     data = {
-#         "text": random_lower_string()
-#     }
+    data = {
+        "text": random_lower_string()
+    }
 
-#     response = client.get(
-#         f"{settings.API_V1_STR}/posts/{post['id']}",
-#         headers=token,
-#         json=data
-#     )
+    response = client.put(
+        f"{settings.API_V1_STR}/posts/{post['id']}",
+        headers=token,
+        json=data
+    )
 
-#     assert response.status_code == 404
+    assert response.status_code == 404
 
 
 def test_unauthorized_update_post():
@@ -175,12 +187,47 @@ def test_delete_not_existing_post():
     assert response.status_code == 404
 
 
+def test_delete_deactivated_post():
+    username = random_lower_string()
+    password = random_lower_string()
+
+    token = create_random_user(username=username, password=password)
+    post = create_random_post(token=token)
+
+    deactivate_post(post_id=post["id"], token=token)
+
+    superuser_token = authentication_headers(
+        username=settings.SUPERUSER_USERNAME,
+        password=settings.SUPERUSER_PASSWORD
+    )
+
+    response = client.delete(
+        f"{settings.API_V1_STR}/posts/{post['id']}",
+        headers=superuser_token,
+    )
+
+    assert response.status_code == 200
+
+
+def test_user_posts_count_after_post_deleted():
+    username = random_lower_string()
+    password = random_lower_string()
+
+    token = create_random_user(username=username, password=password)
+    post = create_random_post(token=token)
+    delete_post(post_id=post["id"])
+    user = get_active_user(username=username)
+
+    assert user["posts"] == 0
+
+
 def test_activate_post_as_superuser():
     username = random_lower_string()
     password = random_lower_string()
 
     token = create_random_user(username=username, password=password)
-    random_post = create_random_post(token=token)
+    post = create_random_post(token=token)
+    deactivate_post(post_id=post["id"], token=token)
 
     superuser_token = authentication_headers(
         username=settings.SUPERUSER_USERNAME,
@@ -188,13 +235,13 @@ def test_activate_post_as_superuser():
     )
 
     response = client.put(
-        f"{settings.API_V1_STR}/posts/activate/{random_post['id']}",
+        f"{settings.API_V1_STR}/posts/activate/{post['id']}",
         headers=superuser_token,
     )
-    post = response.json()
+    response_post = response.json()
 
     assert response.status_code == 200
-    assert post["is_active"] == True
+    assert response_post["is_active"] == True
 
 
 def test_activate_post_as_normal_user():
@@ -225,6 +272,51 @@ def test_activate_not_existing_post():
     )
 
     assert response.status_code == 404
+
+
+def test_post_likes_count_after_post_activated():
+    username = random_lower_string()
+    password = random_lower_string()
+
+    token = create_random_user(username=username, password=password)
+    post = create_random_post(token=token)
+    like_post(post_id=post["id"], token=token)
+
+    deactivate_post(post_id=post["id"], token=token)
+    activate_post(post_id=post["id"])
+
+    activated_post = get_active_post(post_id=post["id"])
+
+    assert activated_post["likes"] == 1
+
+
+def test_post_comments_count_after_post_activated():
+    username = random_lower_string()
+    password = random_lower_string()
+
+    token = create_random_user(username=username, password=password)
+    post = create_random_post(token=token)
+    create_random_comment(post_id=post["id"], token=token)
+
+    deactivate_post(post_id=post["id"], token=token)
+    activate_post(post_id=post["id"])
+
+    activated_post = get_active_post(post_id=post["id"])
+
+    assert activated_post["comments"] == 1
+
+
+def test_user_posts_count_after_post_activated():
+    username = random_lower_string()
+    password = random_lower_string()
+
+    token = create_random_user(username=username, password=password)
+    post = create_random_post(token=token)
+    deactivate_post(post_id=post["id"], token=token)
+    activate_post(post_id=post["id"])
+    user = get_active_user(username=username)
+
+    assert user["posts"] == 1
 
 
 def test_deactivate_post_as_superuser():
@@ -279,6 +371,18 @@ def test_deactivate_not_existing_post():
     )
 
     assert response.status_code == 404
+
+
+def test_user_posts_count_after_deactivated_post():
+    username = random_lower_string()
+    password = random_lower_string()
+
+    token = create_random_user(username=username, password=password)
+    post = create_random_post(token=token)
+    deactivate_post(post_id=post["id"], token=token)
+    user = get_active_user(username=username)
+
+    assert user["posts"] == 0
 
 
 def test_unauthorized_deactivate_post():
