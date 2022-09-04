@@ -33,7 +33,7 @@ def test_create_post():
     assert post["owner_id"] == user["id"]
 
 
-def test_user_posts_count_after_created_post():
+def test_user_posts_count_after_post_created():
     username = random_lower_string()
     password = random_lower_string()
 
