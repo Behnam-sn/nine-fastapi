@@ -10,6 +10,14 @@ def delete_likes_by_post_id(db: Session, post_id: int):
     )
 
 
+def delete_likes_by_comment_id(db: Session, comment_id: int):
+    (
+        db.query(models.Like)
+        .filter(models.Like.comment_id == comment_id)
+        .delete()
+    )
+
+
 def delete_posts_by_owner_id():
     pass
 

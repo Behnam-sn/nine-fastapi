@@ -1,15 +1,17 @@
 from src.core.config import settings
 from src.tests.conftest import client
-from src.tests.utils import (authentication_headers, create_random_comment,
-                             create_random_post, create_random_user,
-                             deactivate_comment, deactivate_post,
-                             deactivate_user, get_active_post, get_active_user,
-                             get_all_comments_count, get_all_comments_ids,
+from src.tests.utils import (activate_comment, authentication_headers,
+                             create_random_comment, create_random_post,
+                             create_random_user, deactivate_comment,
+                             deactivate_post, deactivate_user, delete_comment,
+                             get_active_comment, get_active_post,
+                             get_active_user, get_all_comments_count,
+                             get_all_comments_ids,
                              get_comments_count_by_owner_id,
                              get_comments_count_by_post_id,
                              get_comments_ids_by_owner_id,
                              get_comments_ids_by_post_id, get_user,
-                             random_lower_string)
+                             like_comment, random_lower_string)
 
 
 def test_create_comment():
@@ -36,6 +38,18 @@ def test_create_comment():
     assert comment["text"] == data["text"]
     assert comment["owner_id"] == user["id"]
     assert comment["post_id"] == post["id"]
+
+
+def test_post_comments_count_after_created_post():
+    username = random_lower_string()
+    password = random_lower_string()
+
+    token = create_random_user(username=username, password=password)
+    post = create_random_post(token=token)
+    create_random_comment(post_id=post["id"], token=token)
+    updated_post = get_active_post(post_id=post["id"])
+
+    assert updated_post["comments"] == 1
 
 
 def test_comment_on_not_existing_post():
@@ -231,6 +245,42 @@ def test_delete_not_existing_comment():
     assert response.status_code == 404
 
 
+def test_delete_deactivated_comment():
+    username = random_lower_string()
+    password = random_lower_string()
+
+    token = create_random_user(username=username, password=password)
+    post = create_random_post(token=token)
+    comment = create_random_comment(post_id=post["id"], token=token)
+
+    deactivate_comment(comment_id=comment["id"], token=token)
+
+    superuser_token = authentication_headers(
+        username=settings.SUPERUSER_USERNAME,
+        password=settings.SUPERUSER_PASSWORD
+    )
+
+    response = client.delete(
+        f"{settings.API_V1_STR}/comments/{comment['id']}",
+        headers=superuser_token,
+    )
+
+    assert response.status_code == 200
+
+
+def test_post_comments_count_after_comment_deleted():
+    username = random_lower_string()
+    password = random_lower_string()
+
+    token = create_random_user(username=username, password=password)
+    post = create_random_post(token=token)
+    comment = create_random_comment(post_id=post["id"], token=token)
+    delete_comment(comment_id=comment["id"])
+    updated_post = get_active_post(post_id=post["id"])
+
+    assert updated_post["comments"] == 0
+
+
 def test_activate_comment_as_superuser():
     username = random_lower_string()
     password = random_lower_string()
@@ -284,6 +334,39 @@ def test_activate_not_existing_comment():
     )
 
     assert response.status_code == 404
+
+
+def test_comment_likes_count_after_comment_activated():
+    username = random_lower_string()
+    password = random_lower_string()
+
+    token = create_random_user(username=username, password=password)
+    post = create_random_post(token=token)
+    comment = create_random_comment(post_id=post["id"], token=token)
+    like_comment(comment_id=comment["id"], token=token)
+
+    deactivate_comment(comment_id=comment["id"], token=token)
+    activate_comment(comment_id=comment["id"])
+
+    activated_comment = get_active_comment(comment_id=comment["id"])
+
+    assert activated_comment["likes"] == 1
+
+
+def test_post_comments_count_after_comment_activated():
+    username = random_lower_string()
+    password = random_lower_string()
+
+    token = create_random_user(username=username, password=password)
+    post = create_random_post(token=token)
+    comment = create_random_comment(post_id=post["id"], token=token)
+
+    deactivate_comment(comment_id=comment["id"], token=token)
+    activate_comment(comment_id=comment["id"])
+
+    updated_post = get_active_post(post_id=post["id"])
+
+    assert updated_post["comments"] == 1
 
 
 def test_deactivate_comment_as_superuser():
@@ -366,7 +449,7 @@ def test_unauthorized_deactivate_comment():
     assert response.status_code == 401
 
 
-def test_deactivated_comment_post():
+def test_post_comments_count_after_comment_deactivated():
     username = random_lower_string()
     password = random_lower_string()
 
@@ -374,32 +457,11 @@ def test_deactivated_comment_post():
     post = create_random_post(token=token)
     comment = create_random_comment(post_id=post["id"], token=token)
 
-    post_comments_count = get_active_post(post_id=post["id"])["comments"]
     deactivate_comment(comment_id=comment["id"], token=token)
-    new_post_comments_count = get_active_post(post_id=post["id"])["comments"]
 
-    assert new_post_comments_count == post_comments_count - 1
+    updated_post = get_active_post(post_id=post["id"])
 
-
-# def test_deactivated_comment_likes():
-#     username = random_lower_string()
-#     password = random_lower_string()
-
-#     token = create_random_user(username=username, password=password)
-#     post = create_random_post(token=token)
-#     comment = create_random_comment(post_id=post["id"], token=token)
-
-#     like_comment(comment_id=comment["id"], token=token)
-
-#     comment_likes_count = active_likes_by_comment_id(comment_id=comment["id"])
-
-#     deactivate_comment(comment_id=comment["id"], token=token)
-
-#     new_comment_likes_count = active_likes_by_comment_id(
-#         comment_id=comment["id"]
-#     )
-
-#     assert new_comment_likes_count == comment_likes_count - 1
+    assert updated_post["comments"] == 0
 
 
 def test_get_all_comments_as_super_user():
@@ -503,6 +565,10 @@ def test_get_not_existing_comment_by_id():
     )
 
     assert response.status_code == 404
+
+
+# def test_get_deleted_comment_by_id():
+#     pass
 
 
 def test_get_deactivated_comment_by_id():

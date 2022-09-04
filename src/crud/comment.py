@@ -2,6 +2,7 @@ from sqlalchemy.orm import Session
 from sqlalchemy.sql import func
 from src import models, schemas
 from src.crud.utils import (activate_comment_likes, deactivate_comment_likes,
+                            delete_likes_by_comment_id,
                             update_comment_likes_count,
                             update_post_comments_count)
 
@@ -16,8 +17,8 @@ class Comment():
         db.commit()
 
         update_post_comments_count(db, post_id=comment.post_id)
-
         db.commit()
+
         db.refresh(db_comment)
         return db_comment
 
@@ -40,8 +41,8 @@ class Comment():
         db.delete(db_comment)
         db.commit()
 
+        delete_likes_by_comment_id(db, comment_id=id)
         update_post_comments_count(db, post_id=getattr(db_comment, "post_id"))
-
         db.commit()
 
     def activate(self, db: Session, id: int) -> models.Comment:
@@ -52,8 +53,8 @@ class Comment():
         activate_comment_likes(db, comment_id=id)
         update_comment_likes_count(db, comment_id=id)
         update_post_comments_count(db, post_id=getattr(db_comment, "post_id"))
-
         db.commit()
+
         db.refresh(db_comment)
         return db_comment
 

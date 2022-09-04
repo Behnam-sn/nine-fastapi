@@ -120,12 +120,10 @@ def delete_post(post_id: int):
         password=settings.SUPERUSER_PASSWORD
     )
 
-    response = client.delete(
+    client.delete(
         f"{settings.API_V1_STR}/posts/{post_id}",
         headers=superuser_token,
     )
-
-    return response.json()
 
 
 def activate_post(post_id: int):
@@ -253,11 +251,42 @@ def create_random_comment(post_id: int, token: str, text: str = random_lower_str
     return response.json()
 
 
+def delete_comment(comment_id: int):
+    superuser_token = authentication_headers(
+        username=settings.SUPERUSER_USERNAME,
+        password=settings.SUPERUSER_PASSWORD
+    )
+
+    client.delete(
+        f"{settings.API_V1_STR}/comments/{comment_id}",
+        headers=superuser_token,
+    )
+
+
+def activate_comment(comment_id: int):
+    superuser_token = authentication_headers(
+        username=settings.SUPERUSER_USERNAME,
+        password=settings.SUPERUSER_PASSWORD
+    )
+
+    client.put(
+        f"{settings.API_V1_STR}/comments/activate/{comment_id}",
+        headers=superuser_token,
+    )
+
+
 def deactivate_comment(comment_id: int, token: str):
     client.put(
         f"{settings.API_V1_STR}/comments/deactivate/{comment_id}",
         headers=token,
     )
+
+
+def get_active_comment(comment_id: int):
+    response = client.get(
+        f"{settings.API_V1_STR}/active-comments/{comment_id}",
+    )
+    return response.json()
 
 
 def get_all_comments_count():
