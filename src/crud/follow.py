@@ -15,8 +15,8 @@ class Follow():
 
         update_user_followers_count(db, user_id=following_id)
         update_user_followings_count(db, user_id=follower_id)
-
         db.commit()
+
         db.refresh(db_follow)
         return db_follow
 
@@ -29,8 +29,8 @@ class Follow():
 
         update_user_followers_count(db, user_id=following_id)
         update_user_followings_count(db, user_id=follower_id)
-
         db.commit()
+
         return db_follow
 
     def get_all_follows_count(self, db: Session) -> int:

@@ -27,6 +27,38 @@ def test_follow_user():
     assert follow["following_id"] == second_user["id"]
 
 
+def test_user_followings_count_after_follow():
+    username = utils.random_lower_string()
+    password = utils.random_lower_string()
+    token = utils.create_user(username=username, password=password)
+
+    second_username = utils.random_lower_string()
+    second_password = utils.random_lower_string()
+    utils.create_user(username=second_username, password=second_password)
+    second_user = utils.get_active_user(username=second_username)
+
+    utils.follow_user(following_id=second_user["id"], token=token)
+    user = utils.get_active_user(username=username)
+
+    assert user["followings"] == 1
+
+
+def test_user_followers_count_after_follow():
+    username = utils.random_lower_string()
+    password = utils.random_lower_string()
+    token = utils.create_user(username=username, password=password)
+
+    second_username = utils.random_lower_string()
+    second_password = utils.random_lower_string()
+    utils.create_user(username=second_username, password=second_password)
+    second_user = utils.get_active_user(username=second_username)
+
+    utils.follow_user(following_id=second_user["id"], token=token)
+    updated_second_user = utils.get_active_user(username=second_username)
+
+    assert updated_second_user["followers"] == 1
+
+
 def test_follow_not_existing_user():
     username = utils.random_lower_string()
     password = utils.random_lower_string()
@@ -123,6 +155,40 @@ def test_unfollow_user():
     assert response.status_code == 200
     assert follow["follower_id"] == user["id"]
     assert follow["following_id"] == second_user["id"]
+
+
+def test_user_followings_count_after_unfollow():
+    username = utils.random_lower_string()
+    password = utils.random_lower_string()
+    token = utils.create_user(username=username, password=password)
+
+    second_username = utils.random_lower_string()
+    second_password = utils.random_lower_string()
+    utils.create_user(username=second_username, password=second_password)
+    second_user = utils.get_active_user(username=second_username)
+
+    utils.follow_user(following_id=second_user["id"], token=token)
+    utils.unfollow_user(following_id=second_user["id"], token=token)
+    user = utils.get_active_user(username=username)
+
+    assert user["followings"] == 0
+
+
+def test_user_followers_count_after_unfollow():
+    username = utils.random_lower_string()
+    password = utils.random_lower_string()
+    token = utils.create_user(username=username, password=password)
+
+    second_username = utils.random_lower_string()
+    second_password = utils.random_lower_string()
+    utils.create_user(username=second_username, password=second_password)
+    second_user = utils.get_active_user(username=second_username)
+
+    utils.follow_user(following_id=second_user["id"], token=token)
+    utils.unfollow_user(following_id=second_user["id"], token=token)
+    updated_second_user = utils.get_active_user(username=second_username)
+
+    assert updated_second_user["followers"] == 0
 
 
 def test_unfollow_not_existing_user():

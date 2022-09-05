@@ -517,6 +517,13 @@ class Utils():
         )
         return response.json()
 
+    def unfollow_user(self, following_id: int, token: str):
+        response = client.delete(
+            f"{settings.API_V1_STR}/follows/{following_id}",
+            headers=token,
+        )
+        return response.json()
+
     def get_all_active_follows_count(self):
         response = client.get(
             f"{settings.API_V1_STR}/active-follows/count/",
