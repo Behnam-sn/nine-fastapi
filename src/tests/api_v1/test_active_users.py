@@ -1,7 +1,6 @@
 from src.core.config import settings
 from src.tests.conftest import client
-from src.tests.utils import (create_random_user, deactivate_user,
-                             get_all_active_users_count, random_lower_string)
+from src.tests.utils import utils
 
 
 def test_get_all_active_users():
@@ -13,23 +12,23 @@ def test_get_all_active_users():
 
 
 def test_get_all_active_users_is_all_active():
-    username = random_lower_string()
-    password = random_lower_string()
+    username = utils.random_lower_string()
+    password = utils.random_lower_string()
 
-    token = create_random_user(username=username, password=password)
+    token = utils.create_random_user(username=username, password=password)
 
-    all_users_count = get_all_active_users_count()
-    deactivate_user(username=username, token=token)
-    new_all_users_count = get_all_active_users_count()
+    all_users_count = utils.get_all_active_users_count()
+    utils.deactivate_user(username=username, token=token)
+    new_all_users_count = utils.get_all_active_users_count()
 
     assert new_all_users_count == all_users_count - 1
 
 
 def test_get_active_user_by_username():
-    username = random_lower_string()
-    password = random_lower_string()
+    username = utils.random_lower_string()
+    password = utils.random_lower_string()
 
-    create_random_user(username=username, password=password)
+    utils.create_random_user(username=username, password=password)
 
     response = client.get(
         f"{settings.API_V1_STR}/active-users/{username}",
@@ -42,7 +41,7 @@ def test_get_active_user_by_username():
 
 
 def test_get_not_existing_user_by_username():
-    username = random_lower_string()
+    username = utils.random_lower_string()
 
     response = client.get(
         f"{settings.API_V1_STR}/active-users/{username}",
@@ -52,11 +51,11 @@ def test_get_not_existing_user_by_username():
 
 
 def test_get_deactivated_user_by_username():
-    username = random_lower_string()
-    password = random_lower_string()
+    username = utils.random_lower_string()
+    password = utils.random_lower_string()
 
-    token = create_random_user(username=username, password=password)
-    deactivate_user(username=username, token=token)
+    token = utils.create_random_user(username=username, password=password)
+    utils.deactivate_user(username=username, token=token)
 
     response = client.get(
         f"{settings.API_V1_STR}/active-users/{username}",
@@ -66,10 +65,10 @@ def test_get_deactivated_user_by_username():
 
 
 def test_get_all_active_users_count():
-    username = random_lower_string()
-    password = random_lower_string()
+    username = utils.random_lower_string()
+    password = utils.random_lower_string()
 
-    create_random_user(username=username, password=password)
+    utils.create_random_user(username=username, password=password)
 
     response = client.get(
         f"{settings.API_V1_STR}/active-users/count/",
@@ -81,13 +80,13 @@ def test_get_all_active_users_count():
 
 
 def test_get_all_active_users_count_is_all_active():
-    username = random_lower_string()
-    password = random_lower_string()
+    username = utils.random_lower_string()
+    password = utils.random_lower_string()
 
-    token = create_random_user(username=username, password=password)
+    token = utils.create_random_user(username=username, password=password)
 
-    count = get_all_active_users_count()
-    deactivate_user(username=username, token=token)
-    new_count = get_all_active_users_count()
+    count = utils.get_all_active_users_count()
+    utils.deactivate_user(username=username, token=token)
+    new_count = utils.get_all_active_users_count()
 
     assert new_count == count - 1

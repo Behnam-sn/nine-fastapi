@@ -1,13 +1,13 @@
 from src.core.config import settings
 from src.tests.conftest import client
-from src.tests.utils import create_random_user, random_lower_string
+from src.tests.utils import utils
 
 
 def test_signup():
     data = {
-        "username": random_lower_string(),
-        "name": random_lower_string(),
-        "password": random_lower_string()
+        "username": utils.random_lower_string(),
+        "name": utils.random_lower_string(),
+        "password": utils.random_lower_string()
     }
 
     response = client.post(
@@ -19,15 +19,15 @@ def test_signup():
 
 
 def test_signup_with_existing_username():
-    username = random_lower_string()
-    password = random_lower_string()
+    username = utils.random_lower_string()
+    password = utils.random_lower_string()
 
-    create_random_user(username=username, password=password)
+    utils.create_random_user(username=username, password=password)
 
     data = {
         "username": username,
-        "name": random_lower_string(),
-        "password": random_lower_string()
+        "name": utils.random_lower_string(),
+        "password": utils.random_lower_string()
     }
 
     response = client.post(
@@ -39,10 +39,10 @@ def test_signup_with_existing_username():
 
 
 def test_signin():
-    username = random_lower_string()
-    password = random_lower_string()
+    username = utils.random_lower_string()
+    password = utils.random_lower_string()
 
-    create_random_user(username=username, password=password)
+    utils.create_random_user(username=username, password=password)
 
     data = {
         "username": username,
@@ -75,13 +75,14 @@ def test_signin_as_superuser():
 
 
 def test_signin_with_wrong_password():
-    username = random_lower_string()
+    username = utils.random_lower_string()
+    password = utils.random_lower_string()
 
-    create_random_user(username=username, password=random_lower_string())
+    utils.create_random_user(username=username, password=password)
 
     data = {
         "username": username,
-        "password": random_lower_string()
+        "password": utils.random_lower_string()
     }
 
     response = client.post(
@@ -90,17 +91,3 @@ def test_signin_with_wrong_password():
     )
 
     assert response.status_code == 401
-
-
-# def test_test_token():
-#     username = random_lower_string()
-#     password = random_lower_string()
-
-#     token = create_random_user(username=username, password=password)
-
-#     response = client.post(
-#         f"{settings.API_V1_STR}/auth/test-token",
-#         headers=token,
-#     )
-
-#     assert response.status_code == 200

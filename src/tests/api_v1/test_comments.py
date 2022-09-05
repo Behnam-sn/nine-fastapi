@@ -1,29 +1,18 @@
 from src.core.config import settings
 from src.tests.conftest import client
-from src.tests.utils import (activate_comment, authentication_headers,
-                             create_random_comment, create_random_post,
-                             create_random_user, deactivate_comment,
-                             deactivate_post, deactivate_user, delete_comment,
-                             get_active_comment, get_active_post,
-                             get_active_user, get_all_comments_count,
-                             get_all_comments_ids,
-                             get_comments_count_by_owner_id,
-                             get_comments_count_by_post_id,
-                             get_comments_ids_by_owner_id,
-                             get_comments_ids_by_post_id, get_user,
-                             like_comment, random_lower_string)
+from src.tests.utils import utils
 
 
 def test_create_comment():
-    username = random_lower_string()
-    password = random_lower_string()
+    username = utils.random_lower_string()
+    password = utils.random_lower_string()
 
-    token = create_random_user(username=username, password=password)
-    user = get_active_user(username=username)
-    post = create_random_post(token=token)
+    token = utils.create_random_user(username=username, password=password)
+    user = utils.get_active_user(username=username)
+    post = utils.create_random_post(token=token)
 
     data = {
-        "text": random_lower_string(),
+        "text": utils.random_lower_string(),
         "post_id": post["id"]
     }
 
@@ -41,26 +30,26 @@ def test_create_comment():
 
 
 def test_post_comments_count_after_created_post():
-    username = random_lower_string()
-    password = random_lower_string()
+    username = utils.random_lower_string()
+    password = utils.random_lower_string()
 
-    token = create_random_user(username=username, password=password)
-    post = create_random_post(token=token)
-    create_random_comment(post_id=post["id"], token=token)
-    updated_post = get_active_post(post_id=post["id"])
+    token = utils.create_random_user(username=username, password=password)
+    post = utils.create_random_post(token=token)
+    utils.create_random_comment(post_id=post["id"], token=token)
+    updated_post = utils.get_active_post(post_id=post["id"])
 
     assert updated_post["comments"] == 1
 
 
 def test_comment_on_not_existing_post():
-    username = random_lower_string()
-    password = random_lower_string()
+    username = utils.random_lower_string()
+    password = utils.random_lower_string()
 
-    token = create_random_user(username=username, password=password)
-    post = create_random_post(token=token)
+    token = utils.create_random_user(username=username, password=password)
+    post = utils.create_random_post(token=token)
 
     data = {
-        "text": random_lower_string(),
+        "text": utils.random_lower_string(),
         "post_id": post["id"] + 1
     }
 
@@ -74,15 +63,15 @@ def test_comment_on_not_existing_post():
 
 
 def test_comment_on_deactivated_post():
-    username = random_lower_string()
-    password = random_lower_string()
+    username = utils.random_lower_string()
+    password = utils.random_lower_string()
 
-    token = create_random_user(username=username, password=password)
-    post = create_random_post(token=token)
-    deactivate_post(post_id=post["id"], token=token)
+    token = utils.create_random_user(username=username, password=password)
+    post = utils.create_random_post(token=token)
+    utils.deactivate_post(post_id=post["id"], token=token)
 
     data = {
-        "text": random_lower_string(),
+        "text": utils.random_lower_string(),
         "post_id": post["id"]
     }
 
@@ -96,15 +85,15 @@ def test_comment_on_deactivated_post():
 
 
 def test_update_comment():
-    username = random_lower_string()
-    password = random_lower_string()
+    username = utils.random_lower_string()
+    password = utils.random_lower_string()
 
-    token = create_random_user(username=username, password=password)
-    post = create_random_post(token=token)
-    comment = create_random_comment(post_id=post["id"], token=token)
+    token = utils.create_random_user(username=username, password=password)
+    post = utils.create_random_post(token=token)
+    comment = utils.create_random_comment(post_id=post["id"], token=token)
 
     data = {
-        "text": random_lower_string()
+        "text": utils.random_lower_string()
     }
 
     response = client.put(
@@ -121,15 +110,15 @@ def test_update_comment():
 
 
 def test_update_not_existing_comment():
-    username = random_lower_string()
-    password = random_lower_string()
+    username = utils.random_lower_string()
+    password = utils.random_lower_string()
 
-    token = create_random_user(username=username, password=password)
-    post = create_random_post(token=token)
-    comment = create_random_comment(post_id=post["id"], token=token)
+    token = utils.create_random_user(username=username, password=password)
+    post = utils.create_random_post(token=token)
+    comment = utils.create_random_comment(post_id=post["id"], token=token)
 
     data = {
-        "text": random_lower_string()
+        "text": utils.random_lower_string()
     }
 
     response = client.put(
@@ -142,17 +131,17 @@ def test_update_not_existing_comment():
 
 
 def test_update_deactivated_comment():
-    username = random_lower_string()
-    password = random_lower_string()
+    username = utils.random_lower_string()
+    password = utils.random_lower_string()
 
-    token = create_random_user(username=username, password=password)
-    post = create_random_post(token=token)
-    comment = create_random_comment(post_id=post["id"], token=token)
+    token = utils.create_random_user(username=username, password=password)
+    post = utils.create_random_post(token=token)
+    comment = utils.create_random_comment(post_id=post["id"], token=token)
 
-    deactivate_comment(comment_id=comment["id"], token=token)
+    utils.deactivate_comment(comment_id=comment["id"], token=token)
 
     data = {
-        "text": random_lower_string()
+        "text": utils.random_lower_string()
     }
 
     response = client.put(
@@ -165,22 +154,22 @@ def test_update_deactivated_comment():
 
 
 def test_unauthorized_update_comment():
-    username = random_lower_string()
-    password = random_lower_string()
+    username = utils.random_lower_string()
+    password = utils.random_lower_string()
 
-    token = create_random_user(username=username, password=password)
-    post = create_random_post(token=token)
-    comment = create_random_comment(post_id=post["id"], token=token)
+    token = utils.create_random_user(username=username, password=password)
+    post = utils.create_random_post(token=token)
+    comment = utils.create_random_comment(post_id=post["id"], token=token)
 
-    new_username = random_lower_string()
-    new_password = random_lower_string()
+    new_username = utils.random_lower_string()
+    new_password = utils.random_lower_string()
 
-    new_token = create_random_user(
+    new_token = utils.create_random_user(
         username=new_username, password=new_password
     )
 
     data = {
-        "text": random_lower_string()
+        "text": utils.random_lower_string()
     }
 
     response = client.put(
@@ -193,14 +182,14 @@ def test_unauthorized_update_comment():
 
 
 def test_delete_comment_as_superuser():
-    username = random_lower_string()
-    password = random_lower_string()
+    username = utils.random_lower_string()
+    password = utils.random_lower_string()
 
-    token = create_random_user(username=username, password=password)
-    post = create_random_post(token=token)
-    comment = create_random_comment(post_id=post["id"], token=token)
+    token = utils.create_random_user(username=username, password=password)
+    post = utils.create_random_post(token=token)
+    comment = utils.create_random_comment(post_id=post["id"], token=token)
 
-    superuser_token = authentication_headers(
+    superuser_token = utils.authentication_headers(
         username=settings.SUPERUSER_USERNAME,
         password=settings.SUPERUSER_PASSWORD
     )
@@ -214,12 +203,12 @@ def test_delete_comment_as_superuser():
 
 
 def test_delete_comment_as_normal_user():
-    username = random_lower_string()
-    password = random_lower_string()
+    username = utils.random_lower_string()
+    password = utils.random_lower_string()
 
-    token = create_random_user(username=username, password=password)
-    post = create_random_post(token=token)
-    comment = create_random_comment(post_id=post["id"], token=token)
+    token = utils.create_random_user(username=username, password=password)
+    post = utils.create_random_post(token=token)
+    comment = utils.create_random_comment(post_id=post["id"], token=token)
 
     response = client.delete(
         f"{settings.API_V1_STR}/comments/{comment['id']}",
@@ -230,12 +219,12 @@ def test_delete_comment_as_normal_user():
 
 
 def test_delete_not_existing_comment():
-    username = random_lower_string()
-    password = random_lower_string()
+    username = utils.random_lower_string()
+    password = utils.random_lower_string()
 
-    token = create_random_user(username=username, password=password)
-    post = create_random_post(token=token)
-    comment = create_random_comment(post_id=post["id"], token=token)
+    token = utils.create_random_user(username=username, password=password)
+    post = utils.create_random_post(token=token)
+    comment = utils.create_random_comment(post_id=post["id"], token=token)
 
     response = client.delete(
         f"{settings.API_V1_STR}/comments/{comment['id'] + 1}",
@@ -246,16 +235,16 @@ def test_delete_not_existing_comment():
 
 
 def test_delete_deactivated_comment():
-    username = random_lower_string()
-    password = random_lower_string()
+    username = utils.random_lower_string()
+    password = utils.random_lower_string()
 
-    token = create_random_user(username=username, password=password)
-    post = create_random_post(token=token)
-    comment = create_random_comment(post_id=post["id"], token=token)
+    token = utils.create_random_user(username=username, password=password)
+    post = utils.create_random_post(token=token)
+    comment = utils.create_random_comment(post_id=post["id"], token=token)
 
-    deactivate_comment(comment_id=comment["id"], token=token)
+    utils.deactivate_comment(comment_id=comment["id"], token=token)
 
-    superuser_token = authentication_headers(
+    superuser_token = utils.authentication_headers(
         username=settings.SUPERUSER_USERNAME,
         password=settings.SUPERUSER_PASSWORD
     )
@@ -269,27 +258,28 @@ def test_delete_deactivated_comment():
 
 
 def test_post_comments_count_after_comment_deleted():
-    username = random_lower_string()
-    password = random_lower_string()
+    username = utils.random_lower_string()
+    password = utils.random_lower_string()
 
-    token = create_random_user(username=username, password=password)
-    post = create_random_post(token=token)
-    comment = create_random_comment(post_id=post["id"], token=token)
-    delete_comment(comment_id=comment["id"])
-    updated_post = get_active_post(post_id=post["id"])
+    token = utils.create_random_user(username=username, password=password)
+    post = utils.create_random_post(token=token)
+    comment = utils.create_random_comment(post_id=post["id"], token=token)
+    utils.delete_comment(comment_id=comment["id"])
+    updated_post = utils.get_active_post(post_id=post["id"])
 
     assert updated_post["comments"] == 0
 
 
 def test_activate_comment_as_superuser():
-    username = random_lower_string()
-    password = random_lower_string()
+    username = utils.random_lower_string()
+    password = utils.random_lower_string()
 
-    token = create_random_user(username=username, password=password)
-    post = create_random_post(token=token)
-    random_comment = create_random_comment(post_id=post["id"], token=token)
+    token = utils.create_random_user(username=username, password=password)
+    post = utils.create_random_post(token=token)
+    random_comment = utils.create_random_comment(
+        post_id=post["id"], token=token)
 
-    superuser_token = authentication_headers(
+    superuser_token = utils.authentication_headers(
         username=settings.SUPERUSER_USERNAME,
         password=settings.SUPERUSER_PASSWORD
     )
@@ -305,12 +295,12 @@ def test_activate_comment_as_superuser():
 
 
 def test_activate_comment_as_normal_user():
-    username = random_lower_string()
-    password = random_lower_string()
+    username = utils.random_lower_string()
+    password = utils.random_lower_string()
 
-    token = create_random_user(username=username, password=password)
-    post = create_random_post(token=token)
-    comment = create_random_comment(post_id=post["id"], token=token)
+    token = utils.create_random_user(username=username, password=password)
+    post = utils.create_random_post(token=token)
+    comment = utils.create_random_comment(post_id=post["id"], token=token)
 
     response = client.put(
         f"{settings.API_V1_STR}/comments/activate/{comment['id']}",
@@ -321,12 +311,12 @@ def test_activate_comment_as_normal_user():
 
 
 def test_activate_not_existing_comment():
-    username = random_lower_string()
-    password = random_lower_string()
+    username = utils.random_lower_string()
+    password = utils.random_lower_string()
 
-    token = create_random_user(username=username, password=password)
-    post = create_random_post(token=token)
-    comment = create_random_comment(post_id=post["id"], token=token)
+    token = utils.create_random_user(username=username, password=password)
+    post = utils.create_random_post(token=token)
+    comment = utils.create_random_comment(post_id=post["id"], token=token)
 
     response = client.put(
         f"{settings.API_V1_STR}/comments/activate/{comment['id'] + 1}",
@@ -337,47 +327,48 @@ def test_activate_not_existing_comment():
 
 
 def test_comment_likes_count_after_comment_activated():
-    username = random_lower_string()
-    password = random_lower_string()
+    username = utils.random_lower_string()
+    password = utils.random_lower_string()
 
-    token = create_random_user(username=username, password=password)
-    post = create_random_post(token=token)
-    comment = create_random_comment(post_id=post["id"], token=token)
-    like_comment(comment_id=comment["id"], token=token)
+    token = utils.create_random_user(username=username, password=password)
+    post = utils.create_random_post(token=token)
+    comment = utils.create_random_comment(post_id=post["id"], token=token)
+    utils.like_comment(comment_id=comment["id"], token=token)
 
-    deactivate_comment(comment_id=comment["id"], token=token)
-    activate_comment(comment_id=comment["id"])
+    utils.deactivate_comment(comment_id=comment["id"], token=token)
+    utils.activate_comment(comment_id=comment["id"])
 
-    activated_comment = get_active_comment(comment_id=comment["id"])
+    activated_comment = utils.get_active_comment(comment_id=comment["id"])
 
     assert activated_comment["likes"] == 1
 
 
 def test_post_comments_count_after_comment_activated():
-    username = random_lower_string()
-    password = random_lower_string()
+    username = utils.random_lower_string()
+    password = utils.random_lower_string()
 
-    token = create_random_user(username=username, password=password)
-    post = create_random_post(token=token)
-    comment = create_random_comment(post_id=post["id"], token=token)
+    token = utils.create_random_user(username=username, password=password)
+    post = utils.create_random_post(token=token)
+    comment = utils.create_random_comment(post_id=post["id"], token=token)
 
-    deactivate_comment(comment_id=comment["id"], token=token)
-    activate_comment(comment_id=comment["id"])
+    utils.deactivate_comment(comment_id=comment["id"], token=token)
+    utils.activate_comment(comment_id=comment["id"])
 
-    updated_post = get_active_post(post_id=post["id"])
+    updated_post = utils.get_active_post(post_id=post["id"])
 
     assert updated_post["comments"] == 1
 
 
 def test_deactivate_comment_as_superuser():
-    username = random_lower_string()
-    password = random_lower_string()
+    username = utils.random_lower_string()
+    password = utils.random_lower_string()
 
-    token = create_random_user(username=username, password=password)
-    post = create_random_post(token=token)
-    random_comment = create_random_comment(post_id=post["id"], token=token)
+    token = utils.create_random_user(username=username, password=password)
+    post = utils.create_random_post(token=token)
+    random_comment = utils.create_random_comment(
+        post_id=post["id"], token=token)
 
-    superuser_token = authentication_headers(
+    superuser_token = utils.authentication_headers(
         username=settings.SUPERUSER_USERNAME,
         password=settings.SUPERUSER_PASSWORD
     )
@@ -393,12 +384,13 @@ def test_deactivate_comment_as_superuser():
 
 
 def test_deactivate_comment_as_normal_user():
-    username = random_lower_string()
-    password = random_lower_string()
+    username = utils.random_lower_string()
+    password = utils.random_lower_string()
 
-    token = create_random_user(username=username, password=password)
-    post = create_random_post(token=token)
-    random_comment = create_random_comment(post_id=post["id"], token=token)
+    token = utils.create_random_user(username=username, password=password)
+    post = utils.create_random_post(token=token)
+    random_comment = utils.create_random_comment(
+        post_id=post["id"], token=token)
 
     response = client.put(
         f"{settings.API_V1_STR}/comments/deactivate/{random_comment['id']}",
@@ -411,12 +403,12 @@ def test_deactivate_comment_as_normal_user():
 
 
 def test_deactivate_not_existing_post():
-    username = random_lower_string()
-    password = random_lower_string()
+    username = utils.random_lower_string()
+    password = utils.random_lower_string()
 
-    token = create_random_user(username=username, password=password)
-    post = create_random_post(token=token)
-    comment = create_random_comment(post_id=post["id"], token=token)
+    token = utils.create_random_user(username=username, password=password)
+    post = utils.create_random_post(token=token)
+    comment = utils.create_random_comment(post_id=post["id"], token=token)
 
     response = client.put(
         f"{settings.API_V1_STR}/comments/deactivate/{comment['id'] + 1}",
@@ -427,17 +419,17 @@ def test_deactivate_not_existing_post():
 
 
 def test_unauthorized_deactivate_comment():
-    username = random_lower_string()
-    password = random_lower_string()
+    username = utils.random_lower_string()
+    password = utils.random_lower_string()
 
-    token = create_random_user(username=username, password=password)
-    post = create_random_post(token=token)
-    comment = create_random_comment(post_id=post["id"], token=token)
+    token = utils.create_random_user(username=username, password=password)
+    post = utils.create_random_post(token=token)
+    comment = utils.create_random_comment(post_id=post["id"], token=token)
 
-    new_username = random_lower_string()
-    new_password = random_lower_string()
+    new_username = utils.random_lower_string()
+    new_password = utils.random_lower_string()
 
-    new_token = create_random_user(
+    new_token = utils.create_random_user(
         username=new_username, password=new_password
     )
 
@@ -450,22 +442,22 @@ def test_unauthorized_deactivate_comment():
 
 
 def test_post_comments_count_after_comment_deactivated():
-    username = random_lower_string()
-    password = random_lower_string()
+    username = utils.random_lower_string()
+    password = utils.random_lower_string()
 
-    token = create_random_user(username=username, password=password)
-    post = create_random_post(token=token)
-    comment = create_random_comment(post_id=post["id"], token=token)
+    token = utils.create_random_user(username=username, password=password)
+    post = utils.create_random_post(token=token)
+    comment = utils.create_random_comment(post_id=post["id"], token=token)
 
-    deactivate_comment(comment_id=comment["id"], token=token)
+    utils.deactivate_comment(comment_id=comment["id"], token=token)
 
-    updated_post = get_active_post(post_id=post["id"])
+    updated_post = utils.get_active_post(post_id=post["id"])
 
     assert updated_post["comments"] == 0
 
 
 def test_get_all_comments_as_super_user():
-    superuser_token = authentication_headers(
+    superuser_token = utils.authentication_headers(
         username=settings.SUPERUSER_USERNAME,
         password=settings.SUPERUSER_PASSWORD
     )
@@ -479,10 +471,10 @@ def test_get_all_comments_as_super_user():
 
 
 def test_get_all_comments_as_normal_user():
-    username = random_lower_string()
-    password = random_lower_string()
+    username = utils.random_lower_string()
+    password = utils.random_lower_string()
 
-    token = create_random_user(username=username, password=password)
+    token = utils.create_random_user(username=username, password=password)
 
     response = client.get(
         f"{settings.API_V1_STR}/comments/all/",
@@ -493,29 +485,29 @@ def test_get_all_comments_as_normal_user():
 
 
 def test_get_all_comments_is_all():
-    username = random_lower_string()
-    password = random_lower_string()
+    username = utils.random_lower_string()
+    password = utils.random_lower_string()
 
-    token = create_random_user(username=username, password=password)
-    post = create_random_post(token=token)
-    comment = create_random_comment(post_id=post["id"], token=token)
+    token = utils.create_random_user(username=username, password=password)
+    post = utils.create_random_post(token=token)
+    comment = utils.create_random_comment(post_id=post["id"], token=token)
 
-    count = get_all_comments_count()
-    deactivate_comment(comment_id=comment["id"], token=token)
-    new_count = get_all_comments_count()
+    count = utils.get_all_comments_count()
+    utils.deactivate_comment(comment_id=comment["id"], token=token)
+    new_count = utils.get_all_comments_count()
 
     assert new_count == count
 
 
 def test_get_comment_by_id_as_super_user():
-    username = random_lower_string()
-    password = random_lower_string()
+    username = utils.random_lower_string()
+    password = utils.random_lower_string()
 
-    token = create_random_user(username=username, password=password)
-    post = create_random_post(token=token)
-    comment = create_random_comment(post_id=post["id"], token=token)
+    token = utils.create_random_user(username=username, password=password)
+    post = utils.create_random_post(token=token)
+    comment = utils.create_random_comment(post_id=post["id"], token=token)
 
-    superuser_token = authentication_headers(
+    superuser_token = utils.authentication_headers(
         username=settings.SUPERUSER_USERNAME,
         password=settings.SUPERUSER_PASSWORD
     )
@@ -531,12 +523,12 @@ def test_get_comment_by_id_as_super_user():
 
 
 def test_get_comment_by_id_as_normal_user():
-    username = random_lower_string()
-    password = random_lower_string()
+    username = utils.random_lower_string()
+    password = utils.random_lower_string()
 
-    token = create_random_user(username=username, password=password)
-    post = create_random_post(token=token)
-    comment = create_random_comment(post_id=post["id"], token=token)
+    token = utils.create_random_user(username=username, password=password)
+    post = utils.create_random_post(token=token)
+    comment = utils.create_random_comment(post_id=post["id"], token=token)
 
     response = client.get(
         f"{settings.API_V1_STR}/comments/{comment['id']}",
@@ -547,14 +539,14 @@ def test_get_comment_by_id_as_normal_user():
 
 
 def test_get_not_existing_comment_by_id():
-    username = random_lower_string()
-    password = random_lower_string()
+    username = utils.random_lower_string()
+    password = utils.random_lower_string()
 
-    token = create_random_user(username=username, password=password)
-    post = create_random_post(token=token)
-    comment = create_random_comment(post_id=post["id"], token=token)
+    token = utils.create_random_user(username=username, password=password)
+    post = utils.create_random_post(token=token)
+    comment = utils.create_random_comment(post_id=post["id"], token=token)
 
-    superuser_token = authentication_headers(
+    superuser_token = utils.authentication_headers(
         username=settings.SUPERUSER_USERNAME,
         password=settings.SUPERUSER_PASSWORD
     )
@@ -572,16 +564,16 @@ def test_get_not_existing_comment_by_id():
 
 
 def test_get_deactivated_comment_by_id():
-    username = random_lower_string()
-    password = random_lower_string()
+    username = utils.random_lower_string()
+    password = utils.random_lower_string()
 
-    token = create_random_user(username=username, password=password)
-    post = create_random_post(token=token)
-    comment = create_random_comment(post_id=post["id"], token=token)
+    token = utils.create_random_user(username=username, password=password)
+    post = utils.create_random_post(token=token)
+    comment = utils.create_random_comment(post_id=post["id"], token=token)
 
-    deactivate_comment(comment_id=comment["id"], token=token)
+    utils.deactivate_comment(comment_id=comment["id"], token=token)
 
-    superuser_token = authentication_headers(
+    superuser_token = utils.authentication_headers(
         username=settings.SUPERUSER_USERNAME,
         password=settings.SUPERUSER_PASSWORD
     )
@@ -598,14 +590,14 @@ def test_get_deactivated_comment_by_id():
 
 
 def test_get_all_comments_count_as_super_user():
-    username = random_lower_string()
-    password = random_lower_string()
+    username = utils.random_lower_string()
+    password = utils.random_lower_string()
 
-    token = create_random_user(username=username, password=password)
-    post = create_random_post(token=token)
-    create_random_comment(post_id=post["id"], token=token)
+    token = utils.create_random_user(username=username, password=password)
+    post = utils.create_random_post(token=token)
+    utils.create_random_comment(post_id=post["id"], token=token)
 
-    superuser_token = authentication_headers(
+    superuser_token = utils.authentication_headers(
         username=settings.SUPERUSER_USERNAME,
         password=settings.SUPERUSER_PASSWORD
     )
@@ -621,10 +613,10 @@ def test_get_all_comments_count_as_super_user():
 
 
 def test_get_all_comments_count_as_normal_user():
-    username = random_lower_string()
-    password = random_lower_string()
+    username = utils.random_lower_string()
+    password = utils.random_lower_string()
 
-    token = create_random_user(username=username, password=password)
+    token = utils.create_random_user(username=username, password=password)
 
     response = client.get(
         f"{settings.API_V1_STR}/comments/count/",
@@ -635,31 +627,31 @@ def test_get_all_comments_count_as_normal_user():
 
 
 def test_get_all_comments_count_is_all():
-    username = random_lower_string()
-    password = random_lower_string()
+    username = utils.random_lower_string()
+    password = utils.random_lower_string()
 
-    token = create_random_user(username=username, password=password)
-    post = create_random_post(token=token)
-    comment = create_random_comment(post_id=post["id"], token=token)
+    token = utils.create_random_user(username=username, password=password)
+    post = utils.create_random_post(token=token)
+    comment = utils.create_random_comment(post_id=post["id"], token=token)
 
-    count = get_all_comments_count()
-    deactivate_comment(comment_id=comment["id"], token=token)
-    new_count = get_all_comments_count()
+    count = utils.get_all_comments_count()
+    utils.deactivate_comment(comment_id=comment["id"], token=token)
+    new_count = utils.get_all_comments_count()
 
     assert new_count == count
 
 
 def test_get_all_comments_ids_as_super_user():
-    username = random_lower_string()
-    password = random_lower_string()
+    username = utils.random_lower_string()
+    password = utils.random_lower_string()
 
-    token = create_random_user(username=username, password=password)
-    post = create_random_post(token=token)
-    create_random_comment(post_id=post["id"], token=token)
+    token = utils.create_random_user(username=username, password=password)
+    post = utils.create_random_post(token=token)
+    utils.create_random_comment(post_id=post["id"], token=token)
 
-    count = get_all_comments_count()
+    count = utils.get_all_comments_count()
 
-    superuser_token = authentication_headers(
+    superuser_token = utils.authentication_headers(
         username=settings.SUPERUSER_USERNAME,
         password=settings.SUPERUSER_PASSWORD
     )
@@ -675,12 +667,12 @@ def test_get_all_comments_ids_as_super_user():
 
 
 def test_get_all_comments_ids_as_normal_user():
-    username = random_lower_string()
-    password = random_lower_string()
+    username = utils.random_lower_string()
+    password = utils.random_lower_string()
 
-    token = create_random_user(username=username, password=password)
-    post = create_random_post(token=token)
-    create_random_comment(post_id=post["id"], token=token)
+    token = utils.create_random_user(username=username, password=password)
+    post = utils.create_random_post(token=token)
+    utils.create_random_comment(post_id=post["id"], token=token)
 
     response = client.get(
         f"{settings.API_V1_STR}/comments/ids/",
@@ -691,32 +683,32 @@ def test_get_all_comments_ids_as_normal_user():
 
 
 def test_get_all_comments_ids_is_all():
-    username = random_lower_string()
-    password = random_lower_string()
+    username = utils.random_lower_string()
+    password = utils.random_lower_string()
 
-    token = create_random_user(username=username, password=password)
-    post = create_random_post(token=token)
-    comment = create_random_comment(post_id=post["id"], token=token)
+    token = utils.create_random_user(username=username, password=password)
+    post = utils.create_random_post(token=token)
+    comment = utils.create_random_comment(post_id=post["id"], token=token)
 
-    count = get_all_comments_count()
-    ids = get_all_comments_ids(count=count)
-    deactivate_comment(comment_id=comment["id"], token=token)
-    new_count = get_all_comments_count()
-    new_ids = get_all_comments_ids(count=new_count)
+    count = utils.get_all_comments_count()
+    ids = utils.get_all_comments_ids(count=count)
+    utils.deactivate_comment(comment_id=comment["id"], token=token)
+    new_count = utils.get_all_comments_count()
+    new_ids = utils.get_all_comments_ids(count=new_count)
 
     assert new_ids == ids
 
 
 def test_get_comments_count_by_owner_id_as_super_user():
-    username = random_lower_string()
-    password = random_lower_string()
+    username = utils.random_lower_string()
+    password = utils.random_lower_string()
 
-    token = create_random_user(username=username, password=password)
-    user = get_user(username=username)
-    post = create_random_post(token=token)
-    create_random_comment(post_id=post["id"], token=token)
+    token = utils.create_random_user(username=username, password=password)
+    user = utils.get_user(username=username)
+    post = utils.create_random_post(token=token)
+    utils.create_random_comment(post_id=post["id"], token=token)
 
-    superuser_token = authentication_headers(
+    superuser_token = utils.authentication_headers(
         username=settings.SUPERUSER_USERNAME,
         password=settings.SUPERUSER_PASSWORD
     )
@@ -732,11 +724,11 @@ def test_get_comments_count_by_owner_id_as_super_user():
 
 
 def test_get_comments_count_by_owner_id_as_normal_user():
-    username = random_lower_string()
-    password = random_lower_string()
+    username = utils.random_lower_string()
+    password = utils.random_lower_string()
 
-    token = create_random_user(username=username, password=password)
-    user = get_user(username=username)
+    token = utils.create_random_user(username=username, password=password)
+    user = utils.get_user(username=username)
 
     response = client.get(
         f"{settings.API_V1_STR}/comments/owner/count/{user['id']}",
@@ -747,29 +739,29 @@ def test_get_comments_count_by_owner_id_as_normal_user():
 
 
 def test_get_comments_count_by_owner_id_is_all():
-    username = random_lower_string()
-    password = random_lower_string()
+    username = utils.random_lower_string()
+    password = utils.random_lower_string()
 
-    token = create_random_user(username=username, password=password)
-    user = get_user(username=username)
-    post = create_random_post(token=token)
-    comment = create_random_comment(post_id=post["id"], token=token)
+    token = utils.create_random_user(username=username, password=password)
+    user = utils.get_user(username=username)
+    post = utils.create_random_post(token=token)
+    comment = utils.create_random_comment(post_id=post["id"], token=token)
 
-    count = get_comments_count_by_owner_id(owner_id=user["id"])
-    deactivate_comment(comment_id=comment["id"], token=token)
-    new_count = get_comments_count_by_owner_id(owner_id=user["id"])
+    count = utils.get_comments_count_by_owner_id(owner_id=user["id"])
+    utils.deactivate_comment(comment_id=comment["id"], token=token)
+    new_count = utils.get_comments_count_by_owner_id(owner_id=user["id"])
 
     assert new_count == count
 
 
 def test_get_comments_count_by_not_existing_owner_id():
-    username = random_lower_string()
-    password = random_lower_string()
+    username = utils.random_lower_string()
+    password = utils.random_lower_string()
 
-    create_random_user(username=username, password=password)
-    user = get_user(username=username)
+    utils.create_random_user(username=username, password=password)
+    user = utils.get_user(username=username)
 
-    superuser_token = authentication_headers(
+    superuser_token = utils.authentication_headers(
         username=settings.SUPERUSER_USERNAME,
         password=settings.SUPERUSER_PASSWORD
     )
@@ -783,16 +775,16 @@ def test_get_comments_count_by_not_existing_owner_id():
 
 
 def test_get_comment_count_by_deactivated_owner_id():
-    username = random_lower_string()
-    password = random_lower_string()
+    username = utils.random_lower_string()
+    password = utils.random_lower_string()
 
-    token = create_random_user(username=username, password=password)
-    user = get_user(username=username)
-    post = create_random_post(token=token)
-    create_random_comment(post_id=post["id"], token=token)
-    deactivate_user(username=username, token=token)
+    token = utils.create_random_user(username=username, password=password)
+    user = utils.get_user(username=username)
+    post = utils.create_random_post(token=token)
+    utils.create_random_comment(post_id=post["id"], token=token)
+    utils.deactivate_user(username=username, token=token)
 
-    superuser_token = authentication_headers(
+    superuser_token = utils.authentication_headers(
         username=settings.SUPERUSER_USERNAME,
         password=settings.SUPERUSER_PASSWORD
     )
@@ -808,15 +800,15 @@ def test_get_comment_count_by_deactivated_owner_id():
 
 
 def test_get_comments_ids_by_owner_id_as_super_user():
-    username = random_lower_string()
-    password = random_lower_string()
+    username = utils.random_lower_string()
+    password = utils.random_lower_string()
 
-    token = create_random_user(username=username, password=password)
-    user = get_user(username=username)
-    post = create_random_post(token=token)
-    create_random_comment(post_id=post["id"], token=token)
+    token = utils.create_random_user(username=username, password=password)
+    user = utils.get_user(username=username)
+    post = utils.create_random_post(token=token)
+    utils.create_random_comment(post_id=post["id"], token=token)
 
-    superuser_token = authentication_headers(
+    superuser_token = utils.authentication_headers(
         username=settings.SUPERUSER_USERNAME,
         password=settings.SUPERUSER_PASSWORD
     )
@@ -832,11 +824,11 @@ def test_get_comments_ids_by_owner_id_as_super_user():
 
 
 def test_get_comments_ids_by_owner_id_as_normal_user():
-    username = random_lower_string()
-    password = random_lower_string()
+    username = utils.random_lower_string()
+    password = utils.random_lower_string()
 
-    token = create_random_user(username=username, password=password)
-    user = get_user(username=username)
+    token = utils.create_random_user(username=username, password=password)
+    user = utils.get_user(username=username)
 
     response = client.get(
         f"{settings.API_V1_STR}/comments/owner/ids/{user['id']}",
@@ -847,29 +839,29 @@ def test_get_comments_ids_by_owner_id_as_normal_user():
 
 
 def test_get_comments_ids_by_owner_id_is_all():
-    username = random_lower_string()
-    password = random_lower_string()
+    username = utils.random_lower_string()
+    password = utils.random_lower_string()
 
-    token = create_random_user(username=username, password=password)
-    user = get_user(username=username)
-    post = create_random_post(token=token)
-    comment = create_random_comment(post_id=post["id"], token=token)
+    token = utils.create_random_user(username=username, password=password)
+    user = utils.get_user(username=username)
+    post = utils.create_random_post(token=token)
+    comment = utils.create_random_comment(post_id=post["id"], token=token)
 
-    ids = get_comments_ids_by_owner_id(owner_id=user["id"])
-    deactivate_comment(comment_id=comment["id"], token=token)
-    new_ids = get_comments_ids_by_owner_id(owner_id=user["id"])
+    ids = utils.get_comments_ids_by_owner_id(owner_id=user["id"])
+    utils.deactivate_comment(comment_id=comment["id"], token=token)
+    new_ids = utils.get_comments_ids_by_owner_id(owner_id=user["id"])
 
     assert new_ids == ids
 
 
 def test_get_comments_ids_by_not_existing_owner_id():
-    username = random_lower_string()
-    password = random_lower_string()
+    username = utils.random_lower_string()
+    password = utils.random_lower_string()
 
-    create_random_user(username=username, password=password)
-    user = get_user(username=username)
+    utils.create_random_user(username=username, password=password)
+    user = utils.get_user(username=username)
 
-    superuser_token = authentication_headers(
+    superuser_token = utils.authentication_headers(
         username=settings.SUPERUSER_USERNAME,
         password=settings.SUPERUSER_PASSWORD
     )
@@ -883,18 +875,18 @@ def test_get_comments_ids_by_not_existing_owner_id():
 
 
 def test_get_comments_ids_by_deactivated_owner_id():
-    username = random_lower_string()
-    password = random_lower_string()
+    username = utils.random_lower_string()
+    password = utils.random_lower_string()
 
-    token = create_random_user(username=username, password=password)
-    user = get_user(username=username)
-    post = create_random_post(token=token)
-    create_random_comment(post_id=post["id"], token=token)
+    token = utils.create_random_user(username=username, password=password)
+    user = utils.get_user(username=username)
+    post = utils.create_random_post(token=token)
+    utils.create_random_comment(post_id=post["id"], token=token)
 
-    ids = get_comments_ids_by_owner_id(owner_id=user["id"])
-    deactivate_user(username=username, token=token)
+    ids = utils.get_comments_ids_by_owner_id(owner_id=user["id"])
+    utils.deactivate_user(username=username, token=token)
 
-    superuser_token = authentication_headers(
+    superuser_token = utils.authentication_headers(
         username=settings.SUPERUSER_USERNAME,
         password=settings.SUPERUSER_PASSWORD
     )
@@ -910,14 +902,14 @@ def test_get_comments_ids_by_deactivated_owner_id():
 
 
 def test_get_comments_count_by_post_id_as_super_user():
-    username = random_lower_string()
-    password = random_lower_string()
+    username = utils.random_lower_string()
+    password = utils.random_lower_string()
 
-    token = create_random_user(username=username, password=password)
-    post = create_random_post(token=token)
-    create_random_comment(post_id=post["id"], token=token)
+    token = utils.create_random_user(username=username, password=password)
+    post = utils.create_random_post(token=token)
+    utils.create_random_comment(post_id=post["id"], token=token)
 
-    superuser_token = authentication_headers(
+    superuser_token = utils.authentication_headers(
         username=settings.SUPERUSER_USERNAME,
         password=settings.SUPERUSER_PASSWORD
     )
@@ -933,12 +925,12 @@ def test_get_comments_count_by_post_id_as_super_user():
 
 
 def test_get_comments_count_by_post_id_as_normal_user():
-    username = random_lower_string()
-    password = random_lower_string()
+    username = utils.random_lower_string()
+    password = utils.random_lower_string()
 
-    token = create_random_user(username=username, password=password)
-    post = create_random_post(token=token)
-    create_random_comment(post_id=post["id"], token=token)
+    token = utils.create_random_user(username=username, password=password)
+    post = utils.create_random_post(token=token)
+    utils.create_random_comment(post_id=post["id"], token=token)
 
     response = client.get(
         f"{settings.API_V1_STR}/comments/post/count/{post['id']}",
@@ -949,28 +941,28 @@ def test_get_comments_count_by_post_id_as_normal_user():
 
 
 def test_get_comments_count_by_post_id_is_all():
-    username = random_lower_string()
-    password = random_lower_string()
+    username = utils.random_lower_string()
+    password = utils.random_lower_string()
 
-    token = create_random_user(username=username, password=password)
-    post = create_random_post(token=token)
-    comment = create_random_comment(post_id=post["id"], token=token)
+    token = utils.create_random_user(username=username, password=password)
+    post = utils.create_random_post(token=token)
+    comment = utils.create_random_comment(post_id=post["id"], token=token)
 
-    count = get_comments_count_by_post_id(post_id=post["id"])
-    deactivate_comment(comment_id=comment["id"], token=token)
-    new_count = get_comments_count_by_post_id(post_id=post["id"])
+    count = utils.get_comments_count_by_post_id(post_id=post["id"])
+    utils.deactivate_comment(comment_id=comment["id"], token=token)
+    new_count = utils.get_comments_count_by_post_id(post_id=post["id"])
 
     assert new_count == count
 
 
 def test_get_comments_count_by_not_existing_post_id():
-    username = random_lower_string()
-    password = random_lower_string()
+    username = utils.random_lower_string()
+    password = utils.random_lower_string()
 
-    token = create_random_user(username=username, password=password)
-    post = create_random_post(token=token)
+    token = utils.create_random_user(username=username, password=password)
+    post = utils.create_random_post(token=token)
 
-    superuser_token = authentication_headers(
+    superuser_token = utils.authentication_headers(
         username=settings.SUPERUSER_USERNAME,
         password=settings.SUPERUSER_PASSWORD
     )
@@ -984,15 +976,15 @@ def test_get_comments_count_by_not_existing_post_id():
 
 
 def test_get_comments_count_by_deactivated_post_id():
-    username = random_lower_string()
-    password = random_lower_string()
+    username = utils.random_lower_string()
+    password = utils.random_lower_string()
 
-    token = create_random_user(username=username, password=password)
-    post = create_random_post(token=token)
-    create_random_comment(post_id=post["id"], token=token)
-    deactivate_post(post_id=post["id"], token=token)
+    token = utils.create_random_user(username=username, password=password)
+    post = utils.create_random_post(token=token)
+    utils.create_random_comment(post_id=post["id"], token=token)
+    utils.deactivate_post(post_id=post["id"], token=token)
 
-    superuser_token = authentication_headers(
+    superuser_token = utils.authentication_headers(
         username=settings.SUPERUSER_USERNAME,
         password=settings.SUPERUSER_PASSWORD
     )
@@ -1008,14 +1000,14 @@ def test_get_comments_count_by_deactivated_post_id():
 
 
 def test_get_comments_ids_by_post_id_as_super_user():
-    username = random_lower_string()
-    password = random_lower_string()
+    username = utils.random_lower_string()
+    password = utils.random_lower_string()
 
-    token = create_random_user(username=username, password=password)
-    post = create_random_post(token=token)
-    create_random_comment(post_id=post["id"], token=token)
+    token = utils.create_random_user(username=username, password=password)
+    post = utils.create_random_post(token=token)
+    utils.create_random_comment(post_id=post["id"], token=token)
 
-    superuser_token = authentication_headers(
+    superuser_token = utils.authentication_headers(
         username=settings.SUPERUSER_USERNAME,
         password=settings.SUPERUSER_PASSWORD
     )
@@ -1031,11 +1023,11 @@ def test_get_comments_ids_by_post_id_as_super_user():
 
 
 def test_get_comments_ids_by_post_id_as_normal_user():
-    username = random_lower_string()
-    password = random_lower_string()
+    username = utils.random_lower_string()
+    password = utils.random_lower_string()
 
-    token = create_random_user(username=username, password=password)
-    post = create_random_post(token=token)
+    token = utils.create_random_user(username=username, password=password)
+    post = utils.create_random_post(token=token)
 
     response = client.get(
         f"{settings.API_V1_STR}/comments/post/ids/{post['id']}",
@@ -1046,28 +1038,28 @@ def test_get_comments_ids_by_post_id_as_normal_user():
 
 
 def test_get_comments_ids_by_post_id_is_all():
-    username = random_lower_string()
-    password = random_lower_string()
+    username = utils.random_lower_string()
+    password = utils.random_lower_string()
 
-    token = create_random_user(username=username, password=password)
-    post = create_random_post(token=token)
-    comment = create_random_comment(post_id=post["id"], token=token)
+    token = utils.create_random_user(username=username, password=password)
+    post = utils.create_random_post(token=token)
+    comment = utils.create_random_comment(post_id=post["id"], token=token)
 
-    ids = get_comments_ids_by_post_id(post_id=post["id"])
-    deactivate_comment(comment_id=comment["id"], token=token)
-    new_ids = get_comments_ids_by_post_id(post_id=post["id"])
+    ids = utils.get_comments_ids_by_post_id(post_id=post["id"])
+    utils.deactivate_comment(comment_id=comment["id"], token=token)
+    new_ids = utils.get_comments_ids_by_post_id(post_id=post["id"])
 
     assert new_ids == ids
 
 
 def test_get_comments_ids_by_not_existing_post_id():
-    username = random_lower_string()
-    password = random_lower_string()
+    username = utils.random_lower_string()
+    password = utils.random_lower_string()
 
-    token = create_random_user(username=username, password=password)
-    post = create_random_post(token=token)
+    token = utils.create_random_user(username=username, password=password)
+    post = utils.create_random_post(token=token)
 
-    superuser_token = authentication_headers(
+    superuser_token = utils.authentication_headers(
         username=settings.SUPERUSER_USERNAME,
         password=settings.SUPERUSER_PASSWORD
     )
@@ -1081,17 +1073,17 @@ def test_get_comments_ids_by_not_existing_post_id():
 
 
 def test_get_comments_ids_by_deactivated_post_id():
-    username = random_lower_string()
-    password = random_lower_string()
+    username = utils.random_lower_string()
+    password = utils.random_lower_string()
 
-    token = create_random_user(username=username, password=password)
-    post = create_random_post(token=token)
-    create_random_comment(post_id=post["id"], token=token)
+    token = utils.create_random_user(username=username, password=password)
+    post = utils.create_random_post(token=token)
+    utils.create_random_comment(post_id=post["id"], token=token)
 
-    ids = get_comments_ids_by_post_id(post_id=post["id"])
-    deactivate_post(post_id=post["id"], token=token)
+    ids = utils.get_comments_ids_by_post_id(post_id=post["id"])
+    utils.deactivate_post(post_id=post["id"], token=token)
 
-    superuser_token = authentication_headers(
+    superuser_token = utils.authentication_headers(
         username=settings.SUPERUSER_USERNAME,
         password=settings.SUPERUSER_PASSWORD
     )
