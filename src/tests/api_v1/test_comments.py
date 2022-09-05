@@ -276,8 +276,7 @@ def test_activate_comment_as_superuser():
 
     token = utils.create_user(username=username, password=password)
     post = utils.create_post(token=token)
-    random_comment = utils.create_comment(
-        post_id=post["id"], token=token)
+    comment = utils.create_comment(post_id=post["id"], token=token)
 
     superuser_token = utils.authentication_headers(
         username=settings.SUPERUSER_USERNAME,
@@ -285,13 +284,13 @@ def test_activate_comment_as_superuser():
     )
 
     response = client.put(
-        f"{settings.API_V1_STR}/comments/activate/{random_comment['id']}",
+        f"{settings.API_V1_STR}/comments/activate/{comment['id']}",
         headers=superuser_token,
     )
-    comment = response.json()
+    response_comment = response.json()
 
     assert response.status_code == 200
-    assert comment["is_active"] == True
+    assert response_comment["is_active"] == True
 
 
 def test_activate_comment_as_normal_user():
@@ -365,8 +364,7 @@ def test_deactivate_comment_as_superuser():
 
     token = utils.create_user(username=username, password=password)
     post = utils.create_post(token=token)
-    random_comment = utils.create_comment(
-        post_id=post["id"], token=token)
+    comment = utils.create_comment(post_id=post["id"], token=token)
 
     superuser_token = utils.authentication_headers(
         username=settings.SUPERUSER_USERNAME,
@@ -374,13 +372,13 @@ def test_deactivate_comment_as_superuser():
     )
 
     response = client.put(
-        f"{settings.API_V1_STR}/comments/deactivate/{random_comment['id']}",
+        f"{settings.API_V1_STR}/comments/deactivate/{comment['id']}",
         headers=superuser_token,
     )
-    comment = response.json()
+    response_comment = response.json()
 
     assert response.status_code == 200
-    assert comment["is_active"] == False
+    assert response_comment["is_active"] == False
 
 
 def test_deactivate_comment_as_normal_user():
@@ -389,17 +387,16 @@ def test_deactivate_comment_as_normal_user():
 
     token = utils.create_user(username=username, password=password)
     post = utils.create_post(token=token)
-    random_comment = utils.create_comment(
-        post_id=post["id"], token=token)
+    comment = utils.create_comment(post_id=post["id"], token=token)
 
     response = client.put(
-        f"{settings.API_V1_STR}/comments/deactivate/{random_comment['id']}",
+        f"{settings.API_V1_STR}/comments/deactivate/{comment['id']}",
         headers=token,
     )
-    comment = response.json()
+    response_comment = response.json()
 
     assert response.status_code == 200
-    assert comment["is_active"] == False
+    assert response_comment["is_active"] == False
 
 
 def test_deactivate_not_existing_post():
@@ -450,7 +447,6 @@ def test_post_comments_count_after_comment_deactivated():
     comment = utils.create_comment(post_id=post["id"], token=token)
 
     utils.deactivate_comment(comment_id=comment["id"], token=token)
-
     updated_post = utils.get_active_post(post_id=post["id"])
 
     assert updated_post["comments"] == 0

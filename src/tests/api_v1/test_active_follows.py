@@ -12,23 +12,22 @@ def test_get_all_active_follows():
 
 
 def test_get_all_active_follows_is_all_active():
-    # username = utils.random_lower_string()
-    # password = utils.random_lower_string()
-    # token = utils.create_user(username=username, password=password)
+    username = utils.random_lower_string()
+    password = utils.random_lower_string()
+    token = utils.create_user(username=username, password=password)
 
-    # second_username = utils.random_lower_string()
-    # second_password = utils.random_lower_string()
-    # utils.create_user(username=second_username, password=second_password)
-    # second_user = utils.get_active_user(username=second_username)
+    second_username = utils.random_lower_string()
+    second_password = utils.random_lower_string()
+    utils.create_user(username=second_username, password=second_password)
+    second_user = utils.get_active_user(username=second_username)
 
-    # utils.follow_user(following_id=second_user["id"], token=token)
+    utils.follow_user(following_id=second_user["id"], token=token)
 
-    # count = get_all_active_follows_count()
-    # utils.deactivate_user(username=username, token=token)
-    # new_count = get_all_active_follows_count()
+    count = utils.get_all_active_follows_count()
+    utils.deactivate_user(username=username, token=token)
+    new_count = utils.get_all_active_follows_count()
 
-    # assert new_count == count - 1
-    pass
+    assert new_count == count - 1
 
 
 def test_get_active_follow_by_id():
@@ -38,9 +37,7 @@ def test_get_active_follow_by_id():
 
     second_username = utils.random_lower_string()
     second_password = utils.random_lower_string()
-    utils.create_user(
-        username=second_username, password=second_password
-    )
+    utils.create_user(username=second_username, password=second_password)
     second_user = utils.get_active_user(username=second_username)
 
     follow = utils.follow_user(following_id=second_user["id"], token=token)
@@ -61,9 +58,7 @@ def test_get_not_existing_follow_by_id():
 
     second_username = utils.random_lower_string()
     second_password = utils.random_lower_string()
-    utils.create_user(
-        username=second_username, password=second_password
-    )
+    utils.create_user(username=second_username, password=second_password)
     second_user = utils.get_active_user(username=second_username)
 
     follow = utils.follow_user(following_id=second_user["id"], token=token)
@@ -76,7 +71,23 @@ def test_get_not_existing_follow_by_id():
 
 
 def test_get_deactivated_follow_by_id():
-    pass
+    username = utils.random_lower_string()
+    password = utils.random_lower_string()
+    token = utils.create_user(username=username, password=password)
+
+    second_username = utils.random_lower_string()
+    second_password = utils.random_lower_string()
+    utils.create_user(username=second_username, password=second_password)
+    second_user = utils.get_active_user(username=second_username)
+
+    follow = utils.follow_user(following_id=second_user["id"], token=token)
+    utils.deactivate_user(username=username, token=token)
+
+    response = client.get(
+        f"{settings.API_V1_STR}/active-follows/{follow['id']}",
+    )
+
+    assert response.status_code == 404
 
 
 def test_get_all_active_follows_count():
@@ -86,9 +97,7 @@ def test_get_all_active_follows_count():
 
     second_username = utils.random_lower_string()
     second_password = utils.random_lower_string()
-    utils.create_user(
-        username=second_username, password=second_password
-    )
+    utils.create_user(username=second_username, password=second_password)
     second_user = utils.get_active_user(username=second_username)
 
     utils.follow_user(following_id=second_user["id"], token=token)
@@ -102,8 +111,8 @@ def test_get_all_active_follows_count():
     assert count > 0
 
 
-def test_get_all_active_follows_count_is_all_active():
-    pass
+# def test_get_all_active_follows_count_is_all_active():
+#     pass
 
 
 def test_get_active_following_count_by_user_id():
@@ -114,9 +123,7 @@ def test_get_active_following_count_by_user_id():
 
     second_username = utils.random_lower_string()
     second_password = utils.random_lower_string()
-    utils.create_user(
-        username=second_username, password=second_password
-    )
+    utils.create_user(username=second_username, password=second_password)
     second_user = utils.get_active_user(username=second_username)
 
     utils.follow_user(following_id=second_user["id"], token=token)
@@ -130,8 +137,8 @@ def test_get_active_following_count_by_user_id():
     assert count == 1
 
 
-def test_get_active_following_count_by_user_id_is_all_active():
-    pass
+# def test_get_active_following_count_by_user_id_is_all_active():
+#     pass
 
 
 def test_get_active_following_count_by_not_existing_user_id():
@@ -170,9 +177,7 @@ def test_get_active_following_ids_by_user_id():
 
     second_username = utils.random_lower_string()
     second_password = utils.random_lower_string()
-    utils.create_user(
-        username=second_username, password=second_password
-    )
+    utils.create_user(username=second_username, password=second_password)
     second_user = utils.get_active_user(username=second_username)
 
     utils.follow_user(following_id=second_user["id"], token=token)
@@ -186,8 +191,8 @@ def test_get_active_following_ids_by_user_id():
     assert len(ids) == 1
 
 
-def test_get_active_following_ids_by_user_id_is_all_active():
-    pass
+# def test_get_active_following_ids_by_user_id_is_all_active():
+#     pass
 
 
 def test_get_active_following_ids_by_not_existing_user_id():
@@ -225,9 +230,7 @@ def test_get_active_follower_count_by_user_id():
 
     second_username = utils.random_lower_string()
     second_password = utils.random_lower_string()
-    utils.create_user(
-        username=second_username, password=second_password
-    )
+    utils.create_user(username=second_username, password=second_password)
     second_user = utils.get_active_user(username=second_username)
 
     utils.follow_user(following_id=second_user["id"], token=token)
@@ -241,8 +244,8 @@ def test_get_active_follower_count_by_user_id():
     assert count == 1
 
 
-def test_get_active_follower_count_by_user_id_is_all_active():
-    pass
+# def test_get_active_follower_count_by_user_id_is_all_active():
+#     pass
 
 
 def test_get_active_follower_count_by_not_existing_user_id():
@@ -280,9 +283,7 @@ def test_get_active_follower_ids_by_user_id():
 
     second_username = utils.random_lower_string()
     second_password = utils.random_lower_string()
-    utils.create_user(
-        username=second_username, password=second_password
-    )
+    utils.create_user(username=second_username, password=second_password)
     second_user = utils.get_active_user(username=second_username)
 
     utils.follow_user(following_id=second_user["id"], token=token)
@@ -296,8 +297,8 @@ def test_get_active_follower_ids_by_user_id():
     assert len(ids) == 1
 
 
-def test_get_active_follower_ids_by_user_id_is_all_active():
-    pass
+# def test_get_active_follower_ids_by_user_id_is_all_active():
+#     pass
 
 
 def test_get_active_follower_ids_by_not_existing_user_id():

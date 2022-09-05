@@ -18,11 +18,11 @@ def test_get_all_active_posts_is_all_active():
     token = utils.create_user(username=username, password=password)
     post = utils.create_post(token=token)
 
-    all_active_posts_count = utils.get_all_active_posts_count()
+    count = utils.get_all_active_posts_count()
     utils.deactivate_post(post_id=post["id"], token=token)
-    new_all_active_posts_count = utils.get_all_active_posts_count()
+    new_count = utils.get_all_active_posts_count()
 
-    assert new_all_active_posts_count == all_active_posts_count - 1
+    assert new_count == count - 1
 
 
 def test_get_active_post_by_id():
@@ -30,15 +30,15 @@ def test_get_active_post_by_id():
     password = utils.random_lower_string()
 
     token = utils.create_user(username=username, password=password)
-    random_post = utils.create_post(token=token)
+    post = utils.create_post(token=token)
 
     response = client.get(
-        f"{settings.API_V1_STR}/active-posts/{random_post['id']}",
+        f"{settings.API_V1_STR}/active-posts/{post['id']}",
     )
-    post = response.json()
+    response_post = response.json()
 
     assert response.status_code == 200
-    assert random_post == post
+    assert response_post == post
 
 
 def test_get_not_existing_post_by_id():

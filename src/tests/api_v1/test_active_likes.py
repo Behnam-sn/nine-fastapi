@@ -137,8 +137,8 @@ def test_get_active_likes_count_by_owner_id():
     assert count == 2
 
 
-def test_get_active_likes_count_by_owner_id_is_all_active():
-    pass
+# def test_get_active_likes_count_by_owner_id_is_all_active():
+#     pass
 
 
 def test_get_active_likes_count_by_not_existing_owner_id():

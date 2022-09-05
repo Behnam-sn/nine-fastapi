@@ -17,11 +17,11 @@ def test_get_all_active_users_is_all_active():
 
     token = utils.create_user(username=username, password=password)
 
-    all_users_count = utils.get_all_active_users_count()
+    count = utils.get_all_active_users_count()
     utils.deactivate_user(username=username, token=token)
-    new_all_users_count = utils.get_all_active_users_count()
+    new_count = utils.get_all_active_users_count()
 
-    assert new_all_users_count == all_users_count - 1
+    assert new_count == count - 1
 
 
 def test_get_active_user_by_username():
