@@ -1,11 +1,7 @@
 from sqlalchemy.orm import Session
 from sqlalchemy.sql import func
 from src import models, schemas
-from src.crud.utils import (activate_likes_by_post_id,
-                            deactivate_likes_by_post_id,
-                            delete_likes_by_post_id,
-                            update_post_comments_count,
-                            update_post_likes_count, update_user_posts_count)
+from src.crud.utils import utils
 
 
 class Post():
@@ -17,7 +13,7 @@ class Post():
         db.add(db_post)
         db.commit()
 
-        update_user_posts_count(db, owner_id=owner_id)
+        utils.update_user_posts_count(db, owner_id=owner_id)
         db.commit()
 
         db.refresh(db_post)
@@ -42,8 +38,10 @@ class Post():
         db.delete(db_post)
         db.commit()
 
-        delete_likes_by_post_id(db, post_id=id)
-        update_user_posts_count(db, owner_id=getattr(db_post, "owner_id"))
+        utils.delete_likes_by_post_id(db, post_id=id)
+        utils.update_user_posts_count(
+            db, owner_id=getattr(db_post, "owner_id")
+        )
         db.commit()
 
     def activate(self, db: Session, id: int) -> models.Post:
@@ -51,10 +49,12 @@ class Post():
         setattr(db_post, "is_active", True)
         db.commit()
 
-        activate_likes_by_post_id(db, post_id=id)
-        update_post_likes_count(db, post_id=id)
-        update_post_comments_count(db, post_id=id)
-        update_user_posts_count(db, owner_id=getattr(db_post, "owner_id"))
+        utils.activate_likes_by_post_id(db, post_id=id)
+        utils.update_post_likes_count(db, post_id=id)
+        utils.update_post_comments_count(db, post_id=id)
+        utils.update_user_posts_count(
+            db, owner_id=getattr(db_post, "owner_id")
+        )
 
         db.commit()
         db.refresh(db_post)
@@ -65,8 +65,10 @@ class Post():
         setattr(db_post, "is_active", False)
         db.commit()
 
-        deactivate_likes_by_post_id(db, post_id=id)
-        update_user_posts_count(db, owner_id=getattr(db_post, "owner_id"))
+        utils.deactivate_likes_by_post_id(db, post_id=id)
+        utils.update_user_posts_count(
+            db, owner_id=getattr(db_post, "owner_id")
+        )
 
         db.commit()
         db.refresh(db_post)

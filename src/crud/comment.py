@@ -1,11 +1,7 @@
 from sqlalchemy.orm import Session
 from sqlalchemy.sql import func
 from src import models, schemas
-from src.crud.utils import (activate_likes_by_comment_id,
-                            deactivate_likes_by_comment_id,
-                            delete_likes_by_comment_id,
-                            update_comment_likes_count,
-                            update_post_comments_count)
+from src.crud.utils import utils
 
 
 class Comment():
@@ -17,7 +13,7 @@ class Comment():
         db.add(db_comment)
         db.commit()
 
-        update_post_comments_count(db, post_id=comment.post_id)
+        utils.update_post_comments_count(db, post_id=comment.post_id)
         db.commit()
 
         db.refresh(db_comment)
@@ -42,8 +38,10 @@ class Comment():
         db.delete(db_comment)
         db.commit()
 
-        delete_likes_by_comment_id(db, comment_id=id)
-        update_post_comments_count(db, post_id=getattr(db_comment, "post_id"))
+        utils.delete_likes_by_comment_id(db, comment_id=id)
+        utils.update_post_comments_count(
+            db, post_id=getattr(db_comment, "post_id")
+        )
         db.commit()
 
     def activate(self, db: Session, id: int) -> models.Comment:
@@ -51,9 +49,11 @@ class Comment():
         setattr(db_comment, "is_active", True)
         db.commit()
 
-        activate_likes_by_comment_id(db, comment_id=id)
-        update_comment_likes_count(db, comment_id=id)
-        update_post_comments_count(db, post_id=getattr(db_comment, "post_id"))
+        utils.activate_likes_by_comment_id(db, comment_id=id)
+        utils.update_comment_likes_count(db, comment_id=id)
+        utils.update_post_comments_count(
+            db, post_id=getattr(db_comment, "post_id")
+        )
         db.commit()
 
         db.refresh(db_comment)
@@ -64,8 +64,10 @@ class Comment():
         setattr(db_comment, "is_active", False)
         db.commit()
 
-        deactivate_likes_by_comment_id(db, comment_id=id)
-        update_post_comments_count(db, post_id=getattr(db_comment, "post_id"))
+        utils.deactivate_likes_by_comment_id(db, comment_id=id)
+        utils.update_post_comments_count(
+            db, post_id=getattr(db_comment, "post_id")
+        )
         db.commit()
 
         db.refresh(db_comment)

@@ -2,18 +2,7 @@ from sqlalchemy.orm import Session
 from sqlalchemy.sql import func
 from src import models, schemas
 from src.core.security import get_password_hash, verify_password
-from src.crud.utils import (activate_comments_by_owner_id,
-                            activate_followers_by_user_id,
-                            activate_followings_by_user_id,
-                            activate_likes_by_owner_id,
-                            activate_posts_by_owner_id,
-                            deactivate_comments_by_owner_id,
-                            deactivate_followers_by_user_id,
-                            deactivate_followings_by_user_id,
-                            deactivate_likes_by_owner_id,
-                            deactivate_posts_by_owner_id,
-                            update_user_followers_count,
-                            update_user_followings_count)
+from src.crud.utils import utils
 
 
 class User():
@@ -62,13 +51,17 @@ class User():
         setattr(db_user, "is_active", True)
         db.commit()
 
-        activate_posts_by_owner_id(db, owner_id=getattr(db_user, "id"))
-        activate_comments_by_owner_id(db, owner_id=getattr(db_user, "id"))
-        activate_likes_by_owner_id(db, owner_id=getattr(db_user, "id"))
-        activate_followers_by_user_id(db, user_id=getattr(db_user, "id"))
-        update_user_followers_count(db, user_id=getattr(db_user, "id"))
-        activate_followings_by_user_id(db, user_id=getattr(db_user, "id"))
-        update_user_followings_count(db, user_id=getattr(db_user, "id"))
+        utils.activate_posts_by_owner_id(db, owner_id=getattr(db_user, "id"))
+        utils.activate_comments_by_owner_id(
+            db, owner_id=getattr(db_user, "id")
+        )
+        utils.activate_likes_by_owner_id(db, owner_id=getattr(db_user, "id"))
+        utils.activate_followers_by_user_id(db, user_id=getattr(db_user, "id"))
+        utils.update_user_followers_count(db, user_id=getattr(db_user, "id"))
+        utils.activate_followings_by_user_id(
+            db, user_id=getattr(db_user, "id")
+        )
+        utils.update_user_followings_count(db, user_id=getattr(db_user, "id"))
         db.commit()
 
         db.refresh(db_user)
@@ -79,11 +72,17 @@ class User():
         setattr(db_user, "is_active", False)
         db.commit()
 
-        deactivate_posts_by_owner_id(db, owner_id=getattr(db_user, "id"))
-        deactivate_comments_by_owner_id(db, owner_id=getattr(db_user, "id"))
-        deactivate_likes_by_owner_id(db, owner_id=getattr(db_user, "id"))
-        deactivate_followers_by_user_id(db, user_id=getattr(db_user, "id"))
-        deactivate_followings_by_user_id(db, user_id=getattr(db_user, "id"))
+        utils.deactivate_posts_by_owner_id(db, owner_id=getattr(db_user, "id"))
+        utils.deactivate_comments_by_owner_id(
+            db, owner_id=getattr(db_user, "id")
+        )
+        utils.deactivate_likes_by_owner_id(db, owner_id=getattr(db_user, "id"))
+        utils.deactivate_followers_by_user_id(
+            db, user_id=getattr(db_user, "id")
+        )
+        utils.deactivate_followings_by_user_id(
+            db, user_id=getattr(db_user, "id")
+        )
         db.commit()
 
         db.refresh(db_user)

@@ -1,6 +1,6 @@
 from sqlalchemy.orm import Session
 from src import models
-from src.crud.utils import update_comment_likes_count, update_post_likes_count
+from src.crud.utils import utils
 
 
 class Like():
@@ -12,7 +12,7 @@ class Like():
         db.add(db_like)
         db.commit()
 
-        update_post_likes_count(db, post_id=post_id)
+        utils.update_post_likes_count(db, post_id=post_id)
         db.commit()
 
         db.refresh(db_like)
@@ -25,7 +25,7 @@ class Like():
         db.delete(db_like)
         db.commit()
 
-        update_post_likes_count(db, post_id=post_id)
+        utils.update_post_likes_count(db, post_id=post_id)
         db.commit()
 
         return db_like
@@ -38,7 +38,7 @@ class Like():
         db.add(db_like)
         db.commit()
 
-        update_comment_likes_count(db, comment_id=comment_id)
+        utils.update_comment_likes_count(db, comment_id=comment_id)
         db.commit()
 
         db.refresh(db_like)
@@ -51,7 +51,7 @@ class Like():
         db.delete(db_like)
         db.commit()
 
-        update_comment_likes_count(db, comment_id=comment_id)
+        utils.update_comment_likes_count(db, comment_id=comment_id)
         db.commit()
 
         return db_like

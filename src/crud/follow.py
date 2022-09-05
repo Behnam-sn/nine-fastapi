@@ -1,7 +1,6 @@
 from sqlalchemy.orm import Session
 from src import models
-from src.crud.utils import (update_user_followers_count,
-                            update_user_followings_count)
+from src.crud.utils import utils
 
 
 class Follow():
@@ -13,8 +12,8 @@ class Follow():
         db.add(db_follow)
         db.commit()
 
-        update_user_followers_count(db, user_id=following_id)
-        update_user_followings_count(db, user_id=follower_id)
+        utils.update_user_followers_count(db, user_id=following_id)
+        utils.update_user_followings_count(db, user_id=follower_id)
         db.commit()
 
         db.refresh(db_follow)
@@ -27,8 +26,8 @@ class Follow():
         db.delete(db_follow)
         db.commit()
 
-        update_user_followers_count(db, user_id=following_id)
-        update_user_followings_count(db, user_id=follower_id)
+        utils.update_user_followers_count(db, user_id=following_id)
+        utils.update_user_followings_count(db, user_id=follower_id)
         db.commit()
 
         return db_follow
