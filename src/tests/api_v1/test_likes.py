@@ -22,7 +22,7 @@ def test_like_post():
     assert like["post_id"] == post["id"]
 
 
-def test_liked_post_likes_count_update():
+def test_post_likes_count_after_post_liked():
     username = utils.random_lower_string()
     password = utils.random_lower_string()
 
@@ -105,6 +105,20 @@ def test_unlike_post():
     assert like["post_id"] == post["id"]
 
 
+def test_post_likes_count_after_post_unliked():
+    username = utils.random_lower_string()
+    password = utils.random_lower_string()
+
+    token = utils.create_user(username=username, password=password)
+    post = utils.create_post(token=token)
+
+    utils.like_post(post_id=post["id"], token=token)
+    utils.unlike_post(post_id=post["id"], token=token)
+    updated_post = utils.get_active_post(post_id=post["id"])
+
+    assert updated_post["likes"] == 0
+
+
 def test_unlike_not_existing_post():
     username = utils.random_lower_string()
     password = utils.random_lower_string()
@@ -173,6 +187,20 @@ def test_like_comment():
     assert response.status_code == 200
     assert like["owner_id"] == user["id"]
     assert like["comment_id"] == comment["id"]
+
+
+def test_comment_likes_count_after_comment_liked():
+    username = utils.random_lower_string()
+    password = utils.random_lower_string()
+
+    token = utils.create_user(username=username, password=password)
+    post = utils.create_post(token=token)
+    comment = utils.create_comment(post_id=post["id"], token=token)
+
+    utils.like_comment(comment_id=comment["id"], token=token)
+    updated_comment = utils.get_active_comment(comment_id=comment["id"])
+
+    assert updated_comment["likes"] == 1
 
 
 def test_like_not_existing_comment():
@@ -247,6 +275,21 @@ def test_unlike_comment():
     assert response.status_code == 200
     assert like["owner_id"] == user["id"]
     assert like["comment_id"] == comment["id"]
+
+
+def test_comment_likes_count_after_comment_unliked():
+    username = utils.random_lower_string()
+    password = utils.random_lower_string()
+
+    token = utils.create_user(username=username, password=password)
+    post = utils.create_post(token=token)
+    comment = utils.create_comment(post_id=post["id"], token=token)
+
+    utils.like_comment(comment_id=comment["id"], token=token)
+    utils.unlike_comment(comment_id=comment["id"], token=token)
+    updated_comment = utils.get_active_comment(comment_id=comment["id"])
+
+    assert updated_comment["likes"] == 0
 
 
 def test_unlike_not_existing_comment():
