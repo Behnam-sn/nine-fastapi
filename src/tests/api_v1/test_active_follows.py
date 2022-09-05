@@ -111,8 +111,23 @@ def test_get_all_active_follows_count():
     assert count > 0
 
 
-# def test_get_all_active_follows_count_is_all_active():
-#     pass
+def test_get_all_active_follows_count_is_all_active():
+    username = utils.random_lower_string()
+    password = utils.random_lower_string()
+    token = utils.create_user(username=username, password=password)
+
+    second_username = utils.random_lower_string()
+    second_password = utils.random_lower_string()
+    utils.create_user(username=second_username, password=second_password)
+    second_user = utils.get_active_user(username=second_username)
+
+    utils.follow_user(following_id=second_user["id"], token=token)
+
+    count = utils.get_all_active_follows_count()
+    utils.deactivate_user(username=username, token=token)
+    new_count = utils.get_all_active_follows_count()
+
+    assert new_count == count - 1
 
 
 def test_get_active_following_count_by_user_id():
@@ -137,8 +152,27 @@ def test_get_active_following_count_by_user_id():
     assert count == 1
 
 
-# def test_get_active_following_count_by_user_id_is_all_active():
-#     pass
+def test_get_active_following_count_by_user_id_is_all_active():
+    username = utils.random_lower_string()
+    password = utils.random_lower_string()
+    token = utils.create_user(username=username, password=password)
+    user = utils.get_active_user(username=username)
+
+    second_username = utils.random_lower_string()
+    second_password = utils.random_lower_string()
+    second_token = utils.create_user(
+        username=second_username, password=second_password
+    )
+    second_user = utils.get_active_user(username=second_username)
+
+    utils.follow_user(following_id=second_user["id"], token=token)
+
+    count = utils.get_active_following_count_by_user_id(user_id=user["id"])
+    utils.deactivate_user(username=second_username, token=second_token)
+    new_count = utils.get_active_following_count_by_user_id(user_id=user["id"])
+
+    assert count == 1
+    assert new_count == 0
 
 
 def test_get_active_following_count_by_not_existing_user_id():
