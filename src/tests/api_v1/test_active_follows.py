@@ -14,11 +14,11 @@ def test_get_all_active_follows():
 def test_get_all_active_follows_is_all_active():
     # username = utils.random_lower_string()
     # password = utils.random_lower_string()
-    # token = utils.create_random_user(username=username, password=password)
+    # token = utils.create_user(username=username, password=password)
 
     # second_username = utils.random_lower_string()
     # second_password = utils.random_lower_string()
-    # utils.create_random_user(username=second_username, password=second_password)
+    # utils.create_user(username=second_username, password=second_password)
     # second_user = utils.get_active_user(username=second_username)
 
     # utils.follow_user(following_id=second_user["id"], token=token)
@@ -34,11 +34,11 @@ def test_get_all_active_follows_is_all_active():
 def test_get_active_follow_by_id():
     username = utils.random_lower_string()
     password = utils.random_lower_string()
-    token = utils.create_random_user(username=username, password=password)
+    token = utils.create_user(username=username, password=password)
 
     second_username = utils.random_lower_string()
     second_password = utils.random_lower_string()
-    utils.create_random_user(
+    utils.create_user(
         username=second_username, password=second_password
     )
     second_user = utils.get_active_user(username=second_username)
@@ -57,11 +57,11 @@ def test_get_active_follow_by_id():
 def test_get_not_existing_follow_by_id():
     username = utils.random_lower_string()
     password = utils.random_lower_string()
-    token = utils.create_random_user(username=username, password=password)
+    token = utils.create_user(username=username, password=password)
 
     second_username = utils.random_lower_string()
     second_password = utils.random_lower_string()
-    utils.create_random_user(
+    utils.create_user(
         username=second_username, password=second_password
     )
     second_user = utils.get_active_user(username=second_username)
@@ -82,11 +82,11 @@ def test_get_deactivated_follow_by_id():
 def test_get_all_active_follows_count():
     username = utils.random_lower_string()
     password = utils.random_lower_string()
-    token = utils.create_random_user(username=username, password=password)
+    token = utils.create_user(username=username, password=password)
 
     second_username = utils.random_lower_string()
     second_password = utils.random_lower_string()
-    utils.create_random_user(
+    utils.create_user(
         username=second_username, password=second_password
     )
     second_user = utils.get_active_user(username=second_username)
@@ -109,12 +109,12 @@ def test_get_all_active_follows_count_is_all_active():
 def test_get_active_following_count_by_user_id():
     username = utils.random_lower_string()
     password = utils.random_lower_string()
-    token = utils.create_random_user(username=username, password=password)
+    token = utils.create_user(username=username, password=password)
     user = utils.get_active_user(username=username)
 
     second_username = utils.random_lower_string()
     second_password = utils.random_lower_string()
-    utils.create_random_user(
+    utils.create_user(
         username=second_username, password=second_password
     )
     second_user = utils.get_active_user(username=second_username)
@@ -137,7 +137,7 @@ def test_get_active_following_count_by_user_id_is_all_active():
 def test_get_active_following_count_by_not_existing_user_id():
     username = utils.random_lower_string()
     password = utils.random_lower_string()
-    utils.create_random_user(username=username, password=password)
+    utils.create_user(username=username, password=password)
     user = utils.get_active_user(username=username)
 
     response = client.get(
@@ -150,7 +150,7 @@ def test_get_active_following_count_by_not_existing_user_id():
 def test_get_active_following_count_by_deactivated_user_id():
     username = utils.random_lower_string()
     password = utils.random_lower_string()
-    token = utils.create_random_user(username=username, password=password)
+    token = utils.create_user(username=username, password=password)
     user = utils.get_active_user(username=username)
 
     utils.deactivate_user(username=username, token=token)
@@ -165,12 +165,12 @@ def test_get_active_following_count_by_deactivated_user_id():
 def test_get_active_following_ids_by_user_id():
     username = utils.random_lower_string()
     password = utils.random_lower_string()
-    token = utils.create_random_user(username=username, password=password)
+    token = utils.create_user(username=username, password=password)
     user = utils.get_active_user(username=username)
 
     second_username = utils.random_lower_string()
     second_password = utils.random_lower_string()
-    utils.create_random_user(
+    utils.create_user(
         username=second_username, password=second_password
     )
     second_user = utils.get_active_user(username=second_username)
@@ -193,7 +193,7 @@ def test_get_active_following_ids_by_user_id_is_all_active():
 def test_get_active_following_ids_by_not_existing_user_id():
     username = utils.random_lower_string()
     password = utils.random_lower_string()
-    utils.create_random_user(username=username, password=password)
+    utils.create_user(username=username, password=password)
     user = utils.get_active_user(username=username)
 
     response = client.get(
@@ -206,7 +206,7 @@ def test_get_active_following_ids_by_not_existing_user_id():
 def test_get_active_following_ids_by_deactivated_user_id():
     username = utils.random_lower_string()
     password = utils.random_lower_string()
-    token = utils.create_random_user(username=username, password=password)
+    token = utils.create_user(username=username, password=password)
     user = utils.get_active_user(username=username)
 
     utils.deactivate_user(username=username, token=token)
@@ -221,11 +221,11 @@ def test_get_active_following_ids_by_deactivated_user_id():
 def test_get_active_follower_count_by_user_id():
     username = utils.random_lower_string()
     password = utils.random_lower_string()
-    token = utils.create_random_user(username=username, password=password)
+    token = utils.create_user(username=username, password=password)
 
     second_username = utils.random_lower_string()
     second_password = utils.random_lower_string()
-    utils.create_random_user(
+    utils.create_user(
         username=second_username, password=second_password
     )
     second_user = utils.get_active_user(username=second_username)
@@ -248,7 +248,7 @@ def test_get_active_follower_count_by_user_id_is_all_active():
 def test_get_active_follower_count_by_not_existing_user_id():
     username = utils.random_lower_string()
     password = utils.random_lower_string()
-    utils.create_random_user(username=username, password=password)
+    utils.create_user(username=username, password=password)
     user = utils.get_active_user(username=username)
 
     response = client.get(
@@ -261,7 +261,7 @@ def test_get_active_follower_count_by_not_existing_user_id():
 def test_get_active_follower_count_by_deactivated_user_id():
     username = utils.random_lower_string()
     password = utils.random_lower_string()
-    token = utils.create_random_user(username=username, password=password)
+    token = utils.create_user(username=username, password=password)
     user = utils.get_active_user(username=username)
 
     utils.deactivate_user(username=username, token=token)
@@ -276,11 +276,11 @@ def test_get_active_follower_count_by_deactivated_user_id():
 def test_get_active_follower_ids_by_user_id():
     username = utils.random_lower_string()
     password = utils.random_lower_string()
-    token = utils.create_random_user(username=username, password=password)
+    token = utils.create_user(username=username, password=password)
 
     second_username = utils.random_lower_string()
     second_password = utils.random_lower_string()
-    utils.create_random_user(
+    utils.create_user(
         username=second_username, password=second_password
     )
     second_user = utils.get_active_user(username=second_username)
@@ -303,7 +303,7 @@ def test_get_active_follower_ids_by_user_id_is_all_active():
 def test_get_active_follower_ids_by_not_existing_user_id():
     username = utils.random_lower_string()
     password = utils.random_lower_string()
-    utils.create_random_user(username=username, password=password)
+    utils.create_user(username=username, password=password)
     user = utils.get_active_user(username=username)
 
     response = client.get(
@@ -316,7 +316,7 @@ def test_get_active_follower_ids_by_not_existing_user_id():
 def test_get_active_follower_ids_by_deactivated_user_id():
     username = utils.random_lower_string()
     password = utils.random_lower_string()
-    token = utils.create_random_user(username=username, password=password)
+    token = utils.create_user(username=username, password=password)
     user = utils.get_active_user(username=username)
 
     utils.deactivate_user(username=username, token=token)

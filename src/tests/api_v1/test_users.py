@@ -7,7 +7,7 @@ def test_update_user():
     username = utils.random_lower_string()
     password = utils.random_lower_string()
 
-    token = utils.create_random_user(username=username, password=password)
+    token = utils.create_user(username=username, password=password)
 
     data = {
         "username": utils.random_lower_string(),
@@ -32,12 +32,12 @@ def test_update_username_to_existing_username():
     username = utils.random_lower_string()
     password = utils.random_lower_string()
 
-    utils.create_random_user(username=username, password=password)
+    utils.create_user(username=username, password=password)
 
     random_username = utils.random_lower_string()
     random_password = utils.random_lower_string()
 
-    token = utils.create_random_user(
+    token = utils.create_user(
         username=random_username, password=random_password
     )
 
@@ -60,7 +60,7 @@ def test_update_deactivated_user():
     username = utils.random_lower_string()
     password = utils.random_lower_string()
 
-    token = utils.create_random_user(username=username, password=password)
+    token = utils.create_user(username=username, password=password)
     utils.deactivate_user(username=username, token=token)
 
     data = {
@@ -82,7 +82,7 @@ def test_update_deactivated_user():
 #     username = utils.random_lower_string()
 #     password = utils.random_lower_string()
 
-#     utils.create_random_user(username=username, password=password)
+#     utils.create_user(username=username, password=password)
 #     superuser_token = authentication_headers(
 #         username=settings.SUPERUSER_USERNAME,
 #         password=settings.SUPERUSER_PASSWORD
@@ -102,7 +102,7 @@ def test_update_deactivated_user():
 #     username = utils.random_lower_string()
 #     password = utils.random_lower_string()
 
-#     token = utils.create_random_user(username=username, password=password)
+#     token = utils.create_user(username=username, password=password)
 
 #     response = client.put(
 #         f"{settings.API_V1_STR}/users/activate/{username}",
@@ -134,12 +134,12 @@ def test_unauthorized_activate_user():
     username = utils.random_lower_string()
     password = utils.random_lower_string()
 
-    utils.create_random_user(username=username, password=password)
+    utils.create_user(username=username, password=password)
 
     random_username = utils.random_lower_string()
     random_password = utils.random_lower_string()
 
-    token = utils.create_random_user(
+    token = utils.create_user(
         username=random_username, password=random_password
     )
 
@@ -155,10 +155,10 @@ def test_unauthorized_activate_user():
 #     username = utils.random_lower_string()
 #     password = utils.random_lower_string()
 
-#     token = utils.create_random_user(username=username, password=password)
+#     token = utils.create_user(username=username, password=password)
 #     user = get_user(username=username)
-#     post = create_random_post(token=token)
-#     comment = create_random_comment(post_id=post["id"], token=token)
+#     post = create_post(token=token)
+#     comment = create_comment(post_id=post["id"], token=token)
 
 #     user_post_count = active_posts_count_by_owner_id(owner_id=user["id"])
 
@@ -173,7 +173,7 @@ def test_deactivate_user_as_superuser():
     username = utils.random_lower_string()
     password = utils.random_lower_string()
 
-    utils.create_random_user(username=username, password=password)
+    utils.create_user(username=username, password=password)
     superuser_token = utils.authentication_headers(
         username=settings.SUPERUSER_USERNAME,
         password=settings.SUPERUSER_PASSWORD
@@ -193,7 +193,7 @@ def test_deactivate_user_as_normal_user():
     username = utils.random_lower_string()
     password = utils.random_lower_string()
 
-    token = utils.create_random_user(username=username, password=password)
+    token = utils.create_user(username=username, password=password)
 
     response = client.put(
         f"{settings.API_V1_STR}/users/deactivate/{username}",
@@ -225,12 +225,12 @@ def test_unauthorized_deactivate_user():
     username = utils.random_lower_string()
     password = utils.random_lower_string()
 
-    utils.create_random_user(username=username, password=password)
+    utils.create_user(username=username, password=password)
 
     random_username = utils.random_lower_string()
     random_password = utils.random_lower_string()
 
-    token = utils.create_random_user(
+    token = utils.create_user(
         username=random_username, password=random_password
     )
 
@@ -246,7 +246,7 @@ def test_get_current_user():
     username = utils.random_lower_string()
     password = utils.random_lower_string()
 
-    token = utils.create_random_user(username=username, password=password)
+    token = utils.create_user(username=username, password=password)
 
     response = client.get(
         f"{settings.API_V1_STR}/users/current-user/",
@@ -276,7 +276,7 @@ def test_get_all_users_as_normal_user():
     username = utils.random_lower_string()
     password = utils.random_lower_string()
 
-    token = utils.create_random_user(username=username, password=password)
+    token = utils.create_user(username=username, password=password)
 
     response = client.get(
         f"{settings.API_V1_STR}/users/all/",
@@ -290,7 +290,7 @@ def test_get_all_users_is_all():
     username = utils.random_lower_string()
     password = utils.random_lower_string()
 
-    token = utils.create_random_user(username=username, password=password)
+    token = utils.create_user(username=username, password=password)
 
     all_users_count = utils.get_all_users_count()
     utils.deactivate_user(username=username, token=token)
@@ -303,7 +303,7 @@ def test_get_user_by_username_as_superuser():
     username = utils.random_lower_string()
     password = utils.random_lower_string()
 
-    utils.create_random_user(username=username, password=password)
+    utils.create_user(username=username, password=password)
 
     superuser_token = utils.authentication_headers(
         username=settings.SUPERUSER_USERNAME,
@@ -324,7 +324,7 @@ def test_get_user_by_username_as_normal_user():
     username = utils.random_lower_string()
     password = utils.random_lower_string()
 
-    token = utils.create_random_user(username=username, password=password)
+    token = utils.create_user(username=username, password=password)
 
     response = client.get(
         f"{settings.API_V1_STR}/users/{username}",
@@ -354,7 +354,7 @@ def test_get_deactivated_user_by_username():
     username = utils.random_lower_string()
     password = utils.random_lower_string()
 
-    token = utils.create_random_user(username=username, password=password)
+    token = utils.create_user(username=username, password=password)
     utils.deactivate_user(username=username, token=token)
 
     superuser_token = utils.authentication_headers(
@@ -393,7 +393,7 @@ def test_get_all_users_count_as_normal_user():
     username = utils.random_lower_string()
     password = utils.random_lower_string()
 
-    token = utils.create_random_user(username=username, password=password)
+    token = utils.create_user(username=username, password=password)
 
     response = client.get(
         f"{settings.API_V1_STR}/users/count/",
@@ -407,7 +407,7 @@ def test_get_all_users_count_is_all():
     username = utils.random_lower_string()
     password = utils.random_lower_string()
 
-    token = utils.create_random_user(username=username, password=password)
+    token = utils.create_user(username=username, password=password)
 
     all_users_count = utils.get_all_users_count()
     utils.deactivate_user(username=username, token=token)

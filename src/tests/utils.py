@@ -24,7 +24,7 @@ class Utils():
         auth_token = tokens["access_token"]
         return {"Authorization": f"Bearer {auth_token}"}
 
-    def create_random_user(self, username: str, password: str):
+    def create_user(self, username: str, password: str):
         data = {
             "username": username,
             "name": self.random_lower_string(),
@@ -86,7 +86,7 @@ class Utils():
 
         return response.json()
 
-    def create_random_post(self, token: str):
+    def create_post(self, token: str):
         data = {
             "text": self.random_lower_string()
         }
@@ -216,7 +216,7 @@ class Utils():
         )
         return response.json()
 
-    def create_random_comment(self, post_id: int, token: str):
+    def create_comment(self, post_id: int, token: str):
         data = {
             "text": self.random_lower_string(),
             "post_id": post_id

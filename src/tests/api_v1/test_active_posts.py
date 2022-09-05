@@ -15,8 +15,8 @@ def test_get_all_active_posts_is_all_active():
     username = utils.random_lower_string()
     password = utils.random_lower_string()
 
-    token = utils.create_random_user(username=username, password=password)
-    post = utils.create_random_post(token=token)
+    token = utils.create_user(username=username, password=password)
+    post = utils.create_post(token=token)
 
     all_active_posts_count = utils.get_all_active_posts_count()
     utils.deactivate_post(post_id=post["id"], token=token)
@@ -29,8 +29,8 @@ def test_get_active_post_by_id():
     username = utils.random_lower_string()
     password = utils.random_lower_string()
 
-    token = utils.create_random_user(username=username, password=password)
-    random_post = utils.create_random_post(token=token)
+    token = utils.create_user(username=username, password=password)
+    random_post = utils.create_post(token=token)
 
     response = client.get(
         f"{settings.API_V1_STR}/active-posts/{random_post['id']}",
@@ -45,8 +45,8 @@ def test_get_not_existing_post_by_id():
     username = utils.random_lower_string()
     password = utils.random_lower_string()
 
-    token = utils.create_random_user(username=username, password=password)
-    post = utils.create_random_post(token=token)
+    token = utils.create_user(username=username, password=password)
+    post = utils.create_post(token=token)
 
     response = client.get(
         f"{settings.API_V1_STR}/active-posts/{post['id'] + 1}",
@@ -59,8 +59,8 @@ def test_get_deactivated_post_by_id():
     username = utils.random_lower_string()
     password = utils.random_lower_string()
 
-    token = utils.create_random_user(username=username, password=password)
-    post = utils.create_random_post(token=token)
+    token = utils.create_user(username=username, password=password)
+    post = utils.create_post(token=token)
 
     utils.deactivate_post(post_id=post["id"], token=token)
 
@@ -75,8 +75,8 @@ def test_get_all_active_posts_count():
     username = utils.random_lower_string()
     password = utils.random_lower_string()
 
-    token = utils.create_random_user(username=username, password=password)
-    utils.create_random_post(token=token)
+    token = utils.create_user(username=username, password=password)
+    utils.create_post(token=token)
 
     response = client.get(
         f"{settings.API_V1_STR}/active-posts/count/",
@@ -91,8 +91,8 @@ def test_get_all_active_posts_count_is_all_active():
     username = utils.random_lower_string()
     password = utils.random_lower_string()
 
-    token = utils.create_random_user(username=username, password=password)
-    post = utils.create_random_post(token=token)
+    token = utils.create_user(username=username, password=password)
+    post = utils.create_post(token=token)
 
     count = utils.get_all_active_posts_count()
     utils.deactivate_post(post_id=post["id"], token=token)
@@ -105,8 +105,8 @@ def test_get_all_active_posts_ids():
     username = utils.random_lower_string()
     password = utils.random_lower_string()
 
-    token = utils.create_random_user(username=username, password=password)
-    utils.create_random_post(token=token)
+    token = utils.create_user(username=username, password=password)
+    utils.create_post(token=token)
 
     count = utils.get_all_active_posts_count()
 
@@ -123,8 +123,8 @@ def test_get_all_active_posts_ids_is_all_active():
     username = utils.random_lower_string()
     password = utils.random_lower_string()
 
-    token = utils.create_random_user(username=username, password=password)
-    post = utils.create_random_post(token=token)
+    token = utils.create_user(username=username, password=password)
+    post = utils.create_post(token=token)
 
     count = utils.get_all_active_posts_count()
     ids = utils.get_all_active_posts_ids(count=count)
@@ -139,9 +139,9 @@ def test_get_active_posts_count_by_owner_id():
     username = utils.random_lower_string()
     password = utils.random_lower_string()
 
-    token = utils.create_random_user(username=username, password=password)
+    token = utils.create_user(username=username, password=password)
     user = utils.get_active_user(username=username)
-    utils.create_random_post(token=token)
+    utils.create_post(token=token)
 
     response = client.get(
         f"{settings.API_V1_STR}/active-posts/owner/count/{user['id']}",
@@ -156,9 +156,9 @@ def test_get_active_posts_count_by_owner_id_is_all_active():
     username = utils.random_lower_string()
     password = utils.random_lower_string()
 
-    token = utils.create_random_user(username=username, password=password)
+    token = utils.create_user(username=username, password=password)
     user = utils.get_active_user(username=username)
-    post = utils.create_random_post(token=token)
+    post = utils.create_post(token=token)
 
     count = utils.get_active_posts_count_by_owner_id(owner_id=user["id"])
     utils.deactivate_post(post_id=post["id"], token=token)
@@ -171,7 +171,7 @@ def test_get_active_posts_count_by_not_existing_owner_id():
     username = utils.random_lower_string()
     password = utils.random_lower_string()
 
-    utils.create_random_user(username=username, password=password)
+    utils.create_user(username=username, password=password)
     user = utils.get_active_user(username=username)
 
     response = client.get(
@@ -185,7 +185,7 @@ def test_get_active_posts_count_by_deactivated_owner_id():
     username = utils.random_lower_string()
     password = utils.random_lower_string()
 
-    token = utils.create_random_user(username=username, password=password)
+    token = utils.create_user(username=username, password=password)
     user = utils.get_active_user(username=username)
     utils.deactivate_user(username=username, token=token)
 
@@ -200,9 +200,9 @@ def test_get_active_posts_ids_by_owner_id():
     username = utils.random_lower_string()
     password = utils.random_lower_string()
 
-    token = utils.create_random_user(username=username, password=password)
+    token = utils.create_user(username=username, password=password)
     user = utils.get_active_user(username=username)
-    utils.create_random_post(token=token)
+    utils.create_post(token=token)
 
     response = client.get(
         f"{settings.API_V1_STR}/active-posts/owner/ids/{user['id']}",
@@ -217,9 +217,9 @@ def test_get_active_posts_ids_by_owner_id_is_all_active():
     username = utils.random_lower_string()
     password = utils.random_lower_string()
 
-    token = utils.create_random_user(username=username, password=password)
+    token = utils.create_user(username=username, password=password)
     user = utils.get_active_user(username=username)
-    post = utils.create_random_post(token=token)
+    post = utils.create_post(token=token)
 
     ids = utils.get_active_posts_ids_by_owner_id(owner_id=user["id"])
     utils.deactivate_post(post_id=post["id"], token=token)
@@ -232,7 +232,7 @@ def test_get_active_posts_ids_by_not_existing_owner_id():
     username = utils.random_lower_string()
     password = utils.random_lower_string()
 
-    utils.create_random_user(username=username, password=password)
+    utils.create_user(username=username, password=password)
     user = utils.get_active_user(username=username)
 
     response = client.get(
@@ -246,7 +246,7 @@ def test_get_active_posts_ids_by_deactivated_owner_id():
     username = utils.random_lower_string()
     password = utils.random_lower_string()
 
-    token = utils.create_random_user(username=username, password=password)
+    token = utils.create_user(username=username, password=password)
     user = utils.get_active_user(username=username)
     utils.deactivate_user(username=username, token=token)
 

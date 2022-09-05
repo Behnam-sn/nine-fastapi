@@ -7,7 +7,7 @@ def test_create_post():
     username = utils.random_lower_string()
     password = utils.random_lower_string()
 
-    token = utils.create_random_user(username=username, password=password)
+    token = utils.create_user(username=username, password=password)
     user = utils.get_active_user(username=username)
 
     data = {
@@ -30,8 +30,8 @@ def test_user_posts_count_after_post_created():
     username = utils.random_lower_string()
     password = utils.random_lower_string()
 
-    token = utils.create_random_user(username=username, password=password)
-    utils.create_random_post(token=token)
+    token = utils.create_user(username=username, password=password)
+    utils.create_post(token=token)
     user = utils.get_active_user(username=username)
 
     assert user["posts"] == 1
@@ -41,8 +41,8 @@ def test_update_post():
     username = utils.random_lower_string()
     password = utils.random_lower_string()
 
-    token = utils.create_random_user(username=username, password=password)
-    post = utils.create_random_post(token=token)
+    token = utils.create_user(username=username, password=password)
+    post = utils.create_post(token=token)
 
     data = {
         "text": utils.random_lower_string()
@@ -65,8 +65,8 @@ def test_update_not_existing_post():
     username = utils.random_lower_string()
     password = utils.random_lower_string()
 
-    token = utils.create_random_user(username=username, password=password)
-    post = utils.create_random_post(token=token)
+    token = utils.create_user(username=username, password=password)
+    post = utils.create_post(token=token)
 
     data = {
         "text": utils.random_lower_string()
@@ -85,8 +85,8 @@ def test_update_deactivated_post():
     username = utils.random_lower_string()
     password = utils.random_lower_string()
 
-    token = utils.create_random_user(username=username, password=password)
-    post = utils.create_random_post(token=token)
+    token = utils.create_user(username=username, password=password)
+    post = utils.create_post(token=token)
 
     utils.deactivate_post(post_id=post["id"], token=token)
 
@@ -107,13 +107,13 @@ def test_unauthorized_update_post():
     username = utils.random_lower_string()
     password = utils.random_lower_string()
 
-    token = utils.create_random_user(username=username, password=password)
-    post = utils.create_random_post(token=token)
+    token = utils.create_user(username=username, password=password)
+    post = utils.create_post(token=token)
 
     new_username = utils.random_lower_string()
     new_password = utils.random_lower_string()
 
-    new_token = utils.create_random_user(
+    new_token = utils.create_user(
         username=new_username, password=new_password
     )
 
@@ -134,8 +134,8 @@ def test_delete_post_as_superuser():
     username = utils.random_lower_string()
     password = utils.random_lower_string()
 
-    token = utils.create_random_user(username=username, password=password)
-    post = utils.create_random_post(token=token)
+    token = utils.create_user(username=username, password=password)
+    post = utils.create_post(token=token)
 
     superuser_token = utils.authentication_headers(
         username=settings.SUPERUSER_USERNAME,
@@ -154,8 +154,8 @@ def test_delete_post_as_normal_user():
     username = utils.random_lower_string()
     password = utils.random_lower_string()
 
-    token = utils.create_random_user(username=username, password=password)
-    post = utils.create_random_post(token=token)
+    token = utils.create_user(username=username, password=password)
+    post = utils.create_post(token=token)
 
     response = client.delete(
         f"{settings.API_V1_STR}/posts/{post['id']}",
@@ -169,8 +169,8 @@ def test_delete_not_existing_post():
     username = utils.random_lower_string()
     password = utils.random_lower_string()
 
-    token = utils.create_random_user(username=username, password=password)
-    post = utils.create_random_post(token=token)
+    token = utils.create_user(username=username, password=password)
+    post = utils.create_post(token=token)
 
     response = client.delete(
         f"{settings.API_V1_STR}/posts/{post['id'] + 1}",
@@ -184,8 +184,8 @@ def test_delete_deactivated_post():
     username = utils.random_lower_string()
     password = utils.random_lower_string()
 
-    token = utils.create_random_user(username=username, password=password)
-    post = utils.create_random_post(token=token)
+    token = utils.create_user(username=username, password=password)
+    post = utils.create_post(token=token)
 
     utils.deactivate_post(post_id=post["id"], token=token)
 
@@ -206,8 +206,8 @@ def test_user_posts_count_after_post_deleted():
     username = utils.random_lower_string()
     password = utils.random_lower_string()
 
-    token = utils.create_random_user(username=username, password=password)
-    post = utils.create_random_post(token=token)
+    token = utils.create_user(username=username, password=password)
+    post = utils.create_post(token=token)
     utils.delete_post(post_id=post["id"])
     user = utils.get_active_user(username=username)
 
@@ -218,8 +218,8 @@ def test_activate_post_as_superuser():
     username = utils.random_lower_string()
     password = utils.random_lower_string()
 
-    token = utils.create_random_user(username=username, password=password)
-    post = utils.create_random_post(token=token)
+    token = utils.create_user(username=username, password=password)
+    post = utils.create_post(token=token)
     utils.deactivate_post(post_id=post["id"], token=token)
 
     superuser_token = utils.authentication_headers(
@@ -241,8 +241,8 @@ def test_activate_post_as_normal_user():
     username = utils.random_lower_string()
     password = utils.random_lower_string()
 
-    token = utils.create_random_user(username=username, password=password)
-    post = utils.create_random_post(token=token)
+    token = utils.create_user(username=username, password=password)
+    post = utils.create_post(token=token)
 
     response = client.put(
         f"{settings.API_V1_STR}/posts/activate/{post['id']}",
@@ -256,8 +256,8 @@ def test_activate_not_existing_post():
     username = utils.random_lower_string()
     password = utils.random_lower_string()
 
-    token = utils.create_random_user(username=username, password=password)
-    post = utils.create_random_post(token=token)
+    token = utils.create_user(username=username, password=password)
+    post = utils.create_post(token=token)
 
     response = client.put(
         f"{settings.API_V1_STR}/posts/activate/{post['id'] + 1}",
@@ -271,8 +271,8 @@ def test_post_likes_count_after_post_activated():
     username = utils.random_lower_string()
     password = utils.random_lower_string()
 
-    token = utils.create_random_user(username=username, password=password)
-    post = utils.create_random_post(token=token)
+    token = utils.create_user(username=username, password=password)
+    post = utils.create_post(token=token)
     utils.like_post(post_id=post["id"], token=token)
 
     utils.deactivate_post(post_id=post["id"], token=token)
@@ -287,9 +287,9 @@ def test_post_comments_count_after_post_activated():
     username = utils.random_lower_string()
     password = utils.random_lower_string()
 
-    token = utils.create_random_user(username=username, password=password)
-    post = utils.create_random_post(token=token)
-    utils.create_random_comment(post_id=post["id"], token=token)
+    token = utils.create_user(username=username, password=password)
+    post = utils.create_post(token=token)
+    utils.create_comment(post_id=post["id"], token=token)
 
     utils.deactivate_post(post_id=post["id"], token=token)
     utils.activate_post(post_id=post["id"])
@@ -303,8 +303,8 @@ def test_user_posts_count_after_post_activated():
     username = utils.random_lower_string()
     password = utils.random_lower_string()
 
-    token = utils.create_random_user(username=username, password=password)
-    post = utils.create_random_post(token=token)
+    token = utils.create_user(username=username, password=password)
+    post = utils.create_post(token=token)
 
     utils.deactivate_post(post_id=post["id"], token=token)
     utils.activate_post(post_id=post["id"])
@@ -318,8 +318,8 @@ def test_deactivate_post_as_superuser():
     username = utils.random_lower_string()
     password = utils.random_lower_string()
 
-    token = utils.create_random_user(username=username, password=password)
-    random_post = utils.create_random_post(token=token)
+    token = utils.create_user(username=username, password=password)
+    random_post = utils.create_post(token=token)
 
     superuser_token = utils.authentication_headers(
         username=settings.SUPERUSER_USERNAME,
@@ -340,8 +340,8 @@ def test_deactivate_post_as_normal_user():
     username = utils.random_lower_string()
     password = utils.random_lower_string()
 
-    token = utils.create_random_user(username=username, password=password)
-    random_post = utils.create_random_post(token=token)
+    token = utils.create_user(username=username, password=password)
+    random_post = utils.create_post(token=token)
 
     response = client.put(
         f"{settings.API_V1_STR}/posts/deactivate/{random_post['id']}",
@@ -357,8 +357,8 @@ def test_deactivate_not_existing_post():
     username = utils.random_lower_string()
     password = utils.random_lower_string()
 
-    token = utils.create_random_user(username=username, password=password)
-    post = utils.create_random_post(token=token)
+    token = utils.create_user(username=username, password=password)
+    post = utils.create_post(token=token)
 
     response = client.put(
         f"{settings.API_V1_STR}/posts/deactivate/{post['id'] + 1}",
@@ -372,8 +372,8 @@ def test_user_posts_count_after_deactivated_post():
     username = utils.random_lower_string()
     password = utils.random_lower_string()
 
-    token = utils.create_random_user(username=username, password=password)
-    post = utils.create_random_post(token=token)
+    token = utils.create_user(username=username, password=password)
+    post = utils.create_post(token=token)
     utils.deactivate_post(post_id=post["id"], token=token)
     user = utils.get_active_user(username=username)
 
@@ -384,13 +384,13 @@ def test_unauthorized_deactivate_post():
     username = utils.random_lower_string()
     password = utils.random_lower_string()
 
-    token = utils.create_random_user(username=username, password=password)
-    post = utils.create_random_post(token=token)
+    token = utils.create_user(username=username, password=password)
+    post = utils.create_post(token=token)
 
     new_username = utils.random_lower_string()
     new_password = utils.random_lower_string()
 
-    new_token = utils.create_random_user(
+    new_token = utils.create_user(
         username=new_username, password=new_password
     )
 
@@ -420,7 +420,7 @@ def test_get_all_posts_as_normal_user():
     username = utils.random_lower_string()
     password = utils.random_lower_string()
 
-    token = utils.create_random_user(username=username, password=password)
+    token = utils.create_user(username=username, password=password)
 
     response = client.get(
         f"{settings.API_V1_STR}/posts/all/",
@@ -434,8 +434,8 @@ def test_get_all_posts_is_all():
     username = utils.random_lower_string()
     password = utils.random_lower_string()
 
-    token = utils.create_random_user(username=username, password=password)
-    post = utils.create_random_post(token=token)
+    token = utils.create_user(username=username, password=password)
+    post = utils.create_post(token=token)
 
     all_posts_count = utils.get_all_posts_count()
     utils.deactivate_post(post_id=post["id"], token=token)
@@ -448,8 +448,8 @@ def test_get_post_by_id_as_super_user():
     username = utils.random_lower_string()
     password = utils.random_lower_string()
 
-    token = utils.create_random_user(username=username, password=password)
-    post = utils.create_random_post(token=token)
+    token = utils.create_user(username=username, password=password)
+    post = utils.create_post(token=token)
 
     superuser_token = utils.authentication_headers(
         username=settings.SUPERUSER_USERNAME,
@@ -470,8 +470,8 @@ def test_get_post_by_id_as_normal_user():
     username = utils.random_lower_string()
     password = utils.random_lower_string()
 
-    token = utils.create_random_user(username=username, password=password)
-    post = utils.create_random_post(token=token)
+    token = utils.create_user(username=username, password=password)
+    post = utils.create_post(token=token)
 
     response = client.get(
         f"{settings.API_V1_STR}/posts/{post['id']}",
@@ -485,8 +485,8 @@ def test_get_not_existing_post_by_id():
     username = utils.random_lower_string()
     password = utils.random_lower_string()
 
-    token = utils.create_random_user(username=username, password=password)
-    post = utils.create_random_post(token=token)
+    token = utils.create_user(username=username, password=password)
+    post = utils.create_post(token=token)
 
     superuser_token = utils.authentication_headers(
         username=settings.SUPERUSER_USERNAME,
@@ -505,8 +505,8 @@ def test_get_deactivated_post_by_id():
     username = utils.random_lower_string()
     password = utils.random_lower_string()
 
-    token = utils.create_random_user(username=username, password=password)
-    post = utils.create_random_post(token=token)
+    token = utils.create_user(username=username, password=password)
+    post = utils.create_post(token=token)
 
     utils.deactivate_post(post_id=post["id"], token=token)
 
@@ -530,8 +530,8 @@ def test_get_all_posts_count_as_super_user():
     username = utils.random_lower_string()
     password = utils.random_lower_string()
 
-    token = utils.create_random_user(username=username, password=password)
-    utils.create_random_post(token=token)
+    token = utils.create_user(username=username, password=password)
+    utils.create_post(token=token)
 
     superuser_token = utils.authentication_headers(
         username=settings.SUPERUSER_USERNAME,
@@ -552,8 +552,8 @@ def test_get_all_posts_count_as_normal_user():
     username = utils.random_lower_string()
     password = utils.random_lower_string()
 
-    token = utils.create_random_user(username=username, password=password)
-    utils.create_random_post(token=token)
+    token = utils.create_user(username=username, password=password)
+    utils.create_post(token=token)
 
     response = client.get(
         f"{settings.API_V1_STR}/posts/count/",
@@ -567,8 +567,8 @@ def test_get_all_posts_count_is_all():
     username = utils.random_lower_string()
     password = utils.random_lower_string()
 
-    token = utils.create_random_user(username=username, password=password)
-    post = utils.create_random_post(token=token)
+    token = utils.create_user(username=username, password=password)
+    post = utils.create_post(token=token)
 
     all_posts_count = utils.get_all_posts_count()
     utils.deactivate_post(post_id=post["id"], token=token)
@@ -581,8 +581,8 @@ def test_get_all_posts_ids_as_super_user():
     username = utils.random_lower_string()
     password = utils.random_lower_string()
 
-    token = utils.create_random_user(username=username, password=password)
-    utils.create_random_post(token=token)
+    token = utils.create_user(username=username, password=password)
+    utils.create_post(token=token)
 
     count = utils.get_all_posts_count()
 
@@ -605,8 +605,8 @@ def test_get_all_posts_ids_as_normal_user():
     username = utils.random_lower_string()
     password = utils.random_lower_string()
 
-    token = utils.create_random_user(username=username, password=password)
-    utils.create_random_post(token=token)
+    token = utils.create_user(username=username, password=password)
+    utils.create_post(token=token)
 
     response = client.get(
         f"{settings.API_V1_STR}/posts/ids/",
@@ -620,8 +620,8 @@ def test_get_all_posts_ids_is_all():
     username = utils.random_lower_string()
     password = utils.random_lower_string()
 
-    token = utils.create_random_user(username=username, password=password)
-    post = utils.create_random_post(token=token)
+    token = utils.create_user(username=username, password=password)
+    post = utils.create_post(token=token)
 
     count = utils.get_all_posts_count()
     ids = utils.get_all_posts_ids(count=count)
@@ -636,9 +636,9 @@ def test_get_posts_count_by_owner_id_as_super_user():
     username = utils.random_lower_string()
     password = utils.random_lower_string()
 
-    token = utils.create_random_user(username=username, password=password)
+    token = utils.create_user(username=username, password=password)
     user = utils.get_user(username=username)
-    utils.create_random_post(token=token)
+    utils.create_post(token=token)
 
     superuser_token = utils.authentication_headers(
         username=settings.SUPERUSER_USERNAME,
@@ -659,7 +659,7 @@ def test_get_posts_count_by_owner_id_as_normal_user():
     username = utils.random_lower_string()
     password = utils.random_lower_string()
 
-    token = utils.create_random_user(username=username, password=password)
+    token = utils.create_user(username=username, password=password)
     user = utils.get_user(username=username)
 
     response = client.get(
@@ -674,9 +674,9 @@ def test_get_posts_count_by_owner_id_is_all():
     username = utils.random_lower_string()
     password = utils.random_lower_string()
 
-    token = utils.create_random_user(username=username, password=password)
+    token = utils.create_user(username=username, password=password)
     user = utils.get_user(username=username)
-    post = utils.create_random_post(token=token)
+    post = utils.create_post(token=token)
 
     count = utils.get_posts_count_by_owner_id(owner_id=user["id"])
     utils.deactivate_post(post_id=post["id"], token=token)
@@ -689,7 +689,7 @@ def test_get_posts_count_by_not_existing_owner_id():
     username = utils.random_lower_string()
     password = utils.random_lower_string()
 
-    utils.create_random_user(username=username, password=password)
+    utils.create_user(username=username, password=password)
     user = utils.get_user(username=username)
 
     superuser_token = utils.authentication_headers(
@@ -709,9 +709,9 @@ def test_get_posts_count_by_deactivated_owner_id():
     username = utils.random_lower_string()
     password = utils.random_lower_string()
 
-    token = utils.create_random_user(username=username, password=password)
+    token = utils.create_user(username=username, password=password)
     user = utils.get_user(username=username)
-    utils.create_random_post(token=token)
+    utils.create_post(token=token)
     utils.deactivate_user(username=username, token=token)
 
     superuser_token = utils.authentication_headers(
@@ -733,9 +733,9 @@ def test_get_posts_ids_by_owner_id_as_super_user():
     username = utils.random_lower_string()
     password = utils.random_lower_string()
 
-    token = utils.create_random_user(username=username, password=password)
+    token = utils.create_user(username=username, password=password)
     user = utils.get_user(username=username)
-    utils.create_random_post(token=token)
+    utils.create_post(token=token)
 
     superuser_token = utils.authentication_headers(
         username=settings.SUPERUSER_USERNAME,
@@ -756,7 +756,7 @@ def test_get_posts_ids_by_owner_id_as_normal_user():
     username = utils.random_lower_string()
     password = utils.random_lower_string()
 
-    token = utils.create_random_user(username=username, password=password)
+    token = utils.create_user(username=username, password=password)
     user = utils.get_user(username=username)
 
     response = client.get(
@@ -771,9 +771,9 @@ def test_get_posts_ids_by_owner_id_is_all():
     username = utils.random_lower_string()
     password = utils.random_lower_string()
 
-    token = utils.create_random_user(username=username, password=password)
+    token = utils.create_user(username=username, password=password)
     user = utils.get_user(username=username)
-    post = utils.create_random_post(token=token)
+    post = utils.create_post(token=token)
 
     ids = utils.get_posts_ids_by_owner_id(owner_id=user["id"])
     utils.deactivate_post(post_id=post["id"], token=token)
@@ -786,7 +786,7 @@ def test_get_posts_ids_by_not_existing_owner_id():
     username = utils.random_lower_string()
     password = utils.random_lower_string()
 
-    utils.create_random_user(username=username, password=password)
+    utils.create_user(username=username, password=password)
     user = utils.get_user(username=username)
 
     superuser_token = utils.authentication_headers(
@@ -806,9 +806,9 @@ def test_get_posts_ids_by_deactivated_owner_id():
     username = utils.random_lower_string()
     password = utils.random_lower_string()
 
-    token = utils.create_random_user(username=username, password=password)
+    token = utils.create_user(username=username, password=password)
     user = utils.get_user(username=username)
-    utils.create_random_post(token=token)
+    utils.create_post(token=token)
 
     ids = utils.get_posts_ids_by_owner_id(owner_id=user["id"])
     utils.deactivate_user(username=username, token=token)

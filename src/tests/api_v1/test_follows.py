@@ -6,12 +6,12 @@ from src.tests.utils import utils
 def test_follow_user():
     username = utils.random_lower_string()
     password = utils.random_lower_string()
-    token = utils.create_random_user(username=username, password=password)
+    token = utils.create_user(username=username, password=password)
     user = utils.get_active_user(username=username)
 
     second_username = utils.random_lower_string()
     second_password = utils.random_lower_string()
-    utils.create_random_user(
+    utils.create_user(
         username=second_username, password=second_password
     )
     second_user = utils.get_active_user(username=second_username)
@@ -30,7 +30,7 @@ def test_follow_user():
 def test_follow_not_existing_user():
     username = utils.random_lower_string()
     password = utils.random_lower_string()
-    token = utils.create_random_user(username=username, password=password)
+    token = utils.create_user(username=username, password=password)
     user = utils.get_active_user(username=username)
 
     response = client.post(
@@ -44,11 +44,11 @@ def test_follow_not_existing_user():
 def test_follow_deactivated_user():
     username = utils.random_lower_string()
     password = utils.random_lower_string()
-    token = utils.create_random_user(username=username, password=password)
+    token = utils.create_user(username=username, password=password)
 
     second_username = utils.random_lower_string()
     second_password = utils.random_lower_string()
-    second_token = utils.create_random_user(
+    second_token = utils.create_user(
         username=second_username, password=second_password
     )
     second_user = utils.get_active_user(username=second_username)
@@ -66,7 +66,7 @@ def test_follow_deactivated_user():
 def test_user_follow_themself():
     username = utils.random_lower_string()
     password = utils.random_lower_string()
-    token = utils.create_random_user(username=username, password=password)
+    token = utils.create_user(username=username, password=password)
     user = utils.get_active_user(username=username)
 
     response = client.post(
@@ -80,11 +80,11 @@ def test_user_follow_themself():
 def test_follow_already_followed_user():
     username = utils.random_lower_string()
     password = utils.random_lower_string()
-    token = utils.create_random_user(username=username, password=password)
+    token = utils.create_user(username=username, password=password)
 
     second_username = utils.random_lower_string()
     second_password = utils.random_lower_string()
-    utils.create_random_user(
+    utils.create_user(
         username=second_username, password=second_password
     )
     second_user = utils.get_active_user(username=second_username)
@@ -102,12 +102,12 @@ def test_follow_already_followed_user():
 def test_unfollow_user():
     username = utils.random_lower_string()
     password = utils.random_lower_string()
-    token = utils.create_random_user(username=username, password=password)
+    token = utils.create_user(username=username, password=password)
     user = utils.get_active_user(username=username)
 
     second_username = utils.random_lower_string()
     second_password = utils.random_lower_string()
-    utils.create_random_user(
+    utils.create_user(
         username=second_username, password=second_password
     )
     second_user = utils.get_active_user(username=second_username)
@@ -128,7 +128,7 @@ def test_unfollow_user():
 def test_unfollow_not_existing_user():
     username = utils.random_lower_string()
     password = utils.random_lower_string()
-    token = utils.create_random_user(username=username, password=password)
+    token = utils.create_user(username=username, password=password)
     user = utils.get_active_user(username=username)
 
     response = client.delete(
@@ -142,11 +142,11 @@ def test_unfollow_not_existing_user():
 def test_unfollow_deactivated_user():
     username = utils.random_lower_string()
     password = utils.random_lower_string()
-    token = utils.create_random_user(username=username, password=password)
+    token = utils.create_user(username=username, password=password)
 
     second_username = utils.random_lower_string()
     second_password = utils.random_lower_string()
-    second_token = utils.create_random_user(
+    second_token = utils.create_user(
         username=second_username, password=second_password
     )
     second_user = utils.get_active_user(username=second_username)
@@ -164,7 +164,7 @@ def test_unfollow_deactivated_user():
 def test_user_unfollow_themself():
     username = utils.random_lower_string()
     password = utils.random_lower_string()
-    token = utils.create_random_user(username=username, password=password)
+    token = utils.create_user(username=username, password=password)
     user = utils.get_active_user(username=username)
 
     response = client.delete(
@@ -178,11 +178,11 @@ def test_user_unfollow_themself():
 def test_unfollow_not_followed_user():
     username = utils.random_lower_string()
     password = utils.random_lower_string()
-    token = utils.create_random_user(username=username, password=password)
+    token = utils.create_user(username=username, password=password)
 
     second_username = utils.random_lower_string()
     second_password = utils.random_lower_string()
-    utils.create_random_user(
+    utils.create_user(
         username=second_username, password=second_password
     )
     second_user = utils.get_active_user(username=second_username)
@@ -213,7 +213,7 @@ def test_get_all_follows_as_normal_user():
     username = utils.random_lower_string()
     password = utils.random_lower_string()
 
-    token = utils.create_random_user(username=username, password=password)
+    token = utils.create_user(username=username, password=password)
 
     response = client.get(
         f"{settings.API_V1_STR}/follows/all/",
@@ -226,11 +226,11 @@ def test_get_all_follows_as_normal_user():
 def test_get_all_follows_is_all():
     username = utils.random_lower_string()
     password = utils.random_lower_string()
-    token = utils.create_random_user(username=username, password=password)
+    token = utils.create_user(username=username, password=password)
 
     second_username = utils.random_lower_string()
     second_password = utils.random_lower_string()
-    utils.create_random_user(
+    utils.create_user(
         username=second_username, password=second_password
     )
     second_user = utils.get_active_user(username=second_username)
@@ -247,11 +247,11 @@ def test_get_all_follows_is_all():
 def test_get_follow_by_id_as_super_user():
     username = utils.random_lower_string()
     password = utils.random_lower_string()
-    token = utils.create_random_user(username=username, password=password)
+    token = utils.create_user(username=username, password=password)
 
     second_username = utils.random_lower_string()
     second_password = utils.random_lower_string()
-    utils.create_random_user(
+    utils.create_user(
         username=second_username, password=second_password
     )
     second_user = utils.get_active_user(username=second_username)
@@ -276,11 +276,11 @@ def test_get_follow_by_id_as_super_user():
 def test_get_follow_by_id_as_normal_user():
     username = utils.random_lower_string()
     password = utils.random_lower_string()
-    token = utils.create_random_user(username=username, password=password)
+    token = utils.create_user(username=username, password=password)
 
     second_username = utils.random_lower_string()
     second_password = utils.random_lower_string()
-    utils.create_random_user(
+    utils.create_user(
         username=second_username, password=second_password
     )
     second_user = utils.get_active_user(username=second_username)
@@ -298,11 +298,11 @@ def test_get_follow_by_id_as_normal_user():
 def test_get_not_existing_follow_by_id():
     username = utils.random_lower_string()
     password = utils.random_lower_string()
-    token = utils.create_random_user(username=username, password=password)
+    token = utils.create_user(username=username, password=password)
 
     second_username = utils.random_lower_string()
     second_password = utils.random_lower_string()
-    utils.create_random_user(
+    utils.create_user(
         username=second_username, password=second_password
     )
     second_user = utils.get_active_user(username=second_username)
@@ -325,11 +325,11 @@ def test_get_not_existing_follow_by_id():
 def test_get_deactivated_follow_by_id():
     username = utils.random_lower_string()
     password = utils.random_lower_string()
-    token = utils.create_random_user(username=username, password=password)
+    token = utils.create_user(username=username, password=password)
 
     second_username = utils.random_lower_string()
     second_password = utils.random_lower_string()
-    utils.create_random_user(
+    utils.create_user(
         username=second_username, password=second_password
     )
     second_user = utils.get_active_user(username=second_username)
@@ -356,11 +356,11 @@ def test_get_deactivated_follow_by_id():
 def test_get_all_followers_count_as_super_user():
     username = utils.random_lower_string()
     password = utils.random_lower_string()
-    token = utils.create_random_user(username=username, password=password)
+    token = utils.create_user(username=username, password=password)
 
     second_username = utils.random_lower_string()
     second_password = utils.random_lower_string()
-    utils.create_random_user(
+    utils.create_user(
         username=second_username, password=second_password
     )
     second_user = utils.get_active_user(username=second_username)
@@ -385,7 +385,7 @@ def test_get_all_followers_count_as_super_user():
 def test_get_all_followers_count_as_normal_user():
     username = utils.random_lower_string()
     password = utils.random_lower_string()
-    token = utils.create_random_user(username=username, password=password)
+    token = utils.create_user(username=username, password=password)
 
     response = client.get(
         f"{settings.API_V1_STR}/follows/count/",
@@ -398,11 +398,11 @@ def test_get_all_followers_count_as_normal_user():
 def test_get_all_followers_count_is_all():
     username = utils.random_lower_string()
     password = utils.random_lower_string()
-    token = utils.create_random_user(username=username, password=password)
+    token = utils.create_user(username=username, password=password)
 
     second_username = utils.random_lower_string()
     second_password = utils.random_lower_string()
-    utils.create_random_user(
+    utils.create_user(
         username=second_username, password=second_password
     )
     second_user = utils.get_active_user(username=second_username)
@@ -419,11 +419,11 @@ def test_get_all_followers_count_is_all():
 def test_get_follower_count_by_user_id_as_super_user():
     username = utils.random_lower_string()
     password = utils.random_lower_string()
-    token = utils.create_random_user(username=username, password=password)
+    token = utils.create_user(username=username, password=password)
 
     second_username = utils.random_lower_string()
     second_password = utils.random_lower_string()
-    utils.create_random_user(
+    utils.create_user(
         username=second_username, password=second_password
     )
     second_user = utils.get_active_user(username=second_username)
@@ -448,7 +448,7 @@ def test_get_follower_count_by_user_id_as_super_user():
 def test_get_follower_count_by_user_id_as_normal_user():
     username = utils.random_lower_string()
     password = utils.random_lower_string()
-    token = utils.create_random_user(username=username, password=password)
+    token = utils.create_user(username=username, password=password)
     user = utils.get_active_user(username=username)
 
     response = client.get(
@@ -462,11 +462,11 @@ def test_get_follower_count_by_user_id_as_normal_user():
 def test_get_follower_count_by_user_id_is_all():
     username = utils.random_lower_string()
     password = utils.random_lower_string()
-    token = utils.create_random_user(username=username, password=password)
+    token = utils.create_user(username=username, password=password)
 
     second_username = utils.random_lower_string()
     second_password = utils.random_lower_string()
-    utils.create_random_user(
+    utils.create_user(
         username=second_username, password=second_password
     )
     second_user = utils.get_active_user(username=second_username)
@@ -483,7 +483,7 @@ def test_get_follower_count_by_user_id_is_all():
 def test_get_follower_count_by_not_existing_user_id():
     username = utils.random_lower_string()
     password = utils.random_lower_string()
-    utils.create_random_user(username=username, password=password)
+    utils.create_user(username=username, password=password)
     user = utils.get_active_user(username=username)
 
     superuser_token = utils.authentication_headers(
@@ -502,11 +502,11 @@ def test_get_follower_count_by_not_existing_user_id():
 def test_get_follower_count_by_deactivated_user_id():
     username = utils.random_lower_string()
     password = utils.random_lower_string()
-    token = utils.create_random_user(username=username, password=password)
+    token = utils.create_user(username=username, password=password)
 
     second_username = utils.random_lower_string()
     second_password = utils.random_lower_string()
-    utils.create_random_user(
+    utils.create_user(
         username=second_username, password=second_password
     )
     second_user = utils.get_active_user(username=second_username)
@@ -532,11 +532,11 @@ def test_get_follower_count_by_deactivated_user_id():
 def test_get_follower_ids_by_user_id_as_super_user():
     username = utils.random_lower_string()
     password = utils.random_lower_string()
-    token = utils.create_random_user(username=username, password=password)
+    token = utils.create_user(username=username, password=password)
 
     second_username = utils.random_lower_string()
     second_password = utils.random_lower_string()
-    utils.create_random_user(
+    utils.create_user(
         username=second_username, password=second_password
     )
     second_user = utils.get_active_user(username=second_username)
@@ -561,7 +561,7 @@ def test_get_follower_ids_by_user_id_as_super_user():
 def test_get_follower_ids_by_user_id_as_normal_user():
     username = utils.random_lower_string()
     password = utils.random_lower_string()
-    token = utils.create_random_user(username=username, password=password)
+    token = utils.create_user(username=username, password=password)
     user = utils.get_active_user(username=username)
 
     response = client.get(
@@ -575,11 +575,11 @@ def test_get_follower_ids_by_user_id_as_normal_user():
 def test_get_follower_ids_by_user_id_is_all():
     username = utils.random_lower_string()
     password = utils.random_lower_string()
-    token = utils.create_random_user(username=username, password=password)
+    token = utils.create_user(username=username, password=password)
 
     second_username = utils.random_lower_string()
     second_password = utils.random_lower_string()
-    utils.create_random_user(
+    utils.create_user(
         username=second_username, password=second_password
     )
     second_user = utils.get_active_user(username=second_username)
@@ -596,7 +596,7 @@ def test_get_follower_ids_by_user_id_is_all():
 def test_get_follower_ids_by_not_existing_user_id():
     username = utils.random_lower_string()
     password = utils.random_lower_string()
-    utils.create_random_user(username=username, password=password)
+    utils.create_user(username=username, password=password)
     user = utils.get_active_user(username=username)
 
     superuser_token = utils.authentication_headers(
@@ -615,7 +615,7 @@ def test_get_follower_ids_by_not_existing_user_id():
 def test_get_follower_ids_by_deactivated_user_id():
     username = utils.random_lower_string()
     password = utils.random_lower_string()
-    token = utils.create_random_user(username=username, password=password)
+    token = utils.create_user(username=username, password=password)
     user = utils.get_active_user(username=username)
 
     ids = utils.get_follower_ids_by_user_id(user_id=user["id"])
@@ -639,12 +639,12 @@ def test_get_follower_ids_by_deactivated_user_id():
 def test_get_following_count_by_user_id_as_super_user():
     username = utils.random_lower_string()
     password = utils.random_lower_string()
-    token = utils.create_random_user(username=username, password=password)
+    token = utils.create_user(username=username, password=password)
     user = utils.get_active_user(username=username)
 
     second_username = utils.random_lower_string()
     second_password = utils.random_lower_string()
-    utils.create_random_user(
+    utils.create_user(
         username=second_username, password=second_password
     )
     second_user = utils.get_active_user(username=second_username)
@@ -669,7 +669,7 @@ def test_get_following_count_by_user_id_as_super_user():
 def test_get_following_count_by_user_id_as_normal_user():
     username = utils.random_lower_string()
     password = utils.random_lower_string()
-    token = utils.create_random_user(username=username, password=password)
+    token = utils.create_user(username=username, password=password)
     user = utils.get_active_user(username=username)
 
     response = client.get(
@@ -683,12 +683,12 @@ def test_get_following_count_by_user_id_as_normal_user():
 def test_get_following_count_by_user_id_is_all():
     username = utils.random_lower_string()
     password = utils.random_lower_string()
-    token = utils.create_random_user(username=username, password=password)
+    token = utils.create_user(username=username, password=password)
     user = utils.get_active_user(username=username)
 
     second_username = utils.random_lower_string()
     second_password = utils.random_lower_string()
-    utils.create_random_user(
+    utils.create_user(
         username=second_username, password=second_password
     )
     second_user = utils.get_active_user(username=second_username)
@@ -705,7 +705,7 @@ def test_get_following_count_by_user_id_is_all():
 def test_get_following_count_by_not_existing_user_id():
     username = utils.random_lower_string()
     password = utils.random_lower_string()
-    utils.create_random_user(username=username, password=password)
+    utils.create_user(username=username, password=password)
     user = utils.get_active_user(username=username)
 
     superuser_token = utils.authentication_headers(
@@ -724,12 +724,12 @@ def test_get_following_count_by_not_existing_user_id():
 def test_get_following_count_by_deactivated_user_id():
     username = utils.random_lower_string()
     password = utils.random_lower_string()
-    token = utils.create_random_user(username=username, password=password)
+    token = utils.create_user(username=username, password=password)
     user = utils.get_active_user(username=username)
 
     second_username = utils.random_lower_string()
     second_password = utils.random_lower_string()
-    utils.create_random_user(
+    utils.create_user(
         username=second_username, password=second_password
     )
     second_user = utils.get_active_user(username=second_username)
@@ -755,12 +755,12 @@ def test_get_following_count_by_deactivated_user_id():
 def test_get_following_ids_by_user_id_as_super_user():
     username = utils.random_lower_string()
     password = utils.random_lower_string()
-    token = utils.create_random_user(username=username, password=password)
+    token = utils.create_user(username=username, password=password)
     user = utils.get_active_user(username=username)
 
     second_username = utils.random_lower_string()
     second_password = utils.random_lower_string()
-    utils.create_random_user(
+    utils.create_user(
         username=second_username, password=second_password
     )
     second_user = utils.get_active_user(username=second_username)
@@ -785,7 +785,7 @@ def test_get_following_ids_by_user_id_as_super_user():
 def test_get_following_ids_by_user_id_as_normal_user():
     username = utils.random_lower_string()
     password = utils.random_lower_string()
-    token = utils.create_random_user(username=username, password=password)
+    token = utils.create_user(username=username, password=password)
     user = utils.get_active_user(username=username)
 
     response = client.get(
@@ -799,11 +799,11 @@ def test_get_following_ids_by_user_id_as_normal_user():
 def test_get_following_ids_by_user_id_is_all():
     username = utils.random_lower_string()
     password = utils.random_lower_string()
-    token = utils.create_random_user(username=username, password=password)
+    token = utils.create_user(username=username, password=password)
 
     second_username = utils.random_lower_string()
     second_password = utils.random_lower_string()
-    utils.create_random_user(
+    utils.create_user(
         username=second_username, password=second_password
     )
     second_user = utils.get_active_user(username=second_username)
@@ -820,7 +820,7 @@ def test_get_following_ids_by_user_id_is_all():
 def test_get_following_ids_by_not_existing_user_id():
     username = utils.random_lower_string()
     password = utils.random_lower_string()
-    utils.create_random_user(username=username, password=password)
+    utils.create_user(username=username, password=password)
     user = utils.get_active_user(username=username)
 
     superuser_token = utils.authentication_headers(
@@ -839,12 +839,12 @@ def test_get_following_ids_by_not_existing_user_id():
 def test_get_following_ids_by_deactivated_user_id():
     username = utils.random_lower_string()
     password = utils.random_lower_string()
-    token = utils.create_random_user(username=username, password=password)
+    token = utils.create_user(username=username, password=password)
     user = utils.get_active_user(username=username)
 
     second_username = utils.random_lower_string()
     second_password = utils.random_lower_string()
-    utils.create_random_user(
+    utils.create_user(
         username=second_username, password=second_password
     )
     second_user = utils.get_active_user(username=second_username)

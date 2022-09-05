@@ -22,7 +22,7 @@ def test_signup_with_existing_username():
     username = utils.random_lower_string()
     password = utils.random_lower_string()
 
-    utils.create_random_user(username=username, password=password)
+    utils.create_user(username=username, password=password)
 
     data = {
         "username": username,
@@ -42,7 +42,7 @@ def test_signin():
     username = utils.random_lower_string()
     password = utils.random_lower_string()
 
-    utils.create_random_user(username=username, password=password)
+    utils.create_user(username=username, password=password)
 
     data = {
         "username": username,
@@ -78,7 +78,7 @@ def test_signin_with_wrong_password():
     username = utils.random_lower_string()
     password = utils.random_lower_string()
 
-    utils.create_random_user(username=username, password=password)
+    utils.create_user(username=username, password=password)
 
     data = {
         "username": username,

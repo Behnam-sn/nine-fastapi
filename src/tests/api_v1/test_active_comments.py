@@ -15,9 +15,9 @@ def test_get_all_active_comments_is_all_active():
     username = utils.random_lower_string()
     password = utils.random_lower_string()
 
-    token = utils.create_random_user(username=username, password=password)
-    post = utils.create_random_post(token=token)
-    comment = utils.create_random_comment(post_id=post["id"], token=token)
+    token = utils.create_user(username=username, password=password)
+    post = utils.create_post(token=token)
+    comment = utils.create_comment(post_id=post["id"], token=token)
 
     count = utils.get_all_active_comments_count()
     utils.deactivate_comment(comment_id=comment["id"], token=token)
@@ -30,9 +30,9 @@ def test_get_active_comment_by_id():
     username = utils.random_lower_string()
     password = utils.random_lower_string()
 
-    token = utils.create_random_user(username=username, password=password)
-    post = utils.create_random_post(token=token)
-    comment = utils.create_random_comment(post_id=post["id"], token=token)
+    token = utils.create_user(username=username, password=password)
+    post = utils.create_post(token=token)
+    comment = utils.create_comment(post_id=post["id"], token=token)
 
     response = client.get(
         f"{settings.API_V1_STR}/active-comments/{comment['id']}",
@@ -47,9 +47,9 @@ def test_get_not_existing_comment_by_id():
     username = utils.random_lower_string()
     password = utils.random_lower_string()
 
-    token = utils.create_random_user(username=username, password=password)
-    post = utils.create_random_post(token=token)
-    comment = utils.create_random_comment(post_id=post["id"], token=token)
+    token = utils.create_user(username=username, password=password)
+    post = utils.create_post(token=token)
+    comment = utils.create_comment(post_id=post["id"], token=token)
 
     response = client.get(
         f"{settings.API_V1_STR}/active-comments/{comment['id'] + 1}",
@@ -62,9 +62,9 @@ def test_get_deactivated_comment_by_id():
     username = utils.random_lower_string()
     password = utils.random_lower_string()
 
-    token = utils.create_random_user(username=username, password=password)
-    post = utils.create_random_post(token=token)
-    comment = utils.create_random_comment(post_id=post["id"], token=token)
+    token = utils.create_user(username=username, password=password)
+    post = utils.create_post(token=token)
+    comment = utils.create_comment(post_id=post["id"], token=token)
 
     utils.deactivate_comment(comment_id=comment["id"], token=token)
 
@@ -79,9 +79,9 @@ def test_get_all_active_comments_count():
     username = utils.random_lower_string()
     password = utils.random_lower_string()
 
-    token = utils.create_random_user(username=username, password=password)
-    post = utils.create_random_post(token=token)
-    utils.create_random_comment(post_id=post["id"], token=token)
+    token = utils.create_user(username=username, password=password)
+    post = utils.create_post(token=token)
+    utils.create_comment(post_id=post["id"], token=token)
 
     response = client.get(
         f"{settings.API_V1_STR}/active-comments/count/",
@@ -96,9 +96,9 @@ def test_get_all_active_comments_count_is_all_active():
     username = utils.random_lower_string()
     password = utils.random_lower_string()
 
-    token = utils.create_random_user(username=username, password=password)
-    post = utils.create_random_post(token=token)
-    comment = utils.create_random_comment(post_id=post["id"], token=token)
+    token = utils.create_user(username=username, password=password)
+    post = utils.create_post(token=token)
+    comment = utils.create_comment(post_id=post["id"], token=token)
 
     count = utils.get_all_active_comments_count()
     utils.deactivate_comment(comment_id=comment["id"], token=token)
@@ -111,9 +111,9 @@ def test_get_all_active_comments_ids():
     username = utils.random_lower_string()
     password = utils.random_lower_string()
 
-    token = utils.create_random_user(username=username, password=password)
-    post = utils.create_random_post(token=token)
-    utils.create_random_comment(post_id=post["id"], token=token)
+    token = utils.create_user(username=username, password=password)
+    post = utils.create_post(token=token)
+    utils.create_comment(post_id=post["id"], token=token)
 
     count = utils.get_all_active_comments_count()
 
@@ -130,9 +130,9 @@ def test_get_all_active_comments_ids_is_all_active():
     username = utils.random_lower_string()
     password = utils.random_lower_string()
 
-    token = utils.create_random_user(username=username, password=password)
-    post = utils.create_random_post(token=token)
-    comment = utils.create_random_comment(post_id=post["id"], token=token)
+    token = utils.create_user(username=username, password=password)
+    post = utils.create_post(token=token)
+    comment = utils.create_comment(post_id=post["id"], token=token)
 
     count = utils.get_all_active_comments_count()
     ids = utils.get_all_active_comments_ids(count=count)
@@ -147,10 +147,10 @@ def test_get_active_comments_count_by_owner_id():
     username = utils.random_lower_string()
     password = utils.random_lower_string()
 
-    token = utils.create_random_user(username=username, password=password)
+    token = utils.create_user(username=username, password=password)
     user = utils.get_active_user(username=username)
-    post = utils.create_random_post(token=token)
-    utils.create_random_comment(post_id=post["id"], token=token)
+    post = utils.create_post(token=token)
+    utils.create_comment(post_id=post["id"], token=token)
 
     response = client.get(
         f"{settings.API_V1_STR}/active-comments/owner/count/{user['id']}",
@@ -165,10 +165,10 @@ def test_get_active_comments_count_by_owner_id_is_all_active():
     username = utils.random_lower_string()
     password = utils.random_lower_string()
 
-    token = utils.create_random_user(username=username, password=password)
+    token = utils.create_user(username=username, password=password)
     user = utils.get_active_user(username=username)
-    post = utils.create_random_post(token=token)
-    comment = utils.create_random_comment(post_id=post["id"], token=token)
+    post = utils.create_post(token=token)
+    comment = utils.create_comment(post_id=post["id"], token=token)
 
     count = utils.get_active_comments_count_by_owner_id(owner_id=user["id"])
     utils.deactivate_comment(comment_id=comment["id"], token=token)
@@ -183,7 +183,7 @@ def test_get_active_comments_count_by_not_existing_owner_id():
     username = utils.random_lower_string()
     password = utils.random_lower_string()
 
-    utils.create_random_user(username=username, password=password)
+    utils.create_user(username=username, password=password)
     user = utils.get_active_user(username=username)
 
     response = client.get(
@@ -197,7 +197,7 @@ def test_get_active_comments_count_by_deactivated_owner_id():
     username = utils.random_lower_string()
     password = utils.random_lower_string()
 
-    token = utils.create_random_user(username=username, password=password)
+    token = utils.create_user(username=username, password=password)
     user = utils.get_active_user(username=username)
     utils.deactivate_user(username=username, token=token)
 
@@ -212,10 +212,10 @@ def test_get_active_comments_ids_by_owner_id():
     username = utils.random_lower_string()
     password = utils.random_lower_string()
 
-    token = utils.create_random_user(username=username, password=password)
+    token = utils.create_user(username=username, password=password)
     user = utils.get_active_user(username=username)
-    post = utils.create_random_post(token=token)
-    utils.create_random_comment(post_id=post["id"], token=token)
+    post = utils.create_post(token=token)
+    utils.create_comment(post_id=post["id"], token=token)
 
     response = client.get(
         f"{settings.API_V1_STR}/active-comments/owner/ids/{user['id']}",
@@ -230,10 +230,10 @@ def test_get_active_comments_ids_by_owner_id_is_all_active():
     username = utils.random_lower_string()
     password = utils.random_lower_string()
 
-    token = utils.create_random_user(username=username, password=password)
+    token = utils.create_user(username=username, password=password)
     user = utils.get_active_user(username=username)
-    post = utils.create_random_post(token=token)
-    comment = utils.create_random_comment(post_id=post["id"], token=token)
+    post = utils.create_post(token=token)
+    comment = utils.create_comment(post_id=post["id"], token=token)
 
     ids = utils.get_active_comments_ids_by_owner_id(owner_id=user["id"])
     utils.deactivate_comment(comment_id=comment["id"], token=token)
@@ -246,7 +246,7 @@ def test_get_active_comments_ids_by_not_existing_owner_id():
     username = utils.random_lower_string()
     password = utils.random_lower_string()
 
-    utils.create_random_user(username=username, password=password)
+    utils.create_user(username=username, password=password)
     user = utils.get_active_user(username=username)
 
     response = client.get(
@@ -260,7 +260,7 @@ def test_get_active_comments_ids_by_deactivated_owner_id():
     username = utils.random_lower_string()
     password = utils.random_lower_string()
 
-    token = utils.create_random_user(username=username, password=password)
+    token = utils.create_user(username=username, password=password)
     user = utils.get_active_user(username=username)
     utils.deactivate_user(username=username, token=token)
 
@@ -275,9 +275,9 @@ def test_get_active_comments_count_by_post_id():
     username = utils.random_lower_string()
     password = utils.random_lower_string()
 
-    token = utils.create_random_user(username=username, password=password)
-    post = utils.create_random_post(token=token)
-    utils.create_random_comment(post_id=post["id"], token=token)
+    token = utils.create_user(username=username, password=password)
+    post = utils.create_post(token=token)
+    utils.create_comment(post_id=post["id"], token=token)
 
     response = client.get(
         f"{settings.API_V1_STR}/active-comments/post/count/{post['id']}",
@@ -292,9 +292,9 @@ def test_get_active_comments_count_by_post_id_is_all_active():
     username = utils.random_lower_string()
     password = utils.random_lower_string()
 
-    token = utils.create_random_user(username=username, password=password)
-    post = utils.create_random_post(token=token)
-    comment = utils.create_random_comment(post_id=post["id"], token=token)
+    token = utils.create_user(username=username, password=password)
+    post = utils.create_post(token=token)
+    comment = utils.create_comment(post_id=post["id"], token=token)
 
     count = utils.get_active_comments_count_by_post_id(post_id=post["id"])
     utils.deactivate_comment(comment_id=comment["id"], token=token)
@@ -307,8 +307,8 @@ def test_get_active_comments_count_by_not_existing_post_id():
     username = utils.random_lower_string()
     password = utils.random_lower_string()
 
-    token = utils.create_random_user(username=username, password=password)
-    post = utils.create_random_post(token=token)
+    token = utils.create_user(username=username, password=password)
+    post = utils.create_post(token=token)
 
     response = client.get(
         f"{settings.API_V1_STR}/active-comments/post/count/{post['id'] + 1}",
@@ -321,8 +321,8 @@ def test_get_active_comments_count_by_deactivated_post_id():
     username = utils.random_lower_string()
     password = utils.random_lower_string()
 
-    token = utils.create_random_user(username=username, password=password)
-    post = utils.create_random_post(token=token)
+    token = utils.create_user(username=username, password=password)
+    post = utils.create_post(token=token)
     utils.deactivate_post(post_id=post['id'], token=token)
 
     response = client.get(
@@ -336,9 +336,9 @@ def test_get_active_comments_ids_by_post_id():
     username = utils.random_lower_string()
     password = utils.random_lower_string()
 
-    token = utils.create_random_user(username=username, password=password)
-    post = utils.create_random_post(token=token)
-    utils.create_random_comment(post_id=post["id"], token=token)
+    token = utils.create_user(username=username, password=password)
+    post = utils.create_post(token=token)
+    utils.create_comment(post_id=post["id"], token=token)
 
     response = client.get(
         f"{settings.API_V1_STR}/active-comments/post/ids/{post['id']}",
@@ -353,9 +353,9 @@ def test_get_active_comments_ids_by_post_id_is_all_active():
     username = utils.random_lower_string()
     password = utils.random_lower_string()
 
-    token = utils.create_random_user(username=username, password=password)
-    post = utils.create_random_post(token=token)
-    comment = utils.create_random_comment(post_id=post["id"], token=token)
+    token = utils.create_user(username=username, password=password)
+    post = utils.create_post(token=token)
+    comment = utils.create_comment(post_id=post["id"], token=token)
 
     ids = utils.get_active_comments_ids_by_post_id(post_id=post["id"])
     utils.deactivate_comment(comment_id=comment["id"], token=token)
@@ -368,8 +368,8 @@ def test_get_active_comments_ids_by_not_existing_post_id():
     username = utils.random_lower_string()
     password = utils.random_lower_string()
 
-    token = utils.create_random_user(username=username, password=password)
-    post = utils.create_random_post(token=token)
+    token = utils.create_user(username=username, password=password)
+    post = utils.create_post(token=token)
 
     response = client.get(
         f"{settings.API_V1_STR}/active-comments/post/ids/{post['id'] + 1}",
@@ -382,8 +382,8 @@ def test_get_active_comments_ids_by_deactivated_post_id():
     username = utils.random_lower_string()
     password = utils.random_lower_string()
 
-    token = utils.create_random_user(username=username, password=password)
-    post = utils.create_random_post(token=token)
+    token = utils.create_user(username=username, password=password)
+    post = utils.create_post(token=token)
     utils.deactivate_post(post_id=post['id'], token=token)
 
     response = client.get(

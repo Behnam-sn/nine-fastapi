@@ -7,9 +7,9 @@ def test_like_post():
     username = utils.random_lower_string()
     password = utils.random_lower_string()
 
-    token = utils.create_random_user(username=username, password=password)
+    token = utils.create_user(username=username, password=password)
     user = utils.get_active_user(username=username)
-    post = utils.create_random_post(token=token)
+    post = utils.create_post(token=token)
 
     response = client.post(
         f"{settings.API_V1_STR}/likes/post/{post['id']}",
@@ -26,8 +26,8 @@ def test_liked_post_likes_count_update():
     username = utils.random_lower_string()
     password = utils.random_lower_string()
 
-    token = utils.create_random_user(username=username, password=password)
-    post = utils.create_random_post(token=token)
+    token = utils.create_user(username=username, password=password)
+    post = utils.create_post(token=token)
 
     utils.like_post(post_id=post["id"], token=token)
     updated_post = utils.get_active_post(post_id=post["id"])
@@ -39,8 +39,8 @@ def test_like_not_existing_post():
     username = utils.random_lower_string()
     password = utils.random_lower_string()
 
-    token = utils.create_random_user(username=username, password=password)
-    post = utils.create_random_post(token=token)
+    token = utils.create_user(username=username, password=password)
+    post = utils.create_post(token=token)
 
     response = client.post(
         f"{settings.API_V1_STR}/likes/post/{post['id'] + 1}",
@@ -54,8 +54,8 @@ def test_like_deactivated_post():
     username = utils.random_lower_string()
     password = utils.random_lower_string()
 
-    token = utils.create_random_user(username=username, password=password)
-    post = utils.create_random_post(token=token)
+    token = utils.create_user(username=username, password=password)
+    post = utils.create_post(token=token)
 
     utils.deactivate_post(post_id=post["id"], token=token)
 
@@ -71,8 +71,8 @@ def test_like_post_already_liked():
     username = utils.random_lower_string()
     password = utils.random_lower_string()
 
-    token = utils.create_random_user(username=username, password=password)
-    post = utils.create_random_post(token=token)
+    token = utils.create_user(username=username, password=password)
+    post = utils.create_post(token=token)
 
     utils.like_post(post_id=post["id"], token=token)
 
@@ -88,9 +88,9 @@ def test_unlike_post():
     username = utils.random_lower_string()
     password = utils.random_lower_string()
 
-    token = utils.create_random_user(username=username, password=password)
+    token = utils.create_user(username=username, password=password)
     user = utils.get_active_user(username=username)
-    post = utils.create_random_post(token=token)
+    post = utils.create_post(token=token)
 
     utils.like_post(post_id=post["id"], token=token)
 
@@ -109,8 +109,8 @@ def test_unlike_not_existing_post():
     username = utils.random_lower_string()
     password = utils.random_lower_string()
 
-    token = utils.create_random_user(username=username, password=password)
-    post = utils.create_random_post(token=token)
+    token = utils.create_user(username=username, password=password)
+    post = utils.create_post(token=token)
 
     utils.like_post(post_id=post["id"], token=token)
 
@@ -126,8 +126,8 @@ def test_unlike_deactivated_post():
     username = utils.random_lower_string()
     password = utils.random_lower_string()
 
-    token = utils.create_random_user(username=username, password=password)
-    post = utils.create_random_post(token=token)
+    token = utils.create_user(username=username, password=password)
+    post = utils.create_post(token=token)
 
     utils.like_post(post_id=post["id"], token=token)
     utils.deactivate_post(post_id=post["id"], token=token)
@@ -144,8 +144,8 @@ def test_unlike_not_liked_post():
     username = utils.random_lower_string()
     password = utils.random_lower_string()
 
-    token = utils.create_random_user(username=username, password=password)
-    post = utils.create_random_post(token=token)
+    token = utils.create_user(username=username, password=password)
+    post = utils.create_post(token=token)
 
     response = client.delete(
         f"{settings.API_V1_STR}/likes/post/{post['id']}",
@@ -159,10 +159,10 @@ def test_like_comment():
     username = utils.random_lower_string()
     password = utils.random_lower_string()
 
-    token = utils.create_random_user(username=username, password=password)
+    token = utils.create_user(username=username, password=password)
     user = utils.get_active_user(username=username)
-    post = utils.create_random_post(token=token)
-    comment = utils.create_random_comment(post_id=post["id"], token=token)
+    post = utils.create_post(token=token)
+    comment = utils.create_comment(post_id=post["id"], token=token)
 
     response = client.post(
         f"{settings.API_V1_STR}/likes/comment/{comment['id']}",
@@ -179,9 +179,9 @@ def test_like_not_existing_comment():
     username = utils.random_lower_string()
     password = utils.random_lower_string()
 
-    token = utils.create_random_user(username=username, password=password)
-    post = utils.create_random_post(token=token)
-    comment = utils.create_random_comment(post_id=post["id"], token=token)
+    token = utils.create_user(username=username, password=password)
+    post = utils.create_post(token=token)
+    comment = utils.create_comment(post_id=post["id"], token=token)
 
     response = client.post(
         f"{settings.API_V1_STR}/likes/comment/{comment['id'] + 1}",
@@ -195,9 +195,9 @@ def test_like_deactivated_comment():
     username = utils.random_lower_string()
     password = utils.random_lower_string()
 
-    token = utils.create_random_user(username=username, password=password)
-    post = utils.create_random_post(token=token)
-    comment = utils.create_random_comment(post_id=post["id"], token=token)
+    token = utils.create_user(username=username, password=password)
+    post = utils.create_post(token=token)
+    comment = utils.create_comment(post_id=post["id"], token=token)
 
     utils.deactivate_comment(comment_id=comment["id"], token=token)
 
@@ -213,9 +213,9 @@ def test_like_comment_already_liked():
     username = utils.random_lower_string()
     password = utils.random_lower_string()
 
-    token = utils.create_random_user(username=username, password=password)
-    post = utils.create_random_post(token=token)
-    comment = utils.create_random_comment(post_id=post["id"], token=token)
+    token = utils.create_user(username=username, password=password)
+    post = utils.create_post(token=token)
+    comment = utils.create_comment(post_id=post["id"], token=token)
 
     utils.like_comment(comment_id=comment["id"], token=token)
 
@@ -231,10 +231,10 @@ def test_unlike_comment():
     username = utils.random_lower_string()
     password = utils.random_lower_string()
 
-    token = utils.create_random_user(username=username, password=password)
+    token = utils.create_user(username=username, password=password)
     user = utils.get_active_user(username=username)
-    post = utils.create_random_post(token=token)
-    comment = utils.create_random_comment(post_id=post["id"], token=token)
+    post = utils.create_post(token=token)
+    comment = utils.create_comment(post_id=post["id"], token=token)
 
     utils.like_comment(comment_id=comment["id"], token=token)
 
@@ -253,9 +253,9 @@ def test_unlike_not_existing_comment():
     username = utils.random_lower_string()
     password = utils.random_lower_string()
 
-    token = utils.create_random_user(username=username, password=password)
-    post = utils.create_random_post(token=token)
-    comment = utils.create_random_comment(post_id=post["id"], token=token)
+    token = utils.create_user(username=username, password=password)
+    post = utils.create_post(token=token)
+    comment = utils.create_comment(post_id=post["id"], token=token)
 
     utils.like_comment(comment_id=comment["id"], token=token)
 
@@ -271,9 +271,9 @@ def test_unlike_deactivated_comment():
     username = utils.random_lower_string()
     password = utils.random_lower_string()
 
-    token = utils.create_random_user(username=username, password=password)
-    post = utils.create_random_post(token=token)
-    comment = utils.create_random_comment(post_id=post["id"], token=token)
+    token = utils.create_user(username=username, password=password)
+    post = utils.create_post(token=token)
+    comment = utils.create_comment(post_id=post["id"], token=token)
 
     utils.like_comment(comment_id=comment["id"], token=token)
     utils.deactivate_comment(comment_id=comment["id"], token=token)
@@ -290,9 +290,9 @@ def test_unlike_not_liked_comment():
     username = utils.random_lower_string()
     password = utils.random_lower_string()
 
-    token = utils.create_random_user(username=username, password=password)
-    post = utils.create_random_post(token=token)
-    comment = utils.create_random_comment(post_id=post["id"], token=token)
+    token = utils.create_user(username=username, password=password)
+    post = utils.create_post(token=token)
+    comment = utils.create_comment(post_id=post["id"], token=token)
 
     response = client.delete(
         f"{settings.API_V1_STR}/likes/comment/{comment['id']}",
@@ -320,7 +320,7 @@ def test_get_all_likes_as_normal_user():
     username = utils.random_lower_string()
     password = utils.random_lower_string()
 
-    token = utils.create_random_user(username=username, password=password)
+    token = utils.create_user(username=username, password=password)
 
     response = client.get(
         f"{settings.API_V1_STR}/likes/all/",
@@ -334,9 +334,9 @@ def test_get_all_likes_is_all():
     username = utils.random_lower_string()
     password = utils.random_lower_string()
 
-    token = utils.create_random_user(username=username, password=password)
-    post = utils.create_random_post(token=token)
-    comment = utils.create_random_comment(post_id=post["id"], token=token)
+    token = utils.create_user(username=username, password=password)
+    post = utils.create_post(token=token)
+    comment = utils.create_comment(post_id=post["id"], token=token)
 
     utils.like_post(post_id=post["id"], token=token)
     utils.like_comment(comment_id=comment["id"], token=token)
@@ -352,8 +352,8 @@ def test_get_like_by_id_as_super_user():
     username = utils.random_lower_string()
     password = utils.random_lower_string()
 
-    token = utils.create_random_user(username=username, password=password)
-    post = utils.create_random_post(token=token)
+    token = utils.create_user(username=username, password=password)
+    post = utils.create_post(token=token)
     like = utils.like_post(post_id=post["id"], token=token)
 
     superuser_token = utils.authentication_headers(
@@ -375,8 +375,8 @@ def test_get_like_by_id_as_normal_user():
     username = utils.random_lower_string()
     password = utils.random_lower_string()
 
-    token = utils.create_random_user(username=username, password=password)
-    post = utils.create_random_post(token=token)
+    token = utils.create_user(username=username, password=password)
+    post = utils.create_post(token=token)
     like = utils.like_post(post_id=post["id"], token=token)
 
     response = client.get(
@@ -390,8 +390,8 @@ def test_get_not_existing_like_by_id():
     username = utils.random_lower_string()
     password = utils.random_lower_string()
 
-    token = utils.create_random_user(username=username, password=password)
-    post = utils.create_random_post(token=token)
+    token = utils.create_user(username=username, password=password)
+    post = utils.create_post(token=token)
     like = utils.like_post(post_id=post["id"], token=token)
 
     superuser_token = utils.authentication_headers(
@@ -418,10 +418,10 @@ def test_get_likes_count_by_owner_id_as_super_user():
     username = utils.random_lower_string()
     password = utils.random_lower_string()
 
-    token = utils.create_random_user(username=username, password=password)
+    token = utils.create_user(username=username, password=password)
     user = utils.get_active_user(username=username)
-    post = utils.create_random_post(token=token)
-    comment = utils.create_random_comment(post_id=post["id"], token=token)
+    post = utils.create_post(token=token)
+    comment = utils.create_comment(post_id=post["id"], token=token)
 
     utils.like_post(post_id=post["id"], token=token)
     utils.like_comment(comment_id=comment["id"], token=token)
@@ -445,7 +445,7 @@ def test_get_likes_count_by_owner_id_as_normal_user():
     username = utils.random_lower_string()
     password = utils.random_lower_string()
 
-    token = utils.create_random_user(username=username, password=password)
+    token = utils.create_user(username=username, password=password)
     user = utils.get_active_user(username=username)
 
     response = client.get(
@@ -460,10 +460,10 @@ def test_get_likes_count_by_owner_id_is_all():
     username = utils.random_lower_string()
     password = utils.random_lower_string()
 
-    token = utils.create_random_user(username=username, password=password)
+    token = utils.create_user(username=username, password=password)
     user = utils.get_active_user(username=username)
-    post = utils.create_random_post(token=token)
-    comment = utils.create_random_comment(post_id=post["id"], token=token)
+    post = utils.create_post(token=token)
+    comment = utils.create_comment(post_id=post["id"], token=token)
 
     utils.like_post(post_id=post["id"], token=token)
     utils.like_comment(comment_id=comment["id"], token=token)
@@ -479,7 +479,7 @@ def test_get_likes_count_by_not_existing_owner_id():
     username = utils.random_lower_string()
     password = utils.random_lower_string()
 
-    utils.create_random_user(username=username, password=password)
+    utils.create_user(username=username, password=password)
     user = utils.get_active_user(username=username)
 
     superuser_token = utils.authentication_headers(
@@ -499,10 +499,10 @@ def test_get_likes_count_by_deactivated_owner_id():
     username = utils.random_lower_string()
     password = utils.random_lower_string()
 
-    token = utils.create_random_user(username=username, password=password)
+    token = utils.create_user(username=username, password=password)
     user = utils.get_active_user(username=username)
-    post = utils.create_random_post(token=token)
-    comment = utils.create_random_comment(post_id=post["id"], token=token)
+    post = utils.create_post(token=token)
+    comment = utils.create_comment(post_id=post["id"], token=token)
 
     utils.like_post(post_id=post["id"], token=token)
     utils.like_comment(comment_id=comment["id"], token=token)
@@ -528,10 +528,10 @@ def test_get_likes_ids_by_owner_id_as_super_user():
     username = utils.random_lower_string()
     password = utils.random_lower_string()
 
-    token = utils.create_random_user(username=username, password=password)
+    token = utils.create_user(username=username, password=password)
     user = utils.get_active_user(username=username)
-    post = utils.create_random_post(token=token)
-    comment = utils.create_random_comment(post_id=post["id"], token=token)
+    post = utils.create_post(token=token)
+    comment = utils.create_comment(post_id=post["id"], token=token)
 
     utils.like_post(post_id=post["id"], token=token)
     utils.like_comment(comment_id=comment["id"], token=token)
@@ -555,7 +555,7 @@ def test_get_likes_ids_by_owner_id_as_normal_user():
     username = utils.random_lower_string()
     password = utils.random_lower_string()
 
-    token = utils.create_random_user(username=username, password=password)
+    token = utils.create_user(username=username, password=password)
     user = utils.get_active_user(username=username)
 
     response = client.get(
@@ -570,10 +570,10 @@ def test_get_likes_ids_by_owner_id_is_all():
     username = utils.random_lower_string()
     password = utils.random_lower_string()
 
-    token = utils.create_random_user(username=username, password=password)
+    token = utils.create_user(username=username, password=password)
     user = utils.get_active_user(username=username)
-    post = utils.create_random_post(token=token)
-    comment = utils.create_random_comment(post_id=post["id"], token=token)
+    post = utils.create_post(token=token)
+    comment = utils.create_comment(post_id=post["id"], token=token)
 
     utils.like_post(post_id=post["id"], token=token)
     utils.like_comment(comment_id=comment["id"], token=token)
@@ -589,7 +589,7 @@ def test_get_likes_ids_by_not_existing_owner_id():
     username = utils.random_lower_string()
     password = utils.random_lower_string()
 
-    utils.create_random_user(username=username, password=password)
+    utils.create_user(username=username, password=password)
     user = utils.get_active_user(username=username)
 
     superuser_token = utils.authentication_headers(
@@ -609,10 +609,10 @@ def test_get_likes_ids_by_deactivated_owner_id():
     username = utils.random_lower_string()
     password = utils.random_lower_string()
 
-    token = utils.create_random_user(username=username, password=password)
+    token = utils.create_user(username=username, password=password)
     user = utils.get_active_user(username=username)
-    post = utils.create_random_post(token=token)
-    comment = utils.create_random_comment(post_id=post["id"], token=token)
+    post = utils.create_post(token=token)
+    comment = utils.create_comment(post_id=post["id"], token=token)
 
     utils.like_post(post_id=post["id"], token=token)
     utils.like_comment(comment_id=comment["id"], token=token)
@@ -639,8 +639,8 @@ def test_get_likes_count_by_post_id_as_super_user():
     username = utils.random_lower_string()
     password = utils.random_lower_string()
 
-    token = utils.create_random_user(username=username, password=password)
-    post = utils.create_random_post(token=token)
+    token = utils.create_user(username=username, password=password)
+    post = utils.create_post(token=token)
 
     utils.like_post(post_id=post["id"], token=token)
 
@@ -663,8 +663,8 @@ def test_get_likes_count_by_post_id_as_normal_user():
     username = utils.random_lower_string()
     password = utils.random_lower_string()
 
-    token = utils.create_random_user(username=username, password=password)
-    post = utils.create_random_post(token=token)
+    token = utils.create_user(username=username, password=password)
+    post = utils.create_post(token=token)
 
     response = client.get(
         f"{settings.API_V1_STR}/likes/post/count/{post['id']}",
@@ -677,8 +677,8 @@ def test_get_likes_count_by_post_id_is_all():
     username = utils.random_lower_string()
     password = utils.random_lower_string()
 
-    token = utils.create_random_user(username=username, password=password)
-    post = utils.create_random_post(token=token)
+    token = utils.create_user(username=username, password=password)
+    post = utils.create_post(token=token)
     utils.like_post(post_id=post["id"], token=token)
 
     count = utils.get_likes_count_by_post_id(post_id=post["id"])
@@ -692,8 +692,8 @@ def test_get_likes_count_by_not_existing_post_id():
     username = utils.random_lower_string()
     password = utils.random_lower_string()
 
-    token = utils.create_random_user(username=username, password=password)
-    post = utils.create_random_post(token=token)
+    token = utils.create_user(username=username, password=password)
+    post = utils.create_post(token=token)
 
     superuser_token = utils.authentication_headers(
         username=settings.SUPERUSER_USERNAME,
@@ -712,8 +712,8 @@ def test_get_likes_count_by_deactivated_post_id():
     username = utils.random_lower_string()
     password = utils.random_lower_string()
 
-    token = utils.create_random_user(username=username, password=password)
-    post = utils.create_random_post(token=token)
+    token = utils.create_user(username=username, password=password)
+    post = utils.create_post(token=token)
 
     utils.like_post(post_id=post["id"], token=token)
     utils.deactivate_post(post_id=post["id"], token=token)
@@ -737,8 +737,8 @@ def test_get_likes_ids_by_post_id_as_super_user():
     username = utils.random_lower_string()
     password = utils.random_lower_string()
 
-    token = utils.create_random_user(username=username, password=password)
-    post = utils.create_random_post(token=token)
+    token = utils.create_user(username=username, password=password)
+    post = utils.create_post(token=token)
     utils.like_post(post_id=post["id"], token=token)
 
     superuser_token = utils.authentication_headers(
@@ -760,8 +760,8 @@ def test_get_likes_ids_by_post_id_as_normal_user():
     username = utils.random_lower_string()
     password = utils.random_lower_string()
 
-    token = utils.create_random_user(username=username, password=password)
-    post = utils.create_random_post(token=token)
+    token = utils.create_user(username=username, password=password)
+    post = utils.create_post(token=token)
 
     response = client.get(
         f"{settings.API_V1_STR}/likes/post/ids/{post['id']}",
@@ -775,8 +775,8 @@ def test_get_likes_ids_by_post_id_is_all():
     username = utils.random_lower_string()
     password = utils.random_lower_string()
 
-    token = utils.create_random_user(username=username, password=password)
-    post = utils.create_random_post(token=token)
+    token = utils.create_user(username=username, password=password)
+    post = utils.create_post(token=token)
     utils.like_post(post_id=post["id"], token=token)
 
     ids = utils.get_likes_ids_by_post_id(post_id=post["id"])
@@ -790,8 +790,8 @@ def test_get_likes_ids_by_not_existing_post_id():
     username = utils.random_lower_string()
     password = utils.random_lower_string()
 
-    token = utils.create_random_user(username=username, password=password)
-    post = utils.create_random_post(token=token)
+    token = utils.create_user(username=username, password=password)
+    post = utils.create_post(token=token)
 
     superuser_token = utils.authentication_headers(
         username=settings.SUPERUSER_USERNAME,
@@ -810,8 +810,8 @@ def test_get_likes_ids_by_deactivated_post_id():
     username = utils.random_lower_string()
     password = utils.random_lower_string()
 
-    token = utils.create_random_user(username=username, password=password)
-    post = utils.create_random_post(token=token)
+    token = utils.create_user(username=username, password=password)
+    post = utils.create_post(token=token)
     utils.like_post(post_id=post["id"], token=token)
 
     ids = utils.get_likes_ids_by_post_id(post_id=post["id"])
@@ -836,9 +836,9 @@ def test_get_likes_count_by_comment_id_as_super_user():
     username = utils.random_lower_string()
     password = utils.random_lower_string()
 
-    token = utils.create_random_user(username=username, password=password)
-    post = utils.create_random_post(token=token)
-    comment = utils.create_random_comment(post_id=post["id"], token=token)
+    token = utils.create_user(username=username, password=password)
+    post = utils.create_post(token=token)
+    comment = utils.create_comment(post_id=post["id"], token=token)
 
     utils.like_comment(comment_id=comment["id"], token=token)
 
@@ -861,9 +861,9 @@ def test_get_likes_count_by_comment_id_as_normal_user():
     username = utils.random_lower_string()
     password = utils.random_lower_string()
 
-    token = utils.create_random_user(username=username, password=password)
-    post = utils.create_random_post(token=token)
-    comment = utils.create_random_comment(post_id=post["id"], token=token)
+    token = utils.create_user(username=username, password=password)
+    post = utils.create_post(token=token)
+    comment = utils.create_comment(post_id=post["id"], token=token)
 
     response = client.get(
         f"{settings.API_V1_STR}/likes/comment/count/{comment['id']}",
@@ -877,9 +877,9 @@ def test_get_likes_count_by_comment_id_is_all():
     username = utils.random_lower_string()
     password = utils.random_lower_string()
 
-    token = utils.create_random_user(username=username, password=password)
-    post = utils.create_random_post(token=token)
-    comment = utils.create_random_comment(post_id=post["id"], token=token)
+    token = utils.create_user(username=username, password=password)
+    post = utils.create_post(token=token)
+    comment = utils.create_comment(post_id=post["id"], token=token)
     utils.like_comment(comment_id=comment["id"], token=token)
 
     count = utils.get_likes_count_by_comment_id(comment_id=comment["id"])
@@ -893,9 +893,9 @@ def test_get_likes_count_by_not_existing_comment_id():
     username = utils.random_lower_string()
     password = utils.random_lower_string()
 
-    token = utils.create_random_user(username=username, password=password)
-    post = utils.create_random_post(token=token)
-    comment = utils.create_random_comment(post_id=post["id"], token=token)
+    token = utils.create_user(username=username, password=password)
+    post = utils.create_post(token=token)
+    comment = utils.create_comment(post_id=post["id"], token=token)
 
     superuser_token = utils.authentication_headers(
         username=settings.SUPERUSER_USERNAME,
@@ -914,9 +914,9 @@ def test_get_likes_count_by_deactivated_comment_id():
     username = utils.random_lower_string()
     password = utils.random_lower_string()
 
-    token = utils.create_random_user(username=username, password=password)
-    post = utils.create_random_post(token=token)
-    comment = utils.create_random_comment(post_id=post["id"], token=token)
+    token = utils.create_user(username=username, password=password)
+    post = utils.create_post(token=token)
+    comment = utils.create_comment(post_id=post["id"], token=token)
 
     utils.like_comment(comment_id=comment["id"], token=token)
     utils.deactivate_comment(comment_id=comment["id"], token=token)
@@ -940,9 +940,9 @@ def test_get_likes_ids_by_comment_id_as_super_user():
     username = utils.random_lower_string()
     password = utils.random_lower_string()
 
-    token = utils.create_random_user(username=username, password=password)
-    post = utils.create_random_post(token=token)
-    comment = utils.create_random_comment(post_id=post["id"], token=token)
+    token = utils.create_user(username=username, password=password)
+    post = utils.create_post(token=token)
+    comment = utils.create_comment(post_id=post["id"], token=token)
 
     utils.like_comment(comment_id=comment["id"], token=token)
 
@@ -965,9 +965,9 @@ def test_get_likes_ids_by_comment_id_as_normal_user():
     username = utils.random_lower_string()
     password = utils.random_lower_string()
 
-    token = utils.create_random_user(username=username, password=password)
-    post = utils.create_random_post(token=token)
-    comment = utils.create_random_comment(post_id=post["id"], token=token)
+    token = utils.create_user(username=username, password=password)
+    post = utils.create_post(token=token)
+    comment = utils.create_comment(post_id=post["id"], token=token)
 
     response = client.get(
         f"{settings.API_V1_STR}/likes/comment/ids/{comment['id']}",
@@ -981,9 +981,9 @@ def test_get_likes_ids_by_comment_id_is_all():
     username = utils.random_lower_string()
     password = utils.random_lower_string()
 
-    token = utils.create_random_user(username=username, password=password)
-    post = utils.create_random_post(token=token)
-    comment = utils.create_random_comment(post_id=post["id"], token=token)
+    token = utils.create_user(username=username, password=password)
+    post = utils.create_post(token=token)
+    comment = utils.create_comment(post_id=post["id"], token=token)
     utils.like_comment(comment_id=comment["id"], token=token)
 
     ids = utils.get_likes_ids_by_comment_id(comment_id=comment["id"])
@@ -997,9 +997,9 @@ def test_get_likes_ids_by_not_existing_comment_id():
     username = utils.random_lower_string()
     password = utils.random_lower_string()
 
-    token = utils.create_random_user(username=username, password=password)
-    post = utils.create_random_post(token=token)
-    comment = utils.create_random_comment(post_id=post["id"], token=token)
+    token = utils.create_user(username=username, password=password)
+    post = utils.create_post(token=token)
+    comment = utils.create_comment(post_id=post["id"], token=token)
 
     superuser_token = utils.authentication_headers(
         username=settings.SUPERUSER_USERNAME,
@@ -1018,9 +1018,9 @@ def test_get_likes_ids_by_deactivated_comment_id():
     username = utils.random_lower_string()
     password = utils.random_lower_string()
 
-    token = utils.create_random_user(username=username, password=password)
-    post = utils.create_random_post(token=token)
-    comment = utils.create_random_comment(post_id=post["id"], token=token)
+    token = utils.create_user(username=username, password=password)
+    post = utils.create_post(token=token)
+    comment = utils.create_comment(post_id=post["id"], token=token)
     utils.like_comment(comment_id=comment["id"], token=token)
 
     ids = utils.get_likes_ids_by_comment_id(comment_id=comment["id"])

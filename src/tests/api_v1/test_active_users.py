@@ -15,7 +15,7 @@ def test_get_all_active_users_is_all_active():
     username = utils.random_lower_string()
     password = utils.random_lower_string()
 
-    token = utils.create_random_user(username=username, password=password)
+    token = utils.create_user(username=username, password=password)
 
     all_users_count = utils.get_all_active_users_count()
     utils.deactivate_user(username=username, token=token)
@@ -28,7 +28,7 @@ def test_get_active_user_by_username():
     username = utils.random_lower_string()
     password = utils.random_lower_string()
 
-    utils.create_random_user(username=username, password=password)
+    utils.create_user(username=username, password=password)
 
     response = client.get(
         f"{settings.API_V1_STR}/active-users/{username}",
@@ -54,7 +54,7 @@ def test_get_deactivated_user_by_username():
     username = utils.random_lower_string()
     password = utils.random_lower_string()
 
-    token = utils.create_random_user(username=username, password=password)
+    token = utils.create_user(username=username, password=password)
     utils.deactivate_user(username=username, token=token)
 
     response = client.get(
@@ -68,7 +68,7 @@ def test_get_all_active_users_count():
     username = utils.random_lower_string()
     password = utils.random_lower_string()
 
-    utils.create_random_user(username=username, password=password)
+    utils.create_user(username=username, password=password)
 
     response = client.get(
         f"{settings.API_V1_STR}/active-users/count/",
@@ -83,7 +83,7 @@ def test_get_all_active_users_count_is_all_active():
     username = utils.random_lower_string()
     password = utils.random_lower_string()
 
-    token = utils.create_random_user(username=username, password=password)
+    token = utils.create_user(username=username, password=password)
 
     count = utils.get_all_active_users_count()
     utils.deactivate_user(username=username, token=token)
