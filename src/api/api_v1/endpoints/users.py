@@ -66,6 +66,20 @@ def update_user(
     return crud.user.update(db, username=current_user.username, user_update=user_update)
 
 
+@router.delete("/{username}")
+def delete_user(
+    username: str,
+    super_user: models.User = Depends(deps.get_current_active_superuser),
+    db: Session = Depends(deps.get_db)
+):
+    db_user = crud.user.get_user_by_username(db, username=username)
+
+    if db_user is None:
+        raise HTTPException(status_code=404, detail="User not found")
+
+    return crud.user.delete(db, username=username)
+
+
 @router.put("/activate/{username}", response_model=schemas.User)
 def activate_user(
     username: str,

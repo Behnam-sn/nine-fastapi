@@ -78,40 +78,40 @@ def test_update_deactivated_user():
     assert response.status_code == 404
 
 
-# def test_activate_user_as_superuser():
-#     username = utils.random_lower_string()
-#     password = utils.random_lower_string()
+def test_activate_user_as_superuser():
+    username = utils.random_lower_string()
+    password = utils.random_lower_string()
 
-#     utils.create_user(username=username, password=password)
-#     superuser_token = authentication_headers(
-#         username=settings.SUPERUSER_USERNAME,
-#         password=settings.SUPERUSER_PASSWORD
-#     )
+    utils.create_user(username=username, password=password)
+    superuser_token = utils.authentication_headers(
+        username=settings.SUPERUSER_USERNAME,
+        password=settings.SUPERUSER_PASSWORD
+    )
 
-#     response = client.put(
-#         f"{settings.API_V1_STR}/users/activate/{username}",
-#         headers=superuser_token,
-#     )
-#     user = response.json()
+    response = client.put(
+        f"{settings.API_V1_STR}/users/activate/{username}",
+        headers=superuser_token,
+    )
+    user = response.json()
 
-#     assert response.status_code == 200
-#     assert user["is_active"] == True
+    assert response.status_code == 200
+    assert user["is_active"] == True
 
 
-# def test_activate_user_as_normal_user():
-#     username = utils.random_lower_string()
-#     password = utils.random_lower_string()
+def test_activate_user_as_normal_user():
+    username = utils.random_lower_string()
+    password = utils.random_lower_string()
 
-#     token = utils.create_user(username=username, password=password)
+    token = utils.create_user(username=username, password=password)
 
-#     response = client.put(
-#         f"{settings.API_V1_STR}/users/activate/{username}",
-#         headers=token,
-#     )
-#     user = response.json()
+    response = client.put(
+        f"{settings.API_V1_STR}/users/activate/{username}",
+        headers=token,
+    )
+    user = response.json()
 
-#     assert response.status_code == 200
-#     assert user["is_active"] == True
+    assert response.status_code == 200
+    assert user["is_active"] == True
 
 
 def test_activate_not_existing_user():
@@ -149,24 +149,6 @@ def test_unauthorized_activate_user():
     )
 
     assert response.status_code == 401
-
-
-# def test_deactivate_user():
-#     username = utils.random_lower_string()
-#     password = utils.random_lower_string()
-
-#     token = utils.create_user(username=username, password=password)
-#     user = get_user(username=username)
-#     post = create_post(token=token)
-#     comment = create_comment(post_id=post["id"], token=token)
-
-#     user_post_count = active_posts_count_by_owner_id(owner_id=user["id"])
-
-#     utils.deactivate_user(username=username, token=token)
-
-#     new_user_post_count = active_posts_count_by_owner_id(owner_id=user["id"])
-
-#     assert new_user_post_count == user_post_count - 1
 
 
 def test_deactivate_user_as_superuser():

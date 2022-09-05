@@ -517,6 +517,12 @@ class Utils():
         )
         return response.json()
 
+    def get_active_following_count_by_user_id(self, user_id: int):
+        response = client.get(
+            f"{settings.API_V1_STR}/active-follows/following/count/{user_id}",
+        )
+        return response.json()
+
     def get_all_follows_count(self):
         response = client.get(
             f"{settings.API_V1_STR}/follows/count/",
