@@ -82,7 +82,9 @@ def test_activate_user_as_superuser():
     username = utils.random_lower_string()
     password = utils.random_lower_string()
 
-    utils.create_user(username=username, password=password)
+    token = utils.create_user(username=username, password=password)
+    utils.deactivate_user(username=username, token=token)
+
     superuser_token = utils.authentication_headers(
         username=settings.SUPERUSER_USERNAME,
         password=settings.SUPERUSER_PASSWORD
@@ -149,6 +151,24 @@ def test_unauthorized_activate_user():
     )
 
     assert response.status_code == 401
+
+
+# def test_user_follower_count_after_user_activated():
+#     username = utils.random_lower_string()
+#     password = utils.random_lower_string()
+#     token = utils.create_user(username=username, password=password)
+
+#     second_username = utils.random_lower_string()
+#     second_password = utils.random_lower_string()
+#     utils.create_user(username=second_username, password=second_password)
+#     second_user = utils.get_active_user(username=second_username)
+
+#     utils.follow_user(following_id=second_user["id"], token=token)
+#     utils.deactivate_user(username=username, token=token)
+
+
+# def test_user_following_count_after_user_activated():
+#     pass
 
 
 def test_deactivate_user_as_superuser():
@@ -224,12 +244,31 @@ def test_unauthorized_deactivate_user():
     assert response.status_code == 401
 
 
-# def test_deactivated_user_posts_is_deactivated():
-#     pass
+def test_deactivated_user_posts_is_deactivated():
+    username = utils.random_lower_string()
+    password = utils.random_lower_string()
+
+    token = utils.create_user(username=username, password=password)
+    post = utils.create_post(token=token)
+
+    utils.deactivate_user(username=username, token=token)
+    deactivated_post = utils.get_post(post_id=post["id"])
+
+    assert deactivated_post["is_owner_active"] == False
 
 
-# def test_deactivated_user_comments_is_deactivated():
-#     pass
+def test_deactivated_user_comments_is_deactivated():
+    username = utils.random_lower_string()
+    password = utils.random_lower_string()
+
+    token = utils.create_user(username=username, password=password)
+    post = utils.create_post(token=token)
+    comment = utils.create_comment(post_id=post["id"], token=token)
+
+    utils.deactivate_user(username=username, token=token)
+    deactivated_comment = utils.get_comment(comment_id=comment["id"])
+
+    assert deactivated_comment["is_owner_active"] == False
 
 
 # def test_deactivated_user_likes_is_deactivated():

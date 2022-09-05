@@ -89,13 +89,6 @@ class Utils():
 
         return response.json()
 
-    # def get_post(self, post_id: int):
-        # response = client.get(
-        #     f"{settings.API_V1_STR}/posts/{post_id}",
-        # )
-        # return response.json()
-        # pass
-
     def delete_post(self, post_id: int):
         superuser_token = self.authentication_headers(
             username=settings.SUPERUSER_USERNAME,
@@ -123,6 +116,19 @@ class Utils():
             f"{settings.API_V1_STR}/posts/deactivate/{post_id}",
             headers=token,
         )
+
+    def get_post(self, post_id: int):
+        superuser_token = self.authentication_headers(
+            username=settings.SUPERUSER_USERNAME,
+            password=settings.SUPERUSER_PASSWORD
+        )
+
+        response = client.get(
+            f"{settings.API_V1_STR}/posts/{post_id}",
+            headers=superuser_token,
+        )
+
+        return response.json()
 
     def get_active_post(self, post_id: int):
         response = client.get(
@@ -220,6 +226,25 @@ class Utils():
 
         return response.json()
 
+    def get_comment(self, comment_id: int):
+        superuser_token = self.authentication_headers(
+            username=settings.SUPERUSER_USERNAME,
+            password=settings.SUPERUSER_PASSWORD
+        )
+
+        response = client.get(
+            f"{settings.API_V1_STR}/comments/{comment_id}",
+            headers=superuser_token,
+        )
+
+        return response.json()
+
+    def get_active_comment(self, comment_id: int):
+        response = client.get(
+            f"{settings.API_V1_STR}/active-comments/{comment_id}",
+        )
+        return response.json()
+
     def delete_comment(self, comment_id: int):
         superuser_token = self.authentication_headers(
             username=settings.SUPERUSER_USERNAME,
@@ -247,12 +272,6 @@ class Utils():
             f"{settings.API_V1_STR}/comments/deactivate/{comment_id}",
             headers=token,
         )
-
-    def get_active_comment(self, comment_id: int):
-        response = client.get(
-            f"{settings.API_V1_STR}/active-comments/{comment_id}",
-        )
-        return response.json()
 
     def get_all_comments_count(self):
         superuser_token = self.authentication_headers(
