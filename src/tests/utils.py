@@ -40,19 +40,6 @@ class Utils():
         auth_token = tokens["access_token"]
         return {"Authorization": f"Bearer {auth_token}"}
 
-    def get_user(self, username: str):
-        superuser_token = self.authentication_headers(
-            username=settings.SUPERUSER_USERNAME,
-            password=settings.SUPERUSER_PASSWORD
-        )
-
-        response = client.get(
-            f"{settings.API_V1_STR}/users/{username}",
-            headers=superuser_token,
-        )
-
-        return response.json()
-
     def get_active_user(self, username: str):
         response = client.get(
             f"{settings.API_V1_STR}/active-users/{username}",
