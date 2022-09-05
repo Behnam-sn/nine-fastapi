@@ -6,7 +6,7 @@ from src.tests.conftest import client
 
 
 class Utils():
-    def random_lower_string(self) -> str:
+    def random_lower_string(self):
         return "".join(random.choices(string.ascii_lowercase, k=32))
 
     def authentication_headers(self, username: str, password: str):
