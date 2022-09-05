@@ -224,6 +224,26 @@ def test_unauthorized_deactivate_user():
     assert response.status_code == 401
 
 
+# def test_deactivated_user_posts_is_deactivated():
+#     pass
+
+
+# def test_deactivated_user_comments_is_deactivated():
+#     pass
+
+
+# def test_deactivated_user_likes_is_deactivated():
+#     pass
+
+
+# def test_deactivated_user_followers_is_deactivated():
+#     pass
+
+
+# def test_deactivated_user_followings_is_deactivated():
+#     pass
+
+
 def test_get_current_user():
     username = utils.random_lower_string()
     password = utils.random_lower_string()

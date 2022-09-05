@@ -747,7 +747,8 @@ def test_get_comments_count_by_owner_id_is_all():
     utils.deactivate_comment(comment_id=comment["id"], token=token)
     new_count = utils.get_comments_count_by_owner_id(owner_id=user["id"])
 
-    assert new_count == count
+    assert count == 1
+    assert new_count == 1
 
 
 def test_get_comments_count_by_not_existing_owner_id():
@@ -847,7 +848,8 @@ def test_get_comments_ids_by_owner_id_is_all():
     utils.deactivate_comment(comment_id=comment["id"], token=token)
     new_ids = utils.get_comments_ids_by_owner_id(owner_id=user["id"])
 
-    assert new_ids == ids
+    assert len(ids) == 1
+    assert len(new_ids) == 1
 
 
 def test_get_comments_ids_by_not_existing_owner_id():
@@ -948,7 +950,8 @@ def test_get_comments_count_by_post_id_is_all():
     utils.deactivate_comment(comment_id=comment["id"], token=token)
     new_count = utils.get_comments_count_by_post_id(post_id=post["id"])
 
-    assert new_count == count
+    assert count == 1
+    assert new_count == 1
 
 
 def test_get_comments_count_by_not_existing_post_id():
@@ -1045,7 +1048,8 @@ def test_get_comments_ids_by_post_id_is_all():
     utils.deactivate_comment(comment_id=comment["id"], token=token)
     new_ids = utils.get_comments_ids_by_post_id(post_id=post["id"])
 
-    assert new_ids == ids
+    assert len(ids) == 1
+    assert len(new_ids) == 1
 
 
 def test_get_comments_ids_by_not_existing_post_id():

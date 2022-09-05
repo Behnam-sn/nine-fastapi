@@ -497,6 +497,42 @@ class Utils():
 
         return response.json()
 
+    def get_active_likes_count_by_owner_id(self, owner_id: int):
+        response = client.get(
+            f"{settings.API_V1_STR}/active-likes/owner/count/{owner_id}",
+        )
+        return response.json()
+
+    def get_active_likes_ids_by_owner_id(self, owner_id: int):
+        response = client.get(
+            f"{settings.API_V1_STR}/active-likes/owner/ids/{owner_id}",
+        )
+        return response.json()
+
+    def get_active_likes_count_by_post_id(self, post_id: int):
+        response = client.get(
+            f"{settings.API_V1_STR}/active-likes/post/count/{post_id}",
+        )
+        return response.json()
+
+    def get_active_likes_ids_by_post_id(self, post_id: int):
+        response = client.get(
+            f"{settings.API_V1_STR}/active-likes/post/ids/{post_id}",
+        )
+        return response.json()
+
+    def get_active_likes_count_by_comment_id(self, comment_id: int):
+        response = client.get(
+            f"{settings.API_V1_STR}/active-likes/comment/count/{comment_id}",
+        )
+        return response.json()
+
+    def get_active_likes_ids_by_comment_id(self, comment_id: int):
+        response = client.get(
+            f"{settings.API_V1_STR}/active-likes/comment/ids/{comment_id}",
+        )
+        return response.json()
+
     def follow_user(self, following_id: int, token: str):
         response = client.post(
             f"{settings.API_V1_STR}/follows/{following_id}",
@@ -508,18 +544,6 @@ class Utils():
         response = client.delete(
             f"{settings.API_V1_STR}/follows/{following_id}",
             headers=token,
-        )
-        return response.json()
-
-    def get_all_active_follows_count(self):
-        response = client.get(
-            f"{settings.API_V1_STR}/active-follows/count/",
-        )
-        return response.json()
-
-    def get_active_following_count_by_user_id(self, user_id: int):
-        response = client.get(
-            f"{settings.API_V1_STR}/active-follows/following/count/{user_id}",
         )
         return response.json()
 
@@ -579,6 +603,36 @@ class Utils():
             headers=superuser_token
         )
 
+        return response.json()
+
+    def get_all_active_follows_count(self):
+        response = client.get(
+            f"{settings.API_V1_STR}/active-follows/count/",
+        )
+        return response.json()
+
+    def get_active_following_count_by_user_id(self, user_id: int):
+        response = client.get(
+            f"{settings.API_V1_STR}/active-follows/following/count/{user_id}",
+        )
+        return response.json()
+
+    def get_active_following_ids_by_user_id(self, user_id: int):
+        response = client.get(
+            f"{settings.API_V1_STR}/active-follows/following/ids/{user_id}",
+        )
+        return response.json()
+
+    def get_active_follower_count_by_user_id(self, user_id: int):
+        response = client.get(
+            f"{settings.API_V1_STR}/active-follows/follower/count/{user_id}",
+        )
+        return response.json()
+
+    def get_active_follower_ids_by_user_id(self, user_id: int):
+        response = client.get(
+            f"{settings.API_V1_STR}/active-follows/follower/ids/{user_id}",
+        )
         return response.json()
 
 

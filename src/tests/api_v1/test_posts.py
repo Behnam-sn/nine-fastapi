@@ -676,13 +676,15 @@ def test_get_posts_count_by_owner_id_is_all():
 
     token = utils.create_user(username=username, password=password)
     user = utils.get_active_user(username=username)
+
     post = utils.create_post(token=token)
 
     count = utils.get_posts_count_by_owner_id(owner_id=user["id"])
     utils.deactivate_post(post_id=post["id"], token=token)
     new_count = utils.get_posts_count_by_owner_id(owner_id=user["id"])
 
-    assert new_count == count
+    assert count == 1
+    assert new_count == 1
 
 
 def test_get_posts_count_by_not_existing_owner_id():
@@ -773,13 +775,15 @@ def test_get_posts_ids_by_owner_id_is_all():
 
     token = utils.create_user(username=username, password=password)
     user = utils.get_active_user(username=username)
+
     post = utils.create_post(token=token)
 
     ids = utils.get_posts_ids_by_owner_id(owner_id=user["id"])
     utils.deactivate_post(post_id=post["id"], token=token)
     new_ids = utils.get_posts_ids_by_owner_id(owner_id=user["id"])
 
-    assert new_ids == ids
+    assert len(ids) == 1
+    assert len(new_ids) == 1
 
 
 def test_get_posts_ids_by_not_existing_owner_id():

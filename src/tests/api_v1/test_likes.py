@@ -515,7 +515,8 @@ def test_get_likes_count_by_owner_id_is_all():
     utils.deactivate_user(username=username, token=token)
     new_count = utils.get_likes_count_by_owner_id(owner_id=user["id"])
 
-    assert new_count == count
+    assert count == 2
+    assert new_count == 2
 
 
 def test_get_likes_count_by_not_existing_owner_id():
@@ -625,7 +626,8 @@ def test_get_likes_ids_by_owner_id_is_all():
     utils.deactivate_user(username=username, token=token)
     new_ids = utils.get_likes_ids_by_owner_id(owner_id=user["id"])
 
-    assert new_ids == ids
+    assert len(ids) == 2
+    assert len(new_ids) == 2
 
 
 def test_get_likes_ids_by_not_existing_owner_id():
@@ -722,13 +724,15 @@ def test_get_likes_count_by_post_id_is_all():
 
     token = utils.create_user(username=username, password=password)
     post = utils.create_post(token=token)
+
     utils.like_post(post_id=post["id"], token=token)
 
     count = utils.get_likes_count_by_post_id(post_id=post["id"])
     utils.deactivate_post(post_id=post["id"], token=token)
     new_count = utils.get_likes_count_by_post_id(post_id=post["id"])
 
-    assert new_count == count
+    assert count == 1
+    assert new_count == 1
 
 
 def test_get_likes_count_by_not_existing_post_id():
@@ -820,13 +824,15 @@ def test_get_likes_ids_by_post_id_is_all():
 
     token = utils.create_user(username=username, password=password)
     post = utils.create_post(token=token)
+
     utils.like_post(post_id=post["id"], token=token)
 
     ids = utils.get_likes_ids_by_post_id(post_id=post["id"])
     utils.deactivate_post(post_id=post["id"], token=token)
     new_ids = utils.get_likes_ids_by_post_id(post_id=post["id"])
 
-    assert new_ids == ids
+    assert len(ids) == 1
+    assert len(new_ids) == 1
 
 
 def test_get_likes_ids_by_not_existing_post_id():
@@ -923,13 +929,15 @@ def test_get_likes_count_by_comment_id_is_all():
     token = utils.create_user(username=username, password=password)
     post = utils.create_post(token=token)
     comment = utils.create_comment(post_id=post["id"], token=token)
+
     utils.like_comment(comment_id=comment["id"], token=token)
 
     count = utils.get_likes_count_by_comment_id(comment_id=comment["id"])
     utils.deactivate_comment(comment_id=comment["id"], token=token)
     new_count = utils.get_likes_count_by_comment_id(comment_id=comment["id"])
 
-    assert new_count == count
+    assert count == 1
+    assert new_count == 1
 
 
 def test_get_likes_count_by_not_existing_comment_id():
@@ -1027,13 +1035,15 @@ def test_get_likes_ids_by_comment_id_is_all():
     token = utils.create_user(username=username, password=password)
     post = utils.create_post(token=token)
     comment = utils.create_comment(post_id=post["id"], token=token)
+
     utils.like_comment(comment_id=comment["id"], token=token)
 
     ids = utils.get_likes_ids_by_comment_id(comment_id=comment["id"])
     utils.deactivate_comment(comment_id=comment["id"], token=token)
     new_ids = utils.get_likes_ids_by_comment_id(comment_id=comment["id"])
 
-    assert new_ids == ids
+    assert len(ids) == 1
+    assert len(new_ids) == 1
 
 
 def test_get_likes_ids_by_not_existing_comment_id():
