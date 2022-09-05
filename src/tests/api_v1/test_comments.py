@@ -555,8 +555,27 @@ def test_get_not_existing_comment_by_id():
     assert response.status_code == 404
 
 
-# def test_get_deleted_comment_by_id():
-#     pass
+def test_get_deleted_comment_by_id():
+    username = utils.random_lower_string()
+    password = utils.random_lower_string()
+
+    token = utils.create_user(username=username, password=password)
+    post = utils.create_post(token=token)
+    comment = utils.create_comment(post_id=post["id"], token=token)
+
+    utils.delete_comment(comment_id=comment["id"])
+
+    superuser_token = utils.authentication_headers(
+        username=settings.SUPERUSER_USERNAME,
+        password=settings.SUPERUSER_PASSWORD
+    )
+
+    response = client.get(
+        f"{settings.API_V1_STR}/comments/{comment['id']}",
+        headers=superuser_token,
+    )
+
+    assert response.status_code == 404
 
 
 def test_get_deactivated_comment_by_id():

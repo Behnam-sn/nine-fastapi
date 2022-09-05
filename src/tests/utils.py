@@ -40,6 +40,9 @@ class Utils():
         auth_token = tokens["access_token"]
         return {"Authorization": f"Bearer {auth_token}"}
 
+    # def delete_user():
+    #     pass
+
     def get_active_user(self, username: str):
         response = client.get(
             f"{settings.API_V1_STR}/active-users/{username}",

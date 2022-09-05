@@ -352,6 +352,10 @@ def test_get_not_existing_user_by_username():
     assert response.status_code == 404
 
 
+# def test_get_deleted_user_by_username():
+#     pass
+
+
 def test_get_deactivated_user_by_username():
     username = utils.random_lower_string()
     password = utils.random_lower_string()
