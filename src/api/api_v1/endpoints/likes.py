@@ -30,6 +30,32 @@ def get_like_by_id(
     return db_like
 
 
+@router.get("/is-post-liked/{post_id}", response_model=bool)
+def get_is_post_liked(
+    post_id: int,
+    current_user: models.User = Depends(deps.get_current_user),
+    db: Session = Depends(deps.get_db),
+):
+    db_like = crud.like.get_like_by_post_id_and_owner_id(
+        db, owner_id=current_user.id, post_id=post_id
+    )
+
+    return db_like is not None
+
+
+@router.get("/is-comment-liked/{comment_id}", response_model=bool)
+def get_is_comment_liked(
+    comment_id: int,
+    current_user: models.User = Depends(deps.get_current_user),
+    db: Session = Depends(deps.get_db),
+):
+    db_like = crud.like.get_like_by_comment_id_and_owner_id(
+        db, owner_id=current_user.id, comment_id=comment_id
+    )
+
+    return db_like is not None
+
+
 @router.post("/post/{post_id}", response_model=schemas.Like)
 def like_post(
     post_id: int,
