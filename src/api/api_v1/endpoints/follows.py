@@ -30,6 +30,19 @@ def get_follow_by_id(
     return db_follow
 
 
+@router.get("/is-following/{following_id}", response_model=bool)
+def get_follow_by_follower_id_and_following_id(
+    following_id: int,
+    current_user: models.User = Depends(deps.get_current_user),
+    db: Session = Depends(deps.get_db),
+):
+    db_follow = crud.follow.get_follow_by_follower_id_and_following_id(
+        db, follower_id=current_user.id, following_id=following_id
+    )
+
+    return db_follow is not None
+
+
 @router.post("/{following_id}", response_model=schemas.Follow)
 def follow_user(
     following_id: int,
