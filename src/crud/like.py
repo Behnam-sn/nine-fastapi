@@ -70,7 +70,7 @@ class Like():
             .first()
         )
 
-    def get_like_by_id(self, db: Session, id: id) -> models.Like | None:
+    def get_like_by_id(self, db: Session, id: int) -> models.Like | None:
         return (
             db.query(models.Like)
             .filter(models.Like.id == id)
@@ -143,7 +143,7 @@ class Like():
             .all()
         )
 
-    def get_active_like_by_id(self, db: Session, id: id) -> models.Like | None:
+    def get_active_like_by_id(self, db: Session, id: int) -> models.Like | None:
         return (
             db.query(models.Like)
             .filter(models.Like.is_comment_active == True, models.Like.is_post_active == True, models.Like.is_owner_active == True)
